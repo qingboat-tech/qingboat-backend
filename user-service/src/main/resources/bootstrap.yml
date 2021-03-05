@@ -1,25 +1,11 @@
 server:
-  port: 8082
+  port: 8083
   servlet:
     context-path: /uc
 
 spring:
   application:
     name: user-service
-
-  cloud:
-    nacos:
-      config:
-        server-addr: 127.0.0.1:8848
-        group: DEFAULT_GROUP
-        namespace: public
-        file-extension: yaml
-        ext-config[0]:
-          data-id: user-service.yaml
-          refresh: true
-
-      discovery:
-        server-addr: 127.0.0.1:8848
 
   datasource:
     username: root
