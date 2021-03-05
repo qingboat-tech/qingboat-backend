@@ -1,0 +1,20 @@
+
+server:
+  port: 8082
+  servlet:
+    context-path: /as
+
+spring:
+  application:
+    name: article-service
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: article_db
+
+feign:
+  httpclient:
+    enabled: true
+  okhttp:
+    enabled: true

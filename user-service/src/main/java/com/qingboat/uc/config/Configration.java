@@ -8,15 +8,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-@RefreshScope
+// @RefreshScope
 @Data
 @Component
 public class Configration {
 
-    @Value("${db.host}")
+   // @Value("${db.host}")
     private String appName;
 
-    @Value("${db.port}")
+    // @Value("${db.port}")
     private String port;
 
     @Bean
