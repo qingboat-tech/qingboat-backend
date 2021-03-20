@@ -11,6 +11,7 @@
         <module name="user-service" />
         <module name="provider-service" />
         <module name="article-service" />
+        <module name="trade-service" />
       </profile>
     </annotationProcessing>
   </component>
