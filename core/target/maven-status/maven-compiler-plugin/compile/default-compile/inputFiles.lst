@@ -1,6 +1,0 @@
-/Users/fcbox/Documents/workspace/qingboat/core/src/main/java/com/qingboat/base/api/ApiResponse.java
-/Users/fcbox/Documents/workspace/qingboat/core/src/main/java/com/qingboat/base/exception/BaseException.java
-/Users/fcbox/Documents/workspace/qingboat/core/src/main/java/com/qingboat/base/config/FeignConfig.java
-/Users/fcbox/Documents/workspace/qingboat/core/src/main/java/com/qingboat/base/advise/GlobalExceptionResponseBodyAdvice.java
-/Users/fcbox/Documents/workspace/qingboat/core/src/main/java/com/qingboat/base/config/FeignDecoder.java
-/Users/fcbox/Documents/workspace/qingboat/core/src/main/java/com/qingboat/base/advise/GlobalResponseBodyAdvice.java

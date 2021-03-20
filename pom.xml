@@ -10,8 +10,8 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>core</module>
     <module>user-service</module>
+    <module>core</module>
     <module>provider-service</module>
     <module>article-service</module>
   </modules>
@@ -114,6 +114,7 @@
       </plugins>
     </pluginManagement>
   </build>
+
 
 
 </project>

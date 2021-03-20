@@ -1,7 +1,0 @@
-com/qingboat/base/advise/GlobalExceptionResponseBodyAdvice.class
-com/qingboat/base/exception/BaseException.class
-com/qingboat/base/api/ApiResponse.class
-com/qingboat/base/config/FeignDecoder.class
-com/qingboat/base/config/FeignConfig.class
-com/qingboat/base/advise/GlobalResponseBodyAdvice.class
-com/qingboat/base/api/ApiResponse$ApiResponseBuilder.class
