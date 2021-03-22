@@ -12,7 +12,6 @@
   <modules>
     <module>user-service</module>
     <module>core</module>
-    <module>provider-service</module>
     <module>article-service</module>
     <module>trade-service</module>
   </modules>

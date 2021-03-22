@@ -1,6 +1,5 @@
 package com.qingboat.base.config;
 
-import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qingboat.base.api.ApiResponse;
