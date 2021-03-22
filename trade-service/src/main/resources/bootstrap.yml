@@ -13,7 +13,7 @@ spring:
     username: root
     password: davwang816
     #serverTimezone=UTC 配置时区
-    url: jdbc:mysql://localhost:3306/testDB?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://localhost:3306/qingboatDB?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
 
