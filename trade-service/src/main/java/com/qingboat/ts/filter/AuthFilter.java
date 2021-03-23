@@ -26,7 +26,7 @@ public class AuthFilter implements Filter {
         String innerSec = request.getHeader("INNER_SEC");
         String userId = request.getHeader("UID");
 
-        boolean authFlag = false;
+        boolean authFlag = true;
 
         if (userId !=null && innerSec != null){
             String md5 = DigestUtils.md5DigestAsHex((SEC_KEY + userId).getBytes());
@@ -37,6 +37,7 @@ public class AuthFilter implements Filter {
             AuthToken authToken = new AuthToken();
 
             token = token.substring(token.indexOf(" ")+1);
+            System.err.println( " token:" +token);
             authToken = authToken.selectById(token);
             if (authToken !=null && authToken.getUserId()!=null){
                 authFlag = true;

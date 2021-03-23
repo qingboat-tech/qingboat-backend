@@ -6,6 +6,7 @@ import com.qingboat.ts.dao.GoodsDao;
 import com.qingboat.ts.dao.GoodsSkuDao;
 import com.qingboat.ts.entity.GoodsEntity;
 import com.qingboat.ts.entity.GoodsSkuEntity;
+import com.qingboat.ts.entity.OrderEntity;
 import com.qingboat.ts.service.GoodsService;
 import com.qingboat.ts.vo.GoodsVo;
 import org.springframework.beans.BeanUtils;
@@ -25,17 +26,13 @@ public class GoodsServiceImpl implements GoodsService {
 
 
     @Override
-    public GoodsVo getGoodsById(Long goodsId) {
+    public GoodsEntity getGoodsById(Long goodsId) {
         GoodsEntity goodsEntity = goodsDao.selectById(goodsId);
-        GoodsVo goodsVo = null;
         if (goodsEntity!=null && goodsEntity.getHasSku()){
-            goodsVo = new GoodsVo();
-            BeanUtils.copyProperties(goodsEntity,goodsVo );
-
             Wrapper<GoodsSkuEntity> param = null;
             List list= goodsSkuDao.selectList (param);
-            goodsVo.setSkuList(list);
+            goodsEntity.setSkuList(list);
         }
-        return goodsVo;
+        return goodsEntity;
     }
 }

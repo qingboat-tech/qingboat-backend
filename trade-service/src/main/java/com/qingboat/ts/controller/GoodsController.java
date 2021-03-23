@@ -1,5 +1,6 @@
 package com.qingboat.ts.controller;
 
+import com.qingboat.ts.entity.GoodsEntity;
 import com.qingboat.ts.service.GoodsService;
 import com.qingboat.ts.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,8 @@ public class GoodsController {
 
     @GetMapping("/getGoodsById")
     @ResponseBody
-    public GoodsVo getCustomerById(@RequestParam(value = "goodsId") Long goodsId ){
-        GoodsVo goodsVo = goodsService.getGoodsById(goodsId);
-        return goodsVo;
+    public GoodsEntity getGoodsById(@RequestParam(value = "goodsId") Long goodsId ){
+        GoodsEntity goodsEntity = goodsService.getGoodsById(goodsId);
+        return goodsEntity;
     }
 }

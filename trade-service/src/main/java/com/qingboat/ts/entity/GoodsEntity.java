@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @TableName("apps_goods")// 映射数据库表名
@@ -35,5 +36,9 @@ public class GoodsEntity {
     private Date updatedAt;
 
     private Boolean hasSku;
+
+    @TableField(exist = false)
+    private List skuList;
+
 
 }
