@@ -18,6 +18,11 @@ public class GoodsSkuEntity {
 
     private String name;
 
+    @TableField("`desc`")
+    private String desc;
+
+    private String currency;
+
     private Integer price;
 
     private Integer inventory; //库存数
