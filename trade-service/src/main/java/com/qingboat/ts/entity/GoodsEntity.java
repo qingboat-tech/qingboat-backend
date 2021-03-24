@@ -29,6 +29,8 @@ public class GoodsEntity {
 
     private Integer price;
 
+    private String currency;
+
     private Integer inventory;
 
     private Date createdAt;
@@ -38,7 +40,7 @@ public class GoodsEntity {
     private Boolean hasSku;
 
     @TableField(exist = false)
-    private List skuList;
+    private List<GoodsSkuEntity> skuList;
 
 
 }

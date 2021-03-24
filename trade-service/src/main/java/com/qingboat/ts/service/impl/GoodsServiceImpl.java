@@ -45,4 +45,10 @@ public class GoodsServiceImpl implements GoodsService {
         List<GoodsSkuEntity> list = goodsSkuDao.selectList(wrapper);
         return list;
     }
+
+    @Override
+    public GoodsSkuEntity getGoodsSkuById(Long goodsSkuId) {
+        GoodsSkuEntity goodsSkuEntity = goodsSkuDao.selectById(goodsSkuId);
+        return goodsSkuEntity;
+    }
 }

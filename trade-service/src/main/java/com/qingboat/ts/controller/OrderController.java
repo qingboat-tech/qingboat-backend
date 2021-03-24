@@ -31,6 +31,7 @@ public class OrderController {
         log.info(" RequestParam: goodsId=" +goodsId +" ;skuId="+skuId );
 
         return orderService.createOrder(goodsId,skuId, uid);
+
     }
 
 

@@ -12,6 +12,6 @@ public interface GoodsService {
 
     List<GoodsSkuEntity> getGoodsSkuByGoodsId(Long goodsId);
 
-
+    GoodsSkuEntity getGoodsSkuById(Long goodsSkuId);
 
 }
