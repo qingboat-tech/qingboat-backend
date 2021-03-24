@@ -40,6 +40,7 @@ public class AuthFilter implements Filter {
             System.err.println( " token:" +token);
             authToken = authToken.selectById(token);
             if (authToken !=null && authToken.getUserId()!=null){
+                request.setAttribute("USER_AUTHONTOKEN" ,authToken);
                 authFlag = true;
             }
         }

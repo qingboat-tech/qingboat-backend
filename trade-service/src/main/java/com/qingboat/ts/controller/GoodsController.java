@@ -3,7 +3,7 @@ package com.qingboat.ts.controller;
 import com.qingboat.ts.entity.GoodsEntity;
 import com.qingboat.ts.entity.GoodsSkuEntity;
 import com.qingboat.ts.service.GoodsService;
-import com.qingboat.ts.vo.GoodsVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@Slf4j
 public class GoodsController {
 
     @Autowired
