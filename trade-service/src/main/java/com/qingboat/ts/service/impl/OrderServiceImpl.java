@@ -65,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
         }
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setGoodsSkuId(skuId);
-        orderEntity.setOrderNo("1222");
+        orderEntity.setOrderNo(generateOrderId());
         orderEntity.setPurchaseUserId(userId);
         orderEntity.setGoodsId(goodsId);
         orderEntity.setGoodsTitle(goodsEntity.getTitle());
@@ -84,11 +84,15 @@ public class OrderServiceImpl implements OrderService {
         orderEntity.setCreatedAt(new Date());
         orderEntity.setUpdatedAt(new Date());
 
-        int rst  = orderDao.insert(orderEntity);
-        log.info( orderEntity.getId() +" rst :" +rst);
-
-        return orderEntity;
-
+        int count  = orderDao.insert(orderEntity);
+        OrderEntity rst = new OrderEntity();
+        rst.setId(orderEntity.getId());
+        rst.setOrderNo(orderEntity.getOrderNo());
+        rst.setActualAmount(orderEntity.getActualAmount());
+        rst.setTotalAmount(orderEntity.getTotalAmount());
+        rst.setCurrency(orderEntity.getCurrency());
+        rst.setCreatedAt(orderEntity.getCreatedAt());
+        return rst;
     }
 
 
