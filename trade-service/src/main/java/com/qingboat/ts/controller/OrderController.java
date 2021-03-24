@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 
 @RestController
 @Slf4j
@@ -22,14 +24,13 @@ public class OrderController {
 
     @PostMapping("/createOrder")
     @ResponseBody
-    public OrderEntity createOrder(@RequestParam Long goodsId, @RequestParam Long skuId , Model model){
+    public OrderEntity createOrder(@RequestBody Map<String,Long> param , @RequestAttribute(name = "UID") Long uid){
+        Long goodsId = param.get("goodsId");
+        Long skuId = param.get("skuId");
+
         log.info(" RequestParam: goodsId=" +goodsId +" ;skuId="+skuId );
 
-        AuthToken authToken = (AuthToken) model.getAttribute("USER_AUTHONTOKEN");
-        if (authToken == null){
-            throw new BaseException(500," USER_AUTHONTOKEN ERROR");
-        }
-        return orderService.createOrder(goodsId,skuId, authToken.getUserId());
+        return orderService.createOrder(goodsId,skuId, uid);
     }
 
 

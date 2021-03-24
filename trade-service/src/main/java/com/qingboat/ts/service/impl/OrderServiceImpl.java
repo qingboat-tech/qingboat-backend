@@ -17,6 +17,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderEntity createOrder(Long goodsId, Long skuId ,Long userId) {
+        log.info( "   ====OrderServiceImpl.createOrder======  ");
         return null;
     }
 }

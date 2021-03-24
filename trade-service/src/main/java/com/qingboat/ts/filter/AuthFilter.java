@@ -26,34 +26,28 @@ public class AuthFilter implements Filter {
         String innerSec = request.getHeader("INNER_SEC");
         String userId = request.getHeader("UID");
 
-        boolean authFlag = true;
-
         if (userId !=null && innerSec != null){
             String md5 = DigestUtils.md5DigestAsHex((SEC_KEY + userId).getBytes());
             if (md5.equals(innerSec)){
-                authFlag = true;
-            }
-        }else if (token !=null && token.indexOf(" ")>0 ){
-            AuthToken authToken = new AuthToken();
+                AuthToken authToken = new AuthToken();
+                authToken.setUserId(Long.parseLong(userId));
+                request.setAttribute("USER_AUTHONTOKEN" ,authToken);
+                request.setAttribute("UID" ,Long.parseLong(userId));
 
-            token = token.substring(token.indexOf(" ")+1);
-            System.err.println( " token:" +token);
+            }
+        }
+        if (token !=null && token.indexOf(" ")>0 ){
+            AuthToken authToken = new AuthToken();
+            token = token.substring(token.lastIndexOf(" ")+1);
             authToken = authToken.selectById(token);
+
             if (authToken !=null && authToken.getUserId()!=null){
                 request.setAttribute("USER_AUTHONTOKEN" ,authToken);
-                authFlag = true;
+                request.setAttribute("UID" ,authToken.getUserId());
+
             }
         }
-
-        if (authFlag){
-            filterChain.doFilter(servletRequest,servletResponse);
-        }else {
-            servletResponse.setContentType("text/json; charset=utf-8");
-            PrintWriter writer = servletResponse.getWriter();
-            ApiResponse<?> apiResponse = new ApiResponse<>(500,"ERROR_AUTH",null);
-            writer.println(JSON.toJSON(apiResponse));
-            writer.close();
-        }
+        filterChain.doFilter(servletRequest,servletResponse);
     }
 
     @Override
