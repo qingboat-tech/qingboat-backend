@@ -1,18 +1,20 @@
 package com.qingboat.ts.filter;
 
-import com.alibaba.fastjson.JSON;
-import com.qingboat.base.api.ApiResponse;
-import com.qingboat.ts.entity.AuthToken;
+import com.qingboat.ts.dao.AuthTokenDao;
+import com.qingboat.ts.entity.AuthTokenEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 public class AuthFilter implements Filter {
 
     private final String SEC_KEY = "UJU2@#9kDJIVVWJ";
+    @Autowired
+    private AuthTokenDao authTokenDao;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -29,21 +31,22 @@ public class AuthFilter implements Filter {
         if (userId !=null && innerSec != null){
             String md5 = DigestUtils.md5DigestAsHex((SEC_KEY + userId).getBytes());
             if (md5.equals(innerSec)){
-                AuthToken authToken = new AuthToken();
-                authToken.setUserId(Long.parseLong(userId));
-                request.setAttribute("USER_AUTHONTOKEN" ,authToken);
+                AuthTokenEntity authTokenEntity = new AuthTokenEntity();
+                authTokenEntity.setUserId(Long.parseLong(userId));
+                request.setAttribute("USER_AUTHONTOKEN" , authTokenEntity);
                 request.setAttribute("UID" ,Long.parseLong(userId));
 
             }
         }
         if (token !=null && token.indexOf(" ")>0 ){
-            AuthToken authToken = new AuthToken();
+            AuthTokenEntity authTokenEntity = new AuthTokenEntity();
             token = token.substring(token.lastIndexOf(" ")+1);
-            authToken = authToken.selectById(token);
+            authTokenEntity = authTokenDao.selectById(token);
+            authTokenEntity = authTokenEntity.selectById(token);
 
-            if (authToken !=null && authToken.getUserId()!=null){
-                request.setAttribute("USER_AUTHONTOKEN" ,authToken);
-                request.setAttribute("UID" ,authToken.getUserId());
+            if (authTokenEntity !=null && authTokenEntity.getUserId()!=null){
+                request.setAttribute("USER_AUTHONTOKEN" , authTokenEntity);
+                request.setAttribute("UID" , authTokenEntity.getUserId());
 
             }
         }

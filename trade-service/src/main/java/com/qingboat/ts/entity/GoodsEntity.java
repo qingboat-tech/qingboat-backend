@@ -6,12 +6,13 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Data
 @TableName("apps_goods")// 映射数据库表名
-public class GoodsEntity {
+public class GoodsEntity implements Serializable {
 
     @TableId(type = IdType.AUTO)
     private Long id;

@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Data
 @TableName("authtoken_token")// 映射数据库表名
-public class AuthToken extends Model<AuthToken> implements Serializable {
+public class AuthTokenEntity extends Model<AuthTokenEntity> implements Serializable {
 
     @TableId("`key`")
     private String key;

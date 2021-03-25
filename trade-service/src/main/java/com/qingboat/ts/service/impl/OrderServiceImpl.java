@@ -84,7 +84,8 @@ public class OrderServiceImpl implements OrderService {
         orderEntity.setCreatedAt(new Date());
         orderEntity.setUpdatedAt(new Date());
 
-        int count  = orderDao.insert(orderEntity);
+        orderEntity.insert();
+
         OrderEntity rst = new OrderEntity();
         rst.setId(orderEntity.getId());
         rst.setOrderNo(orderEntity.getOrderNo());
