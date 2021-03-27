@@ -18,6 +18,7 @@ public class ArticleController {
 
 
     @RequestMapping(value = "/author/{authorId}", method = RequestMethod.GET)
+    @ResponseBody
     public List<ArticleEntity> findAllByAuthorId(@PathVariable("authorId") String authorId) {
         return articleService.findAllByAuthorId(authorId);
     }
@@ -28,11 +29,10 @@ public class ArticleController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
+    @ResponseBody
     public ArticleEntity saveArticle(@Valid @RequestBody ArticleEntity article) {
         return articleService.saveArticle(article);
     }
-
-
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public void deleteArticleById(@PathVariable("id") String id) {
        articleService.removeArticleById(id);

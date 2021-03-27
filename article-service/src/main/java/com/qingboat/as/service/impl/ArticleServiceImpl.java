@@ -25,7 +25,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public ArticleEntity findArticleById(String articleId) {
-        return  articleMongoDao.findById(articleId).get();
+        return  articleMongoDao.findArticleById(articleId);
     }
 
     @Override
