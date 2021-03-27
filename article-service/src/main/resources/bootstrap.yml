@@ -7,11 +7,13 @@ server:
 spring:
   application:
     name: article-service
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    default-property-inclusion: non_null
+
   data:
     mongodb:
-      host: localhost
-      port: 27017
-      database: article_db
+      uri: mongodb://192.168.50.27:27017/article_db
 
 feign:
   httpclient:

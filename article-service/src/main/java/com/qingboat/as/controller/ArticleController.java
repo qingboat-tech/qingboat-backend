@@ -2,57 +2,40 @@ package com.qingboat.as.controller;
 
 
 import com.qingboat.as.entity.ArticleEntity;
-import com.qingboat.as.service.ArticleRepositoryService;
+import com.qingboat.as.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.bson.types.ObjectId;
 
 import java.util.List;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/articles")
+@RequestMapping(value = "/article")
 public class ArticleController {
 
     @Autowired
-    final private ArticleRepositoryService repository;
-
-    public ArticleController(ArticleRepositoryService repository) {
-        this.repository = repository;
-    }
+    private ArticleService articleService;
 
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public List<ArticleEntity> getAllArticles() {
-        // get article list
-        return repository.findAll();
+    @RequestMapping(value = "/author/{authorId}", method = RequestMethod.GET)
+    public List<ArticleEntity> findAllByAuthorId(@PathVariable("authorId") String authorId) {
+        return articleService.findAllByAuthorId(authorId);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ArticleEntity getArticleById(@PathVariable("id") String id) {
-        // get a single article
-        return repository.findArticleById(id);
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
-    public ArticleEntity updateArticleById(@PathVariable("id") ObjectId id, @Valid @RequestBody ArticleEntity article) {
-        // update an article
-        article.setId(id.toString());
-        repository.save(article);
-        return article;
+    public ArticleEntity findByArticleId(@PathVariable("id") String id) {
+        return articleService.findArticleById(id);
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public ArticleEntity addNewArticle(@Valid @RequestBody ArticleEntity article) {
-        // create an article
-        article.setId(ObjectId.get().toString());
-        repository.save(article);
-        return article;
+    public ArticleEntity saveArticle(@Valid @RequestBody ArticleEntity article) {
+        return articleService.saveArticle(article);
     }
+
+
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public void deleteArticleByID(@PathVariable("id") String id) {
-        // delete articles
-        repository.delete(repository.findArticleById(id));
+    public void deleteArticleById(@PathVariable("id") String id) {
+       articleService.removeArticleById(id);
     }
 
 }
