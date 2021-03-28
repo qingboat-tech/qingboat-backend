@@ -18,14 +18,14 @@ public class ArticleEntity {
 
     private String desc;    //文章描述
 
-    @Indexed
+    // @Indexed
     private String authorId;//作者Id
 
     private String imgUrl;  //文章封面图片
 
     private JSONArray data;    //文章数据
 
-    @Indexed
+    // @Indexed
     private String parentId; //父文章Id
 
     private Date createdTime;

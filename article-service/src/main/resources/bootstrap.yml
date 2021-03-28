@@ -13,7 +13,7 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://192.168.50.27:27017/article_db
+      uri: mongodb://127.0.0.1:27017/article_db
 
 feign:
   httpclient:
