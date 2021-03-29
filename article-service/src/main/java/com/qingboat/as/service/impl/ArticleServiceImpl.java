@@ -33,7 +33,6 @@ public class ArticleServiceImpl implements ArticleService {
         if (articleEntity.getId() == null){
             articleEntity.setId(ObjectId.get().toString());
         }
-        articleEntity.setUpdatedTime(new Date());
         return articleMongoDao.save(articleEntity);
     }
 

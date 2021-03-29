@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface ArticleMongoDao extends MongoRepository<ArticleEntity, String> {
 
-     @Query(fields = "{title : 1 ,desc : 1 ,imgUrl : 1, authorId:1, createdTime  : 1 }",sort = "{createdTime : -1 }")
+    @Query(value = "{'authorId':?0 , 'parentId': {'$eq':''} }" ,fields = "{title : 1 ,desc : 1 ,imgUrl : 1, authorId:1, createdTime  : 1 }",sort = "{createdTime : -1 }")
     List<ArticleEntity> findByAuthorId(String authorId);
 
     List<ArticleEntity> findByParentId(String parentId);

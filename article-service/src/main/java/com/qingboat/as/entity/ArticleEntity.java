@@ -1,7 +1,9 @@
 package com.qingboat.as.entity;
 import com.alibaba.fastjson.JSONArray;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -28,8 +30,10 @@ public class ArticleEntity {
     // @Indexed
     private String parentId; //父文章Id
 
+    @CreatedDate
     private Date createdTime;
 
+    @LastModifiedDate
     private Date updatedTime;
 
 }
