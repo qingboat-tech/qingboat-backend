@@ -6,10 +6,10 @@ import com.qingboat.as.service.ArticleService;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -33,13 +33,22 @@ public class ArticleServiceImpl implements ArticleService {
         if (articleEntity.getId() == null){
             articleEntity.setId(ObjectId.get().toString());
         }
+        if (articleEntity.getCreatedTime() == null){
+            articleEntity.setCreatedTime(new Date());
+        }
+        articleEntity.setUpdatedTime(new Date());
+
         return articleMongoDao.save(articleEntity);
     }
 
     @Override
-    public List<ArticleEntity> findAllByAuthorId(String authorId) {
-
-        return articleMongoDao.findByAuthorId(authorId);
+    public Page<ArticleEntity> findByAuthorId(String authorId ,int pageIndex) {
+        if (pageIndex<0){
+            pageIndex = 0;
+        }
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdTime");
+        Pageable pageable = PageRequest.of(pageIndex, 10, sort);
+        return articleMongoDao.findByAuthorId(authorId,pageable);
 
 //        ArticleEntity articleEntity = new ArticleEntity();
 //        articleEntity.setAuthorId(authorId);

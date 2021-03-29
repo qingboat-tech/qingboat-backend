@@ -1,6 +1,7 @@
 package com.qingboat.as.service;
 
 import com.qingboat.as.entity.ArticleEntity;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ public interface ArticleService {
 
     ArticleEntity saveArticle(ArticleEntity articleEntity);
 
-    List<ArticleEntity> findAllByAuthorId(String authorId);
+    Page<ArticleEntity> findByAuthorId(String authorId,int pageIndex);
 
     List<ArticleEntity> findAllByParentId(String parentId);
 

@@ -7,6 +7,7 @@ import com.qingboat.as.utils.AliyunOssUtil;
 import com.qingboat.base.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +30,10 @@ public class ArticleController {
     private ArticleService articleService;
 
 
-    @RequestMapping(value = "/author/{authorId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/findByAuthorId", method = RequestMethod.GET)
     @ResponseBody
-    public List<ArticleEntity> findAllByAuthorId(@PathVariable("authorId") String authorId) {
-        return articleService.findAllByAuthorId(authorId);
+    public Page<ArticleEntity> findByAuthorId(@RequestParam("authorId") String authorId,@RequestParam("pageIndex") int pageIndex) {
+        return articleService.findByAuthorId(authorId,pageIndex);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

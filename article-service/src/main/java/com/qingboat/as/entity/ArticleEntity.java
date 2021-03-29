@@ -1,5 +1,6 @@
 package com.qingboat.as.entity;
 import com.alibaba.fastjson.JSONArray;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -30,10 +31,10 @@ public class ArticleEntity {
     // @Indexed
     private String parentId; //父文章Id
 
-    @CreatedDate
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" , timezone = "GMT+8")
     private Date createdTime;
 
-    @LastModifiedDate
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" , timezone = "GMT+8")
     private Date updatedTime;
 
 }
