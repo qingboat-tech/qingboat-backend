@@ -4,7 +4,9 @@ package com.qingboat.as.controller;
 import com.qingboat.as.entity.ArticleEntity;
 import com.qingboat.as.service.ArticleService;
 import com.qingboat.as.utils.AliyunOssUtil;
+import com.qingboat.as.utils.RssUtil;
 import com.qingboat.base.exception.BaseException;
+import com.rometools.rome.io.FeedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,6 +40,7 @@ public class ArticleController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ArticleEntity findByArticleId(@PathVariable("id") String id) {
+        log.info("  =====findByArticleId===== ppp");
         return articleService.findArticleById(id);
     }
 
@@ -49,6 +52,19 @@ public class ArticleController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public void deleteArticleById(@PathVariable("id") String id) {
        articleService.removeArticleById(id);
+    }
+
+    @RequestMapping(value = "/rss")
+    public Boolean readRss(@RequestBody Map<String,String> param) throws IOException, FeedException {
+        if (param !=null && param.containsKey("url")){
+            String rssUrl = param.get("url");
+            log.info( "RSS.url: " +rssUrl);
+            RssUtil.readRss(rssUrl);
+            return true;
+        }
+
+        return false;
+
     }
 
 
