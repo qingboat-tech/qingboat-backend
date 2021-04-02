@@ -46,7 +46,8 @@ public class ArticleController {
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
-    public ArticleEntity saveArticle(@Valid @RequestBody ArticleEntity article) {
+    public ArticleEntity saveArticle(@Valid @RequestBody ArticleEntity article,  @RequestAttribute(name = "UID") String uid) {
+        article.setAuthorId(uid);
         return articleService.saveArticle(article);
     }
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

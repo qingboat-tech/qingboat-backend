@@ -1,4 +1,5 @@
 package com.qingboat.as;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -10,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = "com.qingboat")
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = "com.qingboat")
-// @MapperScan("com.qingboat.ts.dao")
+@MapperScan("com.qingboat.as.dao.mysql")
 public class ArticleServiceApplication {
 
     public static void main(String[] args) {
