@@ -1,8 +1,6 @@
 package com.qingboat.as.filter;
 
-import com.qingboat.as.dao.mysql.AuthTokenDao;
 import com.qingboat.as.entity.AuthTokenEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.*;
@@ -12,8 +10,6 @@ import java.io.IOException;
 public class AuthFilter implements Filter {
 
     private final String SEC_KEY = "UJU2@#9kDJIVVWJ";
-    @Autowired
-    private AuthTokenDao authTokenDao;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -41,7 +37,6 @@ public class AuthFilter implements Filter {
         if (token !=null && token.indexOf(" ")>0 ){
             AuthTokenEntity authTokenEntity = new AuthTokenEntity();
             token = token.substring(token.lastIndexOf(" ")+1);
-            //authTokenEntity = authTokenDao.selectById(token);
             authTokenEntity = authTokenEntity.selectById(token);
 
             if (authTokenEntity !=null && authTokenEntity.getUserId()!=null){

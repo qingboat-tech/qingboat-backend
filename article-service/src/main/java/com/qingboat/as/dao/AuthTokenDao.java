@@ -1,4 +1,4 @@
-package com.qingboat.as.dao.mysql;
+package com.qingboat.as.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.qingboat.as.entity.AuthTokenEntity;
