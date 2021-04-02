@@ -34,8 +34,8 @@ public class ArticleController {
 
     @RequestMapping(value = "/findByAuthorId", method = RequestMethod.GET)
     @ResponseBody
-    public Page<ArticleEntity> findByAuthorId(@RequestParam("authorId") String authorId,@RequestParam("pageIndex") int pageIndex) {
-        return articleService.findByAuthorId(authorId,pageIndex);
+    public Page<ArticleEntity> findByAuthorId(@RequestParam("pageIndex") int pageIndex, @RequestAttribute(name = "UID") String uid) {
+        return articleService.findByAuthorId(uid,pageIndex);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
