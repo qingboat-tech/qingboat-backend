@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = "com.qingboat")
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = "com.qingboat")
-@MapperScan("com.qingboat.as.dao.mysql")
+@MapperScan("com.qingboat.as.dao")
 public class ArticleServiceApplication {
 
     public static void main(String[] args) {
