@@ -11,8 +11,7 @@ public class GlobalExceptionResponseBodyAdvice<T>   {
 
     @ExceptionHandler(BaseException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiResponse sendErrorResponse_UserDefined(Exception exception){
-        BaseException ex = ((BaseException)exception);
+    public ApiResponse sendErrorResponse_UserDefined(BaseException exception){
         return new ApiResponse(ex.getCode(), ex.getMessage(), ex.fillInStackTrace());
     }
 
