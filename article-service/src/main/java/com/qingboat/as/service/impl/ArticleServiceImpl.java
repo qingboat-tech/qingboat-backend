@@ -1,20 +1,21 @@
 package com.qingboat.as.service.impl;
 
+import com.mongodb.client.result.UpdateResult;
 import com.qingboat.as.dao.ArticleMongoDao;
 import com.qingboat.as.entity.ArticleEntity;
 import com.qingboat.as.service.ArticleService;
+import com.qingboat.base.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -23,6 +24,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private ArticleMongoDao articleMongoDao;
 
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
     @Override
     public ArticleEntity findArticleById(String articleId) {
         return  articleMongoDao.findArticleEntityById(articleId);
@@ -30,15 +34,39 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public ArticleEntity saveArticle(ArticleEntity articleEntity) {
+
         if (articleEntity.getId() == null){
             articleEntity.setId(ObjectId.get().toString());
-        }
-        if (articleEntity.getCreatedTime() == null){
             articleEntity.setCreatedTime(new Date());
+            articleEntity.setUpdatedTime(new Date());
+            return articleMongoDao.save(articleEntity);
         }
-        articleEntity.setUpdatedTime(new Date());
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(articleEntity.getId()));
+        Update update = new Update();
+        if (articleEntity.getData()!=null){
+            update.set("data",articleEntity.getData());
+        }
+        if (articleEntity.getDesc()!=null){
+            update.set("desc",articleEntity.getDesc());
+        }
+        if (articleEntity.getTitle()!=null){
+            update.set("title",articleEntity.getTitle());
+        }
+        if (articleEntity.getImgUrl()!=null){
+            update.set("imgUrl",articleEntity.getImgUrl());
+        }
+        if (articleEntity.getParentId()!=null){
+            update.set("parentId",articleEntity.getParentId());
+        }
+        update.set("updateTime",new Date());
 
-        return articleMongoDao.save(articleEntity);
+        UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
+        if (result.getModifiedCount() <=0){
+            throw new BaseException(500,"ArticleEntity_is_not_exist");
+        }
+
+        return articleEntity;
     }
 
     @Override
@@ -50,10 +78,6 @@ public class ArticleServiceImpl implements ArticleService {
         Pageable pageable = PageRequest.of(pageIndex, 10, sort);
         return articleMongoDao.findByAuthorId(authorId,pageable);
 
-//        ArticleEntity articleEntity = new ArticleEntity();
-//        articleEntity.setAuthorId(authorId);
-//        Example<ArticleEntity> articleExample =Example.of(articleEntity);
-//        return  articleMongoDao.findAll(articleExample);
     }
 
     @Override
@@ -65,4 +89,6 @@ public class ArticleServiceImpl implements ArticleService {
     public void removeArticleById(String articleId) {
         articleMongoDao.deleteById(articleId);
     }
+
+
 }
