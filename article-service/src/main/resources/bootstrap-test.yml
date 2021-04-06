@@ -11,6 +11,12 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     default-property-inclusion: non_null
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 50MB
+
   data:
     mongodb:
       uri: mongodb://127.0.0.1:27017/article_db

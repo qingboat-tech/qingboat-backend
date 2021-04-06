@@ -80,9 +80,9 @@ public class ArticleController {
             Map<String,String> rst = new HashMap<>();
             String fileName = file.getOriginalFilename();  // 文件名
             String suffixName = fileName.substring(fileName.lastIndexOf("."));  // 后缀名
-            fileName = new StringBuilder(UUID.randomUUID().toString()).append(suffixName).toString();
+            String newFileName = new StringBuilder(UUID.randomUUID().toString()).append(suffixName).toString();
 
-            String fileUrl = AliyunOssUtil.upload(file,fileName);
+            String fileUrl = AliyunOssUtil.upload(file,newFileName);
             rst.put("fileName",fileName);
             rst.put("fileUrl",fileUrl);
             return rst;
