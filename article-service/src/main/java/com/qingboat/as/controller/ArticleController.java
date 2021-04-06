@@ -13,6 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -34,11 +37,8 @@ public class ArticleController {
 
     @RequestMapping(value = "/findByAuthorId", method = RequestMethod.GET)
     @ResponseBody
-    public Page<ArticleEntity> findByAuthorId(@RequestParam("pageIndex") int pageIndex,HttpServletRequest request) {
-        String uid = (String) request.getAttribute("UID");
-        if (uid == null){
-            throw new BaseException(401,"token不存在，请登录");
-        }
+    public Page<ArticleEntity> findByAuthorId(@RequestParam("pageIndex") int pageIndex) {
+        String uid = getUId();
         return articleService.findByAuthorId(uid,pageIndex);
     }
 
@@ -50,11 +50,8 @@ public class ArticleController {
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
-    public ArticleEntity saveArticle(@Valid @RequestBody ArticleEntity article, HttpServletRequest request) {
-        String uid = (String) request.getAttribute("UID");
-        if (uid == null){
-            throw new BaseException(401,"token不存在，请登录");
-        }
+    public ArticleEntity saveArticle(@Valid @RequestBody ArticleEntity article) {
+        String uid = getUId();
         article.setAuthorId(uid);
         return articleService.saveArticle(article);
     }
@@ -99,5 +96,17 @@ public class ArticleController {
             throw new BaseException(500,e.getMessage());
         }
     }
+
+    private String getUId(){
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();//这个RequestContextHolder是Springmvc提供来获得请求的东西
+        HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
+        Long uid = (Long) request.getAttribute("UID");
+        if (uid == null){
+            throw new BaseException(401,"AUTH_ERROR");
+        }
+        return uid +"";
+    }
+
+
 
 }
