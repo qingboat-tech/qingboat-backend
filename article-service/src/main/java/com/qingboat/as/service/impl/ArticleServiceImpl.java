@@ -59,7 +59,9 @@ public class ArticleServiceImpl implements ArticleService {
         if (articleEntity.getParentId()!=null){
             update.set("parentId",articleEntity.getParentId());
         }
-        update.set("updateTime",new Date());
+        Date updateTime = new Date();
+        update.set("updateTime",updateTime);
+        articleEntity.setUpdatedTime(updateTime);
 
         UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
         if (result.getModifiedCount() <=0){
