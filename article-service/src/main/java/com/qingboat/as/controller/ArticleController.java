@@ -34,7 +34,11 @@ public class ArticleController {
 
     @RequestMapping(value = "/findByAuthorId", method = RequestMethod.GET)
     @ResponseBody
-    public Page<ArticleEntity> findByAuthorId(@RequestParam("pageIndex") int pageIndex, @RequestAttribute(name = "UID") String uid) {
+    public Page<ArticleEntity> findByAuthorId(@RequestParam("pageIndex") int pageIndex,HttpServletRequest request) {
+        String uid = (String) request.getAttribute("UID");
+        if (uid == nul){
+            throw new BaseException(401,"token不存在，请登录");
+        }
         return articleService.findByAuthorId(uid,pageIndex);
     }
 
@@ -46,7 +50,11 @@ public class ArticleController {
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
-    public ArticleEntity saveArticle(@Valid @RequestBody ArticleEntity article,  @RequestAttribute(name = "UID") String uid) {
+    public ArticleEntity saveArticle(@Valid @RequestBody ArticleEntity article, HttpServletRequest request) {
+        String uid = (String) request.getAttribute("UID");
+        if (uid == nul){
+            throw new BaseException(401,"token不存在，请登录");
+        }
         article.setAuthorId(uid);
         return articleService.saveArticle(article);
     }
