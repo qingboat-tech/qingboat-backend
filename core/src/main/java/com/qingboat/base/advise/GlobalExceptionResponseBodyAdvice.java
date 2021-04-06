@@ -10,18 +10,15 @@ import org.springframework.web.bind.annotation.*;
 public class GlobalExceptionResponseBodyAdvice<T>   {
 
     @ExceptionHandler(BaseException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiResponse sendErrorResponse_UserDefined(BaseException exception){
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse sendErrorResponse_UserDefined(Exception exception){
+        BaseException ex = ((BaseException)exception);
         return new ApiResponse(ex.getCode(), ex.getMessage(), ex.fillInStackTrace());
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiResponse sendErrorResponse_System(Exception exception){
-        if (exception instanceof BaseException){
-            BaseException ex = ((BaseException)exception);
-            return new ApiResponse(ex.getCode(), ex.getMessage(), ex.fillInStackTrace());
-        }
         return new ApiResponse(500, ApiResponse.ERROR, exception.toString());
     }
 
