@@ -5,6 +5,7 @@ import com.qingboat.as.entity.ArticleEntity;
 import com.qingboat.as.service.ArticleService;
 import com.qingboat.as.utils.AliyunOssUtil;
 import com.qingboat.as.utils.RssUtil;
+import com.qingboat.as.utils.sensi.SensitiveFilter;
 import com.qingboat.base.exception.BaseException;
 import com.rometools.rome.io.FeedException;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +20,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -96,6 +94,21 @@ public class ArticleController {
             throw new BaseException(500,e.getMessage());
         }
     }
+
+    @RequestMapping(value = "/sensitive", method = RequestMethod.POST)
+    @ResponseBody
+    public String sensitive( @RequestBody Map<String,String> param) {
+
+        SensitiveFilter filter = SensitiveFilter.DEFAULT;
+        Iterator<String> ite = param.values().iterator();
+        if (ite.hasNext()){
+            String rst = filter.filter(ite.next(), '*');
+            return rst;
+        }
+        return  null;
+
+    }
+
 
     private String getUId(){
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();//这个RequestContextHolder是Springmvc提供来获得请求的东西
