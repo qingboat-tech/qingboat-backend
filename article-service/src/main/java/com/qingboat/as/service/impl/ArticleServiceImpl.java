@@ -82,7 +82,6 @@ public class ArticleServiceImpl implements ArticleService {
         Pageable pageable = PageRequest.of(pageIndex, 10, sort);
         Page<ArticleEntity>  page =  articleMongoDao.findByAuthorId(authorId,pageable);
         if (page != null && page.isEmpty() && needInit && pageIndex ==0){
-            log.info(" ======initArticle====== authorId:"+authorId);
             initArticle(authorId);
             page =  articleMongoDao.findByAuthorId(authorId,pageable);
         }
@@ -100,15 +99,17 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
 
-    private void initArticle(String authId){
+    private void initArticle(String authorId){
+        log.info(" ======initArticle====== authorId:"+authorId);
         ArticleEntity articleEntity = new ArticleEntity();
-        articleEntity.setAuthorId(authId);
         articleEntity.setId(ObjectId.get().toString());
+        articleEntity.setAuthorId(authorId);
         articleEntity.setCreatedTime(new Date());
         articleEntity.setUpdatedTime(new Date());
         articleEntity.setTitle("氢舟文档范文");
         articleEntity.setData(JSON.parseArray(demoData));
-        articleMongoDao.insert(articleEntity);
+        articleMongoDao.save(articleEntity);
+        log.info(" ======initArticle====== end ===");
     }
 
     private String demoData = " [\n" +

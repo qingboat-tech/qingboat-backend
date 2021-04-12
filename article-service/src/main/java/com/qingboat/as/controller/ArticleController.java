@@ -42,7 +42,6 @@ public class ArticleController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ArticleEntity findByArticleId(@PathVariable("id") String id) {
-        log.info("  =====findByArticleId===== ppp");
         return articleService.findArticleById(id);
     }
 
