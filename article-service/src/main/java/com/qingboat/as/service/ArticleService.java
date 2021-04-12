@@ -11,7 +11,7 @@ public interface ArticleService {
 
     ArticleEntity saveArticle(ArticleEntity articleEntity);
 
-    Page<ArticleEntity> findByAuthorId(String authorId,int pageIndex);
+    Page<ArticleEntity> findByAuthorId(String authorId,int pageIndex,boolean needInit);
 
     List<ArticleEntity> findAllByParentId(String parentId);
 
