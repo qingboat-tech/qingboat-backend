@@ -104,6 +104,9 @@ public class ArticleServiceImpl implements ArticleService {
         ArticleEntity articleEntity = new ArticleEntity();
         articleEntity.setId(ObjectId.get().toString());
         articleEntity.setAuthorId(authorId);
+        articleEntity.setImgUrl("");
+        articleEntity.setDesc("");
+        articleEntity.setParentId("");
         articleEntity.setCreatedTime(new Date());
         articleEntity.setUpdatedTime(new Date());
         articleEntity.setTitle("氢舟文档范文");
