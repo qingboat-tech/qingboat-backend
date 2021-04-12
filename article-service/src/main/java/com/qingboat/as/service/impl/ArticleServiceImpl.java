@@ -81,7 +81,8 @@ public class ArticleServiceImpl implements ArticleService {
         Sort sort = Sort.by(Sort.Direction.DESC, "createdTime");
         Pageable pageable = PageRequest.of(pageIndex, 10, sort);
         Page<ArticleEntity>  page =  articleMongoDao.findByAuthorId(authorId,pageable);
-        if (page != null && page.isEmpty() && needInit){
+        if (page != null && page.isEmpty() && needInit && pageIndex ==0){
+            log.info(" ======initArticle====== authorId:"+authorId);
             initArticle(authorId);
             page =  articleMongoDao.findByAuthorId(authorId,pageable);
         }
@@ -105,11 +106,12 @@ public class ArticleServiceImpl implements ArticleService {
         articleEntity.setId(ObjectId.get().toString());
         articleEntity.setCreatedTime(new Date());
         articleEntity.setUpdatedTime(new Date());
-        articleEntity.setData(JSON.parseArray(data));
-        articleMongoDao.save(articleEntity);
+        articleEntity.setTitle("氢舟文档范文");
+        articleEntity.setData(JSON.parseArray(demoData));
+        articleMongoDao.insert(articleEntity);
     }
 
-    private String data = " [\n" +
+    private String demoData = " [\n" +
             "            {\n" +
             "                \"html\": \"<span style=\\\"color: rgb(122, 136, 154);\\\">氢舟文档编辑器可以提供什么?</span>\",\n" +
             "                \"tag\": \"p\",\n" +
