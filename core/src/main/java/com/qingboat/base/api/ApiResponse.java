@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class ApiResponse<T> {
 
     public static final String SUCCESS = "SUCCESS";
-    public static final String ERROR = "ERROR";
+    public static final String ERROR = "SYSTEM_ERROR";
 
     /**
      * 状态码

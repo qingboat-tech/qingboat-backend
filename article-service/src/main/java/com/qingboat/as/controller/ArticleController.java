@@ -1,7 +1,11 @@
 package com.qingboat.as.controller;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.qingboat.as.dao.UserProfileDao;
 import com.qingboat.as.entity.ArticleEntity;
+import com.qingboat.as.entity.UserProfileEntity;
 import com.qingboat.as.service.ArticleService;
 import com.qingboat.as.utils.AliyunOssUtil;
 import com.qingboat.as.utils.RssUtil;
@@ -32,6 +36,10 @@ public class ArticleController {
     @Autowired
     private ArticleService articleService;
 
+    @Autowired
+    private UserProfileDao userProfileDao;
+
+
 
     @RequestMapping(value = "/findByAuthorId", method = RequestMethod.GET)
     @ResponseBody
@@ -41,8 +49,17 @@ public class ArticleController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ArticleEntity findByArticleId(@PathVariable("id") String id) {
-        return articleService.findArticleById(id);
+    public JSONObject findByArticleId(@PathVariable("id") String id) {
+        ArticleEntity articleEntity = articleService.findArticleById(id);
+        JSONObject jsonObject = (JSONObject) JSON.toJSON(articleEntity);
+        if (articleEntity!=null && !StringUtils.isEmpty(articleEntity.getAuthorId())){
+            UserProfileEntity user =userProfileDao.findByUserId(Long.parseLong(articleEntity.getAuthorId()));
+            if (user!=null){
+                jsonObject.put("authorNickName",user.getNickname());
+                jsonObject.put("authorImgUrl",user.getHeadimgUrl());
+            }
+        }
+        return jsonObject;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)

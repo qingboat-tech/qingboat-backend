@@ -20,7 +20,7 @@ public class GlobalExceptionResponseBodyAdvice<T>   {
     }
 
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.OK)
     public ApiResponse sendErrorResponse_System(Exception exception){
         log.error("GlobalExceptionResponseBodyAdvice",exception);
         return new ApiResponse(500, ApiResponse.ERROR, exception.toString());
