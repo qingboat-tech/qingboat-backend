@@ -112,153 +112,295 @@ public class ArticleServiceImpl implements ArticleService {
         articleEntity.setTitle("氢舟文档范文");
         articleEntity.setData(JSON.parseArray(demoData));
         articleMongoDao.save(articleEntity);
-        log.info(" ======initArticle====== end ===");
     }
 
-    private String demoData = " [\n" +
+    private String demoData = "[\n" +
             "            {\n" +
-            "                \"html\": \"<span style=\\\"color: rgb(122, 136, 154);\\\">氢舟文档编辑器可以提供什么?</span>\",\n" +
-            "                \"tag\": \"p\",\n" +
-            "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
-            "                \"blockType\": \"text\",\n" +
-            "                \"attribute\": \"content\",\n" +
-            "                \"id\": \"kne86dz03nbow1qi997\"\n" +
-            "            },\n" +
-            "            {\n" +
-            "                \"html\": \"图片:\",\n" +
+            "                \"blockType\": \"header\",\n" +
+            "                \"html\": \"一、如何添加标题、段落\",\n" +
             "                \"tag\": \"h2\",\n" +
             "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
-            "                \"blockType\": \"header\",\n" +
             "                \"attribute\": \"content\",\n" +
             "                \"id\": \"kne7xxg2hhqam7vub3\"\n" +
             "            },\n" +
             "            {\n" +
-            "                \"id\": \"kn5dzll741fzjrjzufn\",\n" +
-            "                \"html\": \"\",\n" +
-            "                \"tag\": \"img\",\n" +
-            "                \"placeholder\": \"点击此处添加图片\",\n" +
-            "                \"imageUrl\": \"https://qingboat.oss-cn-beijing.aliyuncs.com/media/image-1.jpg\",\n" +
-            "                \"blockType\": \"img\"\n" +
-            "            },\n" +
-            "            {\n" +
-            "                \"html\": \"标题:\",\n" +
-            "                \"tag\": \"h2\",\n" +
+            "                \"html\": \"方法一：\",\n" +
+            "                \"tag\": \"h4\",\n" +
             "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
             "                \"blockType\": \"header\",\n" +
             "                \"attribute\": \"content\",\n" +
-            "                \"id\": \"kne7vynn0awpu74leo2c\"\n" +
+            "                \"id\": \"kniq1du2aszewumz0aw\"\n" +
             "            },\n" +
             "            {\n" +
-            "                \"html\": \"\",\n" +
-            "                \"tag\": \"h1\",\n" +
-            "                \"placeholder\": \"Heading 1\",\n" +
-            "                \"blockType\": \"header\",\n" +
-            "                \"attribute\": \"content\",\n" +
-            "                \"id\": \"kne7z6pypc1ayd360l\"\n" +
-            "            },\n" +
-            "            {\n" +
-            "                \"html\": \"\",\n" +
-            "                \"tag\": \"h2\",\n" +
-            "                \"placeholder\": \"Heading 2\",\n" +
-            "                \"blockType\": \"header\",\n" +
-            "                \"attribute\": \"content\",\n" +
-            "                \"id\": \"kne88arh4akxxbc6jte\"\n" +
-            "            },\n" +
-            "            {\n" +
-            "                \"html\": \"\",\n" +
-            "                \"tag\": \"h3\",\n" +
-            "                \"placeholder\": \"Heading 3\",\n" +
-            "                \"blockType\": \"header\",\n" +
-            "                \"attribute\": \"content\",\n" +
-            "                \"id\": \"kne88rwj6ydvo3f9hs9\"\n" +
-            "            },\n" +
-            "            {\n" +
-            "                \"html\": \"<span style=\\\"font-size: 1rem;\\\">这是一段包含</span><span style=\\\"font-size: 1rem; font-style: italic;\\\">斜 体（I）</span><span style=\\\"font-size: 1rem;\\\">、</span><span style=\\\"font-size: 1rem; font-weight: 600;\\\">加 粗（B）</span><span style=\\\"font-size: 1rem;\\\">、</span><span style=\\\"font-size: 1rem; text-decoration-line: underline;\\\">下划线（U）</span><span style=\\\"font-size: 1rem;\\\">、</span><span style=\\\"font-size: 1rem; text-decoration-line: line-through;\\\">删 除（S）</span><span style=\\\"font-size: 1rem;\\\">的示例文本。</span>\",\n" +
+            "                \"html\": \"点击页面底部 <b>快捷按钮</b>，即可快捷创建一个<b>内容块</b>，例如，点击“Img 图片”，即刻快速在文章内容末端插入一个上传图片的组件，点击或直接拖拽图片到组件上即刻实现图片的添加。\",\n" +
             "                \"tag\": \"p\",\n" +
             "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
             "                \"blockType\": \"text\",\n" +
             "                \"attribute\": \"content\",\n" +
-            "                \"id\": \"kne7uh294aila6w4z6x\"\n" +
+            "                \"id\": \"knipwu2d6jimv1t86v5\"\n" +
             "            },\n" +
             "            {\n" +
-            "                \"html\": \"引用:\",\n" +
+            "                \"html\": \"\",\n" +
+            "                \"tag\": \"img\",\n" +
+            "                \"placeholder\": \"点击此处添加图片\",\n" +
+            "                \"imageUrl\": \"https://qingboat.oss-cn-beijing.aliyuncs.com/media/202104/1168cd2a-86f1-49cc-a7e9-2f1493da9825.png\",\n" +
+            "                \"blockType\": \"img\",\n" +
+            "                \"attribute\": \"template\",\n" +
+            "                \"id\": \"kniqeaad8ctzdhra3ts\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"html\": \"方法二：\",\n" +
+            "                \"tag\": \"h4\",\n" +
+            "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
+            "                \"blockType\": \"header\",\n" +
+            "                \"attribute\": \"content\",\n" +
+            "                \"id\": \"kniq1pr6du10cgftk4q\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"html\": \"使用<b>斜杠命令</b>（在输入状态下键入“/”）唤醒<b>tag菜单</b>，然后想要插入的标签就可以啦。\",\n" +
+            "                \"tag\": \"p\",\n" +
+            "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
+            "                \"blockType\": \"text\",\n" +
+            "                \"attribute\": \"content\",\n" +
+            "                \"id\": \"kniq237sme40usb6ef\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"html\": \"二、如何创建一个Link书签\",\n" +
             "                \"tag\": \"h2\",\n" +
             "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
             "                \"blockType\": \"header\",\n" +
             "                \"attribute\": \"content\",\n" +
-            "                \"id\": \"kne7zovfkyjzzv2d3n\"\n" +
+            "                \"id\": \"kniq3g3p7a9pq8dgh6q\"\n" +
             "            },\n" +
             "            {\n" +
+            "                \"data\": {\n" +
+            "                    \"id\": 79,\n" +
+            "                    \"website\": {\n" +
+            "                        \"domain\": \"mp.weixin.qq.com\",\n" +
+            "                        \"name_cn\": \"微信\",\n" +
+            "                        \"icon\": \"https://qingboat-azb.oss-cn-beijing.aliyuncs.com/media/NTI4MWU5.ico\"\n" +
+            "                    },\n" +
+            "                    \"created_at\": \"1612251827000\",\n" +
+            "                    \"skills_input\": [\n" +
+            "                        \"文章\"\n" +
+            "                    ],\n" +
+            "                    \"is_saved\": true,\n" +
+            "                    \"saved\": {\n" +
+            "                        \"id\": 291,\n" +
+            "                        \"article_id\": 79\n" +
+            "                    },\n" +
+            "                    \"title\": \"什么是内容策展(Content curation)\",\n" +
+            "                    \"content\": \"<div id=\\\"js_content\\\"> </div>\",\n" +
+            "                    \"is_private\": false,\n" +
+            "                    \"skills\": [],\n" +
+            "                    \"collect_user_info\": {\n" +
+            "                        \"id\": 1,\n" +
+            "                        \"nickname\": \"nickname1\",\n" +
+            "                        \"position\": \"职场人士\",\n" +
+            "                        \"headimg_url\": \"https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKcOJZkwl1ZicVXEgnwlNogkTEkrenGiaYHUkvk4k4jtgEiaiaToneicpcjKTVQVrgWsv0BSMKZhpGBxOw/132\",\n" +
+            "                        \"role\": 1\n" +
+            "                    },\n" +
+            "                    \"entry_url\": \"https://mp.weixin.qq.com/s/XgyziaryQNS11ZkCA03vPg\",\n" +
+            "                    \"summary\": \"Curation一词翻译成中文是：策划、筛选并展示。在最早的时候，这个词指的是艺术展览活动中的构思、组织和管理工作。\\\\x0a\\\\x0a非正式学习发生在有意义的动作与经验里，这些经验建立在之前的经验与已存在的知识构造之上，从而促进了在过去经验，知识，与技能上的延续。\",\n" +
+            "                    \"lead_image_url\": \"https://qingboat.oss-cn-beijing.aliyuncs.com/media/mmbiz_jpgicp2L3NE48urCeBwKrXdERBuBpEym4U5qepebiaDc9V3GYGUezicttSjT0EM0zMKVgiax1QvcVrmKaZ22WglnhKibkw0.jpg\",\n" +
+            "                    \"domain\": \"mp.weixin.qq.com\",\n" +
+            "                    \"word_count\": 0,\n" +
+            "                    \"language\": \"zh-cn\",\n" +
+            "                    \"accessible\": true,\n" +
+            "                    \"duration_type\": \"分钟\",\n" +
+            "                    \"duration_units\": 1,\n" +
+            "                    \"summary_cnt\": 0,\n" +
+            "                    \"todoblock_cnt\": 0,\n" +
+            "                    \"highlightnode_cnt\": 0,\n" +
+            "                    \"is_collector\": false,\n" +
+            "                    \"highlight_users\": [],\n" +
+            "                    \"highlight_user_cnt\": 0,\n" +
+            "                    \"one_summary\": {}\n" +
+            "                },\n" +
+            "                \"tag\": \"link\",\n" +
+            "                \"placeholder\": \"\",\n" +
+            "                \"blockType\": \"card\",\n" +
+            "                \"attribute\": \"template\",\n" +
+            "                \"id\": \"knir6z0ozqpreeotuk8\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"html\": \"方法一：\",\n" +
+            "                \"tag\": \"h4\",\n" +
+            "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
+            "                \"blockType\": \"header\",\n" +
+            "                \"attribute\": \"content\",\n" +
+            "                \"id\": \"kniq6i05zt38s1b07db\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"html\": \"点击底部“Link书签” <b>快捷按钮</b>，会插入一个Link输入框，将想要添加的书签网址完整的复制到输入框，单击“创建”按钮，即可创建一个<b>Link书签</b>。\",\n" +
+            "                \"tag\": \"p\",\n" +
+            "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
+            "                \"blockType\": \"text\",\n" +
+            "                \"attribute\": \"content\",\n" +
+            "                \"id\": \"kniq6s5zs1bxvryxurs\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"html\": \"\",\n" +
+            "                \"tag\": \"img\",\n" +
+            "                \"placeholder\": \"点击此处添加图片\",\n" +
+            "                \"imageUrl\": \"https://qingboat.oss-cn-beijing.aliyuncs.com/media/202104/e6764e8b-c542-4953-99d4-008d2a99b6ae.png\",\n" +
+            "                \"blockType\": \"img\",\n" +
+            "                \"attribute\": \"template\",\n" +
+            "                \"id\": \"kniqn7moseuknfjc0m\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"html\": \"<h4 placeholder=\\\"Heading 4\\\" data-position=\\\"8\\\" data-tag=\\\"h4\\\" class=\\\"block___2kida blockSelected___1oLUV  \\\" style=\\\"max-width: 100%;\\\">方法二：</h4>\",\n" +
+            "                \"tag\": \"p\",\n" +
+            "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
+            "                \"blockType\": \"text\",\n" +
+            "                \"attribute\": \"content\",\n" +
+            "                \"id\": \"kniqkb5f9m55ye2lmxb\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"html\": \"从<b>素材库</b>进行快捷添加，点击页面右上角双箭头按钮开启<b>素材库</b>，点击想添加的一个书签即可在文章末端快捷添加一个Link书签。\",\n" +
+            "                \"tag\": \"p\",\n" +
+            "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
+            "                \"blockType\": \"text\",\n" +
+            "                \"attribute\": \"content\",\n" +
+            "                \"id\": \"kniqqukvemn1mtuxh6q\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"html\": \"\",\n" +
+            "                \"tag\": \"img\",\n" +
+            "                \"placeholder\": \"点击此处添加图片\",\n" +
+            "                \"imageUrl\": \"https://qingboat.oss-cn-beijing.aliyuncs.com/media/202104/c94a97c8-527f-46e4-b5a5-e3072082e69a.png\",\n" +
+            "                \"blockType\": \"img\",\n" +
+            "                \"attribute\": \"template\",\n" +
+            "                \"id\": \"knir2gtgg97ajjkkekk\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"html\": \"三、如何修改文字样式。\",\n" +
+            "                \"tag\": \"h2\",\n" +
+            "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
+            "                \"blockType\": \"header\",\n" +
+            "                \"attribute\": \"content\",\n" +
+            "                \"id\": \"knir0wpac0geru2kp5v\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"html\": \"通过鼠标选中文字，可唤起<b>文本菜单</b>，然后点击选中自己想要的样式即可实现。<span style=\\\"font-size: 1rem;\\\">以下是一段包含</span><span style=\\\"font-size: 1rem; font-style: italic;\\\">斜 体（I）</span><span style=\\\"font-size: 1rem;\\\">、</span><span style=\\\"font-size: 1rem; font-weight: 600;\\\">加 粗（B）</span><span style=\\\"font-size: 1rem;\\\">、</span><span style=\\\"font-size: 1rem;\\\"><u>下划线（U）</u></span><span style=\\\"font-size: 1rem;\\\">、</span><span style=\\\"font-size: 1rem;\\\">删 除（S）</span><span style=\\\"font-size: 1rem;\\\">的示例文本。</span>\",\n" +
+            "                \"tag\": \"p\",\n" +
+            "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
+            "                \"blockType\": \"text\",\n" +
+            "                \"attribute\": \"content\",\n" +
+            "                \"id\": \"knirdbn31qva84rsz3z\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"html\": \"\",\n" +
+            "                \"tag\": \"img\",\n" +
+            "                \"placeholder\": \"点击此处添加图片\",\n" +
+            "                \"imageUrl\": \"https://qingboat.oss-cn-beijing.aliyuncs.com/media/202104/06893925-61f2-46c7-85b0-a4bc65b0907b.png\",\n" +
+            "                \"blockType\": \"img\",\n" +
+            "                \"attribute\": \"template\",\n" +
+            "                \"id\": \"knirhl5uz2hmnmtowjt\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"blockType\": \"blockquote\",\n" +
             "                \"html\": \"<span style=\\\"color: rgb(85, 85, 85);\\\">什么是Curation？Curation一词翻译成中文是：策划、筛选并展示。在最早的时候，这个词指的是艺术展览活动中的构思、组织和管理工作。</span>\",\n" +
             "                \"tag\": \"blockquote\",\n" +
             "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
-            "                \"blockType\": \"blockquote\",\n" +
             "                \"attribute\": \"content\",\n" +
             "                \"id\": \"kne7vm51f4f880yq3k7\"\n" +
             "            },\n" +
             "            {\n" +
-            "                \"html\": \"列表：\",\n" +
-            "                \"tag\": \"h2\",\n" +
+            "                \"html\": \"通过<b>文本菜单</b>可以实现样式有：\",\n" +
+            "                \"tag\": \"p\",\n" +
             "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
-            "                \"blockType\": \"header\",\n" +
+            "                \"blockType\": \"text\",\n" +
             "                \"attribute\": \"content\",\n" +
-            "                \"id\": \"kne897i9ydlpdp6145i\"\n" +
+            "                \"id\": \"knirice1pmry2lwjkfp\"\n" +
             "            },\n" +
             "            {\n" +
-            "                \"html\": \"<ul><li>无序列表</li><li>无序列表</li><li>...</li></ul><ol><li><span style=\\\"font-size: 1rem;\\\">有序列表</span></li><li>有序列表</li><li>...</li></ol>\",\n" +
+            "                \"html\": \"<ol><li>加粗</li><li>斜体</li><li>下划线</li><li>删除文字</li><li>有序列表</li><li>无序列表</li><li>引用块</li></ol>\",\n" +
             "                \"tag\": \"div\",\n" +
             "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
             "                \"blockType\": \"orderedList\",\n" +
             "                \"attribute\": \"content\",\n" +
-            "                \"id\": \"kne83grz3cjipzvsod\"\n" +
+            "                \"id\": \"knirjf9n4d3p3qy8udd\"\n" +
             "            },\n" +
             "            {\n" +
-            "                \"html\": \"快捷菜单：\",\n" +
+            "                \"blockType\": \"header\",\n" +
+            "                \"html\": \"四、如何删除内容块\",\n" +
             "                \"tag\": \"h2\",\n" +
             "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
-            "                \"blockType\": \"header\",\n" +
             "                \"attribute\": \"content\",\n" +
-            "                \"id\": \"kne80jyhxe34ewyv8sa\"\n" +
+            "                \"id\": \"kne897i9ydlpdp6145i\"\n" +
             "            },\n" +
             "            {\n" +
-            "                \"html\": \"\",\n" +
-            "                \"tag\": \"p\",\n" +
+            "                \"html\": \"<ul><li>当删除文本内容后继续按删除键，即可删除当前<b>内容块</b></li><li>点击内容块左侧箭头按钮，可唤醒编辑菜单，再点击“删除”，即可删除当前<b>内容块</b></li></ul>\",\n" +
+            "                \"tag\": \"div\",\n" +
             "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
-            "                \"blockType\": \"text\",\n" +
+            "                \"blockType\": \"unorderedList\",\n" +
             "                \"attribute\": \"content\",\n" +
-            "                \"id\": \"kne89hmfhtvjsn5rejl\"\n" +
+            "                \"id\": \"knipjuktnin5cwr9i2\"\n" +
             "            },\n" +
             "            {\n" +
-            "                \"html\": \"排序：\",\n" +
+            "                \"blockType\": \"header\",\n" +
+            "                \"html\": \"五、如何调整文章内容顺序\",\n" +
             "                \"tag\": \"h2\",\n" +
             "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
-            "                \"blockType\": \"header\",\n" +
-            "                \"attribute\": \"content\",\n" +
-            "                \"id\": \"kne89rxm8cqlxriwfu6\"\n" +
-            "            },\n" +
-            "            {\n" +
-            "                \"html\": \"←← 左边的按钮可拖拽调整文章顺序，快来试试吧。【请将鼠标移到此处】\",\n" +
-            "                \"tag\": \"p\",\n" +
-            "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
-            "                \"blockType\": \"text\",\n" +
             "                \"attribute\": \"content\",\n" +
             "                \"id\": \"kne8118w4l1a4x9mabu\"\n" +
             "            },\n" +
             "            {\n" +
+            "                \"html\": \"点击并按住左侧箭头按钮，然后便可以上下自由拖拽内容块来调整顺序。\",\n" +
+            "                \"tag\": \"p\",\n" +
+            "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
+            "                \"blockType\": \"text\",\n" +
+            "                \"attribute\": \"content\",\n" +
+            "                \"id\": \"knirqksorslx3q4gtb\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"html\": \"六、如何预览当前创作的文章\",\n" +
+            "                \"tag\": \"h2\",\n" +
+            "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
+            "                \"blockType\": \"header\",\n" +
+            "                \"attribute\": \"content\",\n" +
+            "                \"id\": \"kniqnf4rrr1dcsivsja\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"html\": \"点击页面右上角双箭头按钮下放的\uD83D\uDC41样式的按钮，即可预览。\",\n" +
+            "                \"tag\": \"p\",\n" +
+            "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
+            "                \"blockType\": \"text\",\n" +
+            "                \"attribute\": \"content\",\n" +
+            "                \"id\": \"knirwkpjh225njbjmn\"\n" +
+            "            },\n" +
+            "            {\n" +
             "                \"html\": \"\",\n" +
             "                \"tag\": \"p\",\n" +
             "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
             "                \"blockType\": \"text\",\n" +
             "                \"attribute\": \"content\",\n" +
-            "                \"id\": \"kne8a65da3753kb94mu\"\n" +
+            "                \"id\": \"knisgsjisn0jkkrdr8\"\n" +
             "            },\n" +
             "            {\n" +
-            "                \"html\": \"更多敬请期待。。。\",\n" +
+            "                \"blockType\": \"header\",\n" +
+            "                \"html\": \"更多功能即将开放，敬请期待。。。\",\n" +
             "                \"tag\": \"h2\",\n" +
             "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
-            "                \"blockType\": \"header\",\n" +
             "                \"attribute\": \"content\",\n" +
             "                \"id\": \"kne834sco1pnhbph81n\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"html\": \"\",\n" +
+            "                \"tag\": \"p\",\n" +
+            "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
+            "                \"blockType\": \"text\",\n" +
+            "                \"attribute\": \"content\",\n" +
+            "                \"id\": \"knishxx2svn0x01sww\"\n" +
+            "            },\n" +
+            "            {\n" +
+            "                \"html\": \"您在体验的过程中遇到任何问题，随时在群里@我们，感谢您的参与\",\n" +
+            "                \"tag\": \"blockquote\",\n" +
+            "                \"placeholder\": \"键入 “/” 唤醒菜单\",\n" +
+            "                \"blockType\": \"blockquote\",\n" +
+            "                \"attribute\": \"content\",\n" +
+            "                \"id\": \"kniqnfdvhyhcb04ybau\"\n" +
             "            }\n" +
             "        ]";
 
