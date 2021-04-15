@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Data
 @TableName("apps_userprofile")// 映射数据库表名
-public class UserProfileEntity implements Serializable {
+public class UserEntity implements Serializable {
 
     private Long userId;
 

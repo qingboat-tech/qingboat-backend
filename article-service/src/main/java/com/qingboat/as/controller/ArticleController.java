@@ -3,10 +3,10 @@ package com.qingboat.as.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.qingboat.as.dao.UserProfileDao;
 import com.qingboat.as.entity.ArticleEntity;
-import com.qingboat.as.entity.UserProfileEntity;
+import com.qingboat.as.entity.UserEntity;
 import com.qingboat.as.service.ArticleService;
+import com.qingboat.as.service.UserService;
 import com.qingboat.as.utils.AliyunOssUtil;
 import com.qingboat.as.utils.RssUtil;
 import com.qingboat.as.utils.sensi.SensitiveFilter;
@@ -15,7 +15,6 @@ import com.rometools.rome.io.FeedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestAttributes;
@@ -37,7 +36,7 @@ public class ArticleController {
     private ArticleService articleService;
 
     @Autowired
-    private UserProfileDao userProfileDao;
+    private UserService userService;
 
 
 
@@ -53,7 +52,7 @@ public class ArticleController {
         ArticleEntity articleEntity = articleService.findArticleById(id);
         JSONObject jsonObject = (JSONObject) JSON.toJSON(articleEntity);
         if (articleEntity!=null && !StringUtils.isEmpty(articleEntity.getAuthorId())){
-            UserProfileEntity user =userProfileDao.findByUserId(Long.parseLong(articleEntity.getAuthorId()));
+            UserEntity user =userService.findByUserId(Long.parseLong(articleEntity.getAuthorId()));
             if (user!=null){
                 jsonObject.put("authorNickName",user.getNickname());
                 jsonObject.put("authorImgUrl",user.getHeadimgUrl());
