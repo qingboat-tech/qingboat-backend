@@ -1,18 +1,18 @@
 package com.qingboat.as.controller;
 
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.qingboat.as.entity.ArticleEntity;
 import com.qingboat.as.entity.UserEntity;
 import com.qingboat.as.service.ArticleService;
 import com.qingboat.as.service.UserService;
 import com.qingboat.as.utils.AliyunOssUtil;
+import com.qingboat.as.utils.BeanUtil;
 import com.qingboat.as.utils.RssUtil;
 import com.qingboat.as.utils.sensi.SensitiveFilter;
+import com.qingboat.as.vo.ArticleVo;
 import com.qingboat.base.exception.BaseException;
 import com.rometools.rome.io.FeedException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.util.StringUtils;
@@ -23,6 +23,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -48,17 +49,20 @@ public class ArticleController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public JSONObject findByArticleId(@PathVariable("id") String id) {
+    public ArticleVo findByArticleId(@PathVariable("id") String id) throws InvocationTargetException, IllegalAccessException {
         ArticleEntity articleEntity = articleService.findArticleById(id);
-        JSONObject jsonObject = (JSONObject) JSON.toJSON(articleEntity);
+        ArticleVo vo   =  new ArticleVo();
+
+        BeanUtils.copyProperties(articleEntity,vo);
+
         if (articleEntity!=null && !StringUtils.isEmpty(articleEntity.getAuthorId())){
             UserEntity user =userService.findByUserId(Long.parseLong(articleEntity.getAuthorId()));
-            if (user!=null){
-                jsonObject.put("authorNickName",user.getNickname());
-                jsonObject.put("authorImgUrl",user.getHeadimgUrl());
+            if (user!=null && vo!=null){
+                vo.setAuthorNickName(user.getNickname());
+                vo.setAuthorImgUrl(user.getHeadimgUrl());
             }
         }
-        return jsonObject;
+        return vo;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)

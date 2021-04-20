@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -39,8 +40,8 @@ public class ArticleServiceImpl implements ArticleService {
 
         if (articleEntity.getId() == null){
             articleEntity.setId(ObjectId.get().toString());
-            articleEntity.setCreatedTime(new Date());
-            articleEntity.setUpdatedTime(new Date());
+            articleEntity.setCreatedTime(LocalDateTime.now());
+            articleEntity.setUpdatedTime(LocalDateTime.now());
             return articleMongoDao.save(articleEntity);
         }
         Query query = new Query();
@@ -61,9 +62,8 @@ public class ArticleServiceImpl implements ArticleService {
         if (articleEntity.getParentId()!=null){
             update.set("parentId",articleEntity.getParentId());
         }
-        Date updateTime = new Date();
-        update.set("updateTime",updateTime);
-        articleEntity.setUpdatedTime(updateTime);
+        update.set("updatedTime",LocalDateTime.now());
+        articleEntity.setUpdatedTime(LocalDateTime.now());
 
         UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
         if (result.getModifiedCount() <=0){
@@ -107,8 +107,8 @@ public class ArticleServiceImpl implements ArticleService {
         articleEntity.setImgUrl("");
         articleEntity.setDesc("");
         articleEntity.setParentId("");
-        articleEntity.setCreatedTime(new Date());
-        articleEntity.setUpdatedTime(new Date());
+        articleEntity.setCreatedTime(LocalDateTime.now());
+        articleEntity.setUpdatedTime(LocalDateTime.now());
         articleEntity.setTitle("氢舟文档范文");
         articleEntity.setData(JSON.parseArray(demoData));
         articleMongoDao.save(articleEntity);
