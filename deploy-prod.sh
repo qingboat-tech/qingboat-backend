@@ -14,7 +14,7 @@ echo "SVAR set to: $SVAR"
 
 
 # 开始执行打包命令
-ssh $(whoami)@47.94.144.56 << soff
+ssh qingboat@39.105.29.208<< soff
 sudo su - deploy<<EOF
 cd /srv/qingboat-backend
 

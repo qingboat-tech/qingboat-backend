@@ -19,13 +19,13 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://127.0.0.1:27017/article_db
+      uri: mongodb://172.16.250.39:27017/article_db
 
   datasource:
     username: qingboatproduction
     password: asdthek6u2n
     #serverTimezone=UTC 配置时区
-    url: jdbc:mysql://127.0.0.1:3306/qingboatdb?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://172.16.250.39:3306/qingboatdb?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
 
