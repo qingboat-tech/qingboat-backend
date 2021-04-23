@@ -19,7 +19,7 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://172.16.250.39:27017/article_db
+      uri: mongodb://qingboatproduction:1qaz2wsx@:172.16.250.39:27017/article_db
 
   datasource:
     username: qingboatproduction
