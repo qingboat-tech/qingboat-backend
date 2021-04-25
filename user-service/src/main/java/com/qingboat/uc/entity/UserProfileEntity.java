@@ -33,7 +33,10 @@ public class UserProfileEntity {
     private String profileImgUrl; // 创作者profile图片
     private Integer status; // 0: 待审核；1：审核通过；-1：审核不通过
 
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createAt;
+
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedAt;
 
 

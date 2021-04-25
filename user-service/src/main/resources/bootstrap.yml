@@ -9,6 +9,7 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     default-property-inclusion: non_null
+    time-zone: GMT+8
 
   servlet:
     multipart:
@@ -24,7 +25,7 @@ spring:
     username: jerry
     password: pass
     #serverTimezone=UTC 配置时区
-    url: jdbc:mysql://localhost:3306/qingboatdb?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://localhost:3306/qingboatdb?serverTimezone=GMT%2b8&useUnicode=true&characterEncoding=utf-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
 
