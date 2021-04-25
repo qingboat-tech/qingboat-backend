@@ -44,7 +44,7 @@
             <version>10.1.0</version>
         </dependency>
 
-        <!-- mysql -->
+        <!-- mysql plus -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -52,8 +52,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
         </dependency>
 
         <dependency>
@@ -61,15 +61,28 @@
             <artifactId>druid-spring-boot-starter</artifactId>
         </dependency>
 
-       <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-           <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        </dependency>
+<!--       <dependency>-->
+<!--            <groupId>com.alibaba.cloud</groupId>-->
+<!--           <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>-->
+<!--        </dependency>-->
+
+        <!-- mongodb  -->
 
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>com.github.binarywang</groupId>-->
+<!--            <artifactId>weixin-java-mp</artifactId>-->
+<!--            <version>4.0.8.B</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.projectlombok</groupId>

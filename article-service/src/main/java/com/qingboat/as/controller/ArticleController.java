@@ -5,7 +5,6 @@ import com.qingboat.as.entity.UserEntity;
 import com.qingboat.as.service.ArticleService;
 import com.qingboat.as.service.UserService;
 import com.qingboat.as.utils.AliyunOssUtil;
-import com.qingboat.as.utils.BeanUtil;
 import com.qingboat.as.utils.RssUtil;
 import com.qingboat.as.utils.sensi.SensitiveFilter;
 import com.qingboat.as.vo.ArticleVo;
@@ -57,7 +56,7 @@ public class ArticleController {
 
         if (articleEntity!=null && !StringUtils.isEmpty(articleEntity.getAuthorId())){
             UserEntity user =userService.findByUserId(Long.parseLong(articleEntity.getAuthorId()));
-            if (user!=null && vo!=null){
+            if (user!=null ){
                 vo.setAuthorNickName(user.getNickname());
                 vo.setAuthorImgUrl(user.getHeadimgUrl());
             }
@@ -130,13 +129,17 @@ public class ArticleController {
 
 
     private String getUId(){
+        String StrUid = null;
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();//这个RequestContextHolder是Springmvc提供来获得请求的东西
-        HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
-        Long uid = (Long) request.getAttribute("UID");
-        if (uid == null){
-            throw new BaseException(401,"AUTH_ERROR");
+        if(requestAttributes !=null && requestAttributes instanceof  ServletRequestAttributes){
+            HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
+            Long uid = (Long) request.getAttribute("UID");
+            if (uid == null){
+                throw new BaseException(401,"AUTH_ERROR");
+            }
+            StrUid = String.valueOf(uid);
         }
-        return uid +"";
+        return StrUid;
     }
 
 

@@ -18,13 +18,13 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://127.0.0.1:27017/article_db
+      uri: mongodb://qingboatproduction:1qaz2wsx@172.16.250.39:27017/article_db
 
   datasource:
-    username: root
-    password: davwang816
+    username: qingboatproduction
+    password: asdthek6u2n
     #serverTimezone=UTC 配置时区
-    url: jdbc:mysql://localhost:3306/qingboatDB?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://172.16.250.39:3306/qingboatdb?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
 
@@ -55,7 +55,6 @@ feign:
     enabled: true
   okhttp:
     enabled: true
-
 
 # mybatis-plus相关配置
 mybatis-plus:
@@ -92,7 +91,6 @@ mybatis-plus:
     #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     # 解决oracle更新数据为null时无法转换报错，mysql不会出现此情况
     jdbc-type-for-null: 'null'
-
 
 logging:
   level:

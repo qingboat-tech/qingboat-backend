@@ -1,9 +1,16 @@
 package com.qingboat.uc.service;
 
-import com.qingboat.uc.entity.UserEntity;
+import com.qingboat.uc.entity.CreatorApplyFormEntity;
+import com.qingboat.uc.entity.UserProfileEntity;
 
 public interface UserService {
 
-    public UserEntity getUserById(Long userId);
+    UserProfileEntity saveUserProfile(UserProfileEntity userProfileEntity);
+
+    CreatorApplyFormEntity saveCreatorApplyForm(CreatorApplyFormEntity creatorApplyFormEntity);
+
+    CreatorApplyFormEntity getCreatorApplyForm(Long userId);
+
+
 
 }

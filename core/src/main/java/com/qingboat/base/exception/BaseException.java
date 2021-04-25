@@ -10,12 +10,12 @@ public class BaseException extends  RuntimeException{
     /**
      * 错误码
      */
-    private int code;
+    private final int code;
 
     /**ApiResponse
      * 错误信息
      */
-    private String message;
+    private final String message;
 
 
     public BaseException(int code, String message) {

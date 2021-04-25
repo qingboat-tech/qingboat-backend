@@ -27,7 +27,7 @@ public class ApiResponse<T> {
     /**
      * 提示信息
      */
-    private String message = "SUCCESS";
+    private String message = SUCCESS;
 
     /**
      * 数据内容
