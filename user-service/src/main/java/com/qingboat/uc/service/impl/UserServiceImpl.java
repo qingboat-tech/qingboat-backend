@@ -1,6 +1,9 @@
 package com.qingboat.uc.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.mongodb.BasicDBObject;
 import com.qingboat.base.exception.BaseException;
 import com.qingboat.uc.dao.CreatorApplyFormMongoDao;
 import com.qingboat.uc.dao.UserProfileDao;
@@ -12,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -47,11 +52,73 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public CreatorApplyFormEntity saveCreatorApplyForm(CreatorApplyFormEntity creatorApplyFormEntity) {
-        return null;
+        creatorApplyFormEntity.setCreatedTime(LocalDateTime.now());
+        return creatorApplyFormMongoDao.save(creatorApplyFormEntity);
     }
 
     @Override
     public CreatorApplyFormEntity getCreatorApplyForm(Long userId) {
-        return null;
+
+        CreatorApplyFormEntity form = creatorApplyFormMongoDao.findByUserId(userId);
+        if (form == null){
+            form = JSONObject.parseObject(applyFormJson,CreatorApplyFormEntity.class);
+        }
+        return form;
     }
+
+
+    final private String applyFormJson ="{\n" +
+            "  \"createdTime\": \"2021-04-25 12:23:09\",\n" +
+            "  \"title\": \"创作者申请表\",\n" +
+            "  \"questionEntityList\": [\n" +
+            "    {\n" +
+            "      \"desc\": \"1、填空题啊都不错（ ）\",\n" +
+            "      \"type\": \"input\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"desc\": \"2、单选题）\",\n" +
+            "      \"type\": \"radio\",\n" +
+            "      \"optionList\": [\n" +
+            "        {\n" +
+            "          \"key\": \"A\",\n" +
+            "          \"value\": \"选项1\"\n" +
+            "        },\n" +
+            "        {\n" +
+            "          \"key\": \"B\",\n" +
+            "          \"value\": \"选项1\"\n" +
+            "        },\n" +
+            "        {\n" +
+            "          \"key\": \"C\",\n" +
+            "          \"value\": \"选项1\"\n" +
+            "        },\n" +
+            "        {\n" +
+            "          \"key\": \"D\",\n" +
+            "          \"value\": \"选项1\"\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"desc\": \"3、多选题\",\n" +
+            "      \"type\": \"check\",\n" +
+            "      \"optionList\": [\n" +
+            "        {\n" +
+            "          \"key\": \"A\",\n" +
+            "          \"value\": \"选项1\"\n" +
+            "        },\n" +
+            "        {\n" +
+            "          \"key\": \"B\",\n" +
+            "          \"value\": \"选项1\"\n" +
+            "        },\n" +
+            "        {\n" +
+            "          \"key\": \"C\",\n" +
+            "          \"value\": \"选项1\"\n" +
+            "        },\n" +
+            "        {\n" +
+            "          \"key\": \"D\",\n" +
+            "          \"value\": \"选项1\"\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    }\n" +
+            "  ]\n" +
+            "}";
 }

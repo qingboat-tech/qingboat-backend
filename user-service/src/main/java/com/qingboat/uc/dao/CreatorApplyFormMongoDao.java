@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CreatorApplyFormMongoDao extends MongoRepository<CreatorApplyFormEntity, String> {
 
+    CreatorApplyFormEntity findByUserId(Long userId);
+
 }

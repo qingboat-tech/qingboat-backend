@@ -1,6 +1,7 @@
 package com.qingboat.uc.controller;
 
 import com.qingboat.base.exception.BaseException;
+import com.qingboat.uc.entity.CreatorApplyFormEntity;
 import com.qingboat.uc.entity.UserProfileEntity;
 import com.qingboat.uc.service.ProviderService;
 import com.qingboat.uc.service.UserService;
@@ -33,6 +34,26 @@ public class UserController {
         userProfileEntity.setStatus(0);
 
         return userService.saveUserProfile(userProfileEntity);
+    }
+
+    @GetMapping("/getCreatorApplyForm")
+    @ResponseBody
+    public CreatorApplyFormEntity getCreatorApplyForm(){
+        Long uid = getUId();
+        CreatorApplyFormEntity creatorApplyFormEntity= userService.getCreatorApplyForm(uid);
+        return creatorApplyFormEntity;
+    }
+
+    @PostMapping("/saveCreatorApplyForm")
+    @ResponseBody
+    public CreatorApplyFormEntity saveCreatorApplyForm(@Valid @RequestBody CreatorApplyFormEntity creatorApplyFormEntity){
+        Long uid = getUId();
+        creatorApplyFormEntity.setUserId(uid);
+        creatorApplyFormEntity= userService.saveCreatorApplyForm(creatorApplyFormEntity);
+
+        //TODO 给氢舟后台管理员发一个审核通知
+
+        return creatorApplyFormEntity;
     }
 
 
