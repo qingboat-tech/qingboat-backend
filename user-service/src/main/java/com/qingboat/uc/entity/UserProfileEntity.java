@@ -1,10 +1,13 @@
 package com.qingboat.uc.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Map;
 
 @Data
 @TableName("apps_userprofile")// 映射数据库表名
@@ -13,12 +16,14 @@ public class UserProfileEntity {
     private Long id;
     private Long userId;
     private String nickname;
-    private String headingUrl;
+    private String headimgUrl;
 
     private Integer industryId;
     private String description;
     private String phone;
-    private String expertiseArea; //创作者标签： json String, 格式：[{'key':'技术'}]
+
+    @TableField(typeHandler = FastjsonTypeHandler.class)
+    private Map[] expertiseArea;//创作者标签： json String, 格式：[{'key':'技术'}]
 
     private LocalDateTime createAt;
     private LocalDateTime updatedAt;
