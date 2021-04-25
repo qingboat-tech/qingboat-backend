@@ -48,6 +48,7 @@ public class UserController {
     @ResponseBody
     public CreatorApplyFormEntity saveCreatorApplyForm(@Valid @RequestBody CreatorApplyFormEntity creatorApplyFormEntity){
         Long uid = getUId();
+
         creatorApplyFormEntity.setUserId(uid);
         creatorApplyFormEntity= userService.saveCreatorApplyForm(creatorApplyFormEntity);
 

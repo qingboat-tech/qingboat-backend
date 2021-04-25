@@ -11,6 +11,7 @@ import com.qingboat.uc.entity.CreatorApplyFormEntity;
 import com.qingboat.uc.entity.UserProfileEntity;
 import com.qingboat.uc.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,14 +53,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public CreatorApplyFormEntity saveCreatorApplyForm(CreatorApplyFormEntity creatorApplyFormEntity) {
-        creatorApplyFormEntity.setCreatedTime(LocalDateTime.now());
+
+        Long userId = creatorApplyFormEntity.getUserId();
+
+        CreatorApplyFormEntity form = creatorApplyFormMongoDao.findFirstByUserId(userId);
+        if (form!=null){
+            creatorApplyFormEntity.setId(form.getId());
+        }else {
+            creatorApplyFormEntity.setCreatedTime(LocalDateTime.now());
+        }
         return creatorApplyFormMongoDao.save(creatorApplyFormEntity);
     }
 
     @Override
     public CreatorApplyFormEntity getCreatorApplyForm(Long userId) {
 
-        CreatorApplyFormEntity form = creatorApplyFormMongoDao.findByUserId(userId);
+        CreatorApplyFormEntity form = creatorApplyFormMongoDao.findFirstByUserId(userId);
         if (form == null){
             form = JSONObject.parseObject(applyFormJson,CreatorApplyFormEntity.class);
         }
