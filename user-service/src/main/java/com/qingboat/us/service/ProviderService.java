@@ -1,6 +1,5 @@
-package com.qingboat.uc.service;
+package com.qingboat.us.service;
 
-import com.qingboat.base.config.FeignConfig;
 import com.qingboat.base.config.FeignDecoder;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;

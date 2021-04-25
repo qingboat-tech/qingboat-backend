@@ -1,6 +1,6 @@
-package com.qingboat.uc.dao;
+package com.qingboat.us.dao;
 
-import com.qingboat.uc.entity.CreatorApplyFormEntity;
+import com.qingboat.us.entity.CreatorApplyFormEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

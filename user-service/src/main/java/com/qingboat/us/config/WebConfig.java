@@ -1,7 +1,7 @@
-package com.qingboat.uc.config;
+package com.qingboat.us.config;
 
 
-import com.qingboat.uc.filter.AuthFilter;
+import com.qingboat.us.filter.AuthFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

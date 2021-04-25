@@ -1,10 +1,9 @@
-package com.qingboat.uc.controller;
+package com.qingboat.us.controller;
 
 import com.qingboat.base.exception.BaseException;
-import com.qingboat.uc.entity.CreatorApplyFormEntity;
-import com.qingboat.uc.entity.UserProfileEntity;
-import com.qingboat.uc.service.ProviderService;
-import com.qingboat.uc.service.UserService;
+import com.qingboat.us.entity.CreatorApplyFormEntity;
+import com.qingboat.us.entity.UserProfileEntity;
+import com.qingboat.us.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +13,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Map;
 
 @RestController
 @Slf4j

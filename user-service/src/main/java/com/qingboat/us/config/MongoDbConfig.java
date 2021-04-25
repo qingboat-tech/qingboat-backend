@@ -1,6 +1,6 @@
-package com.qingboat.uc.config;
+package com.qingboat.us.config;
 
-import com.qingboat.uc.entity.CreatorApplyFormEntity;
+import com.qingboat.us.entity.CreatorApplyFormEntity;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;

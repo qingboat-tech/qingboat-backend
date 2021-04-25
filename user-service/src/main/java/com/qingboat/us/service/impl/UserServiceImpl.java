@@ -1,24 +1,19 @@
-package com.qingboat.uc.service.impl;
+package com.qingboat.us.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.mongodb.BasicDBObject;
 import com.qingboat.base.exception.BaseException;
-import com.qingboat.uc.dao.CreatorApplyFormMongoDao;
-import com.qingboat.uc.dao.UserProfileDao;
-import com.qingboat.uc.entity.CreatorApplyFormEntity;
-import com.qingboat.uc.entity.UserProfileEntity;
-import com.qingboat.uc.service.UserService;
+import com.qingboat.us.dao.CreatorApplyFormMongoDao;
+import com.qingboat.us.dao.UserProfileDao;
+import com.qingboat.us.entity.CreatorApplyFormEntity;
+import com.qingboat.us.entity.UserProfileEntity;
+import com.qingboat.us.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Service
 @Slf4j

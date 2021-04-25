@@ -1,7 +1,7 @@
-package com.qingboat.uc.filter;
+package com.qingboat.us.filter;
 
 
-import com.qingboat.uc.entity.AuthTokenEntity;
+import com.qingboat.us.entity.AuthTokenEntity;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.*;

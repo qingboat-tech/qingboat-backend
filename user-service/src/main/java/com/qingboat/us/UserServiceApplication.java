@@ -1,4 +1,4 @@
-package com.qingboat.uc;
+package com.qingboat.us;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -11,12 +11,12 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = "com.qingboat")
 @EnableDiscoveryClient
 @EnableFeignClients
-@MapperScan("com.qingboat.uc.dao")
-public class UserCenterApplication {
+@MapperScan("com.qingboat.us.dao")
+public class UserServiceApplication {
 
     public static void main(String[] args) {
 
-        SpringApplication.run(UserCenterApplication.class, args);
+        SpringApplication.run(UserServiceApplication.class, args);
     }
 
 }

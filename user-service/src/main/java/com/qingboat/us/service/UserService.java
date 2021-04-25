@@ -1,7 +1,7 @@
-package com.qingboat.uc.service;
+package com.qingboat.us.service;
 
-import com.qingboat.uc.entity.CreatorApplyFormEntity;
-import com.qingboat.uc.entity.UserProfileEntity;
+import com.qingboat.us.entity.CreatorApplyFormEntity;
+import com.qingboat.us.entity.UserProfileEntity;
 
 public interface UserService {
 

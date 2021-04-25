@@ -1,4 +1,4 @@
-package com.qingboat.uc.entity;
+package com.qingboat.us.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
