@@ -30,11 +30,23 @@ public class UserController {
         Long uid = getUId();
         log.info(" RequestParam: uid=" +uid + ",RequestBody"+userProfileEntity);
         userProfileEntity.setUserId(uid);
-        userProfileEntity.setRole(2);
-        userProfileEntity.setStatus(0);
+//        userProfileEntity.setRole(1);
+//        userProfileEntity.setStatus(0);
 
         return userService.saveUserProfile(userProfileEntity);
     }
+
+    @GetMapping("/applyCreator")
+    @ResponseBody
+    public UserProfileEntity applyCreator(){
+        Long uid = getUId();
+        log.info(" applyCreator, RequestParam: uid=" +uid);
+
+        UserProfileEntity userProfileEntity = userService.applyCreator(uid);
+
+        return null;
+    }
+
 
     @GetMapping("/getCreatorApplyForm")
     @ResponseBody
@@ -51,6 +63,7 @@ public class UserController {
 
         creatorApplyFormEntity.setUserId(uid);
         creatorApplyFormEntity= userService.saveCreatorApplyForm(creatorApplyFormEntity);
+        userService.applyCreator(uid);
 
         //TODO 给氢舟后台管理员发一个审核通知
 

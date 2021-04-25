@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
 @Mapper
 public interface UserProfileDao extends BaseMapper<UserProfileEntity> {
 
+    UserProfileEntity findByUserId(Long userId);
 
 }

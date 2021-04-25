@@ -31,12 +31,34 @@ public class UserServiceImpl implements UserService {
     private CreatorApplyFormMongoDao creatorApplyFormMongoDao;
 
 
+    @Override
+    public UserProfileEntity applyCreator(Long uid) {
+        QueryWrapper<UserProfileEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id",uid);
+        UserProfileEntity userProfileEntity = userProfileDao.selectOne(queryWrapper);
+        if (userProfileEntity !=null ){
+            if(1== userProfileEntity.getRole() && 1 == userProfileEntity.getStatus()){
 
+            }else {
+                userProfileEntity.setRole(1);
+                userProfileEntity.setStatus(0);
+                userProfileDao.updateById(userProfileEntity);
+            }
+            return userProfileEntity;
+        }
+        throw new BaseException(500,"userProfile is empty");
+
+    }
 
     @Override
     public UserProfileEntity saveUserProfile(UserProfileEntity userProfileEntity) {
         QueryWrapper<UserProfileEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id",userProfileEntity.getUserId());
+
+        userProfileEntity.setRole(null);
+        userProfileEntity.setStatus(null);
+        userProfileEntity.setCreatedAt(null);
+        userProfileEntity.setPhone(null);
 
         userProfileEntity.setUpdatedAt(new Date());
 

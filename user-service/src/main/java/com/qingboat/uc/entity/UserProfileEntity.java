@@ -34,7 +34,7 @@ public class UserProfileEntity {
     private Integer status; // 0: 待审核；1：审核通过；-1：审核不通过
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date createAt;
+    private Date createdAt;
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedAt;
