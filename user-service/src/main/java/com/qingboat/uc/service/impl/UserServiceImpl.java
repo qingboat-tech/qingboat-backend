@@ -7,12 +7,15 @@ import com.qingboat.uc.dao.UserProfileDao;
 import com.qingboat.uc.entity.CreatorApplyFormEntity;
 import com.qingboat.uc.entity.UserProfileEntity;
 import com.qingboat.uc.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -29,7 +32,10 @@ public class UserServiceImpl implements UserService {
         QueryWrapper<UserProfileEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id",userProfileEntity.getUserId());
 
-        userProfileEntity.setUpdatedAt(LocalDateTime.now());
+        userProfileEntity.setUpdatedAt(new Date());
+
+        log.info(userProfileEntity.toString());
+
         int rst = userProfileDao.update(userProfileEntity,queryWrapper);
 
         if(rst==1){
