@@ -1,5 +1,7 @@
 package com.qingboat.uc.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.qingboat.base.exception.BaseException;
 import com.qingboat.uc.dao.CreatorApplyFormMongoDao;
 import com.qingboat.uc.dao.UserProfileDao;
 import com.qingboat.uc.entity.CreatorApplyFormEntity;
@@ -7,6 +9,8 @@ import com.qingboat.uc.entity.UserProfileEntity;
 import com.qingboat.uc.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -18,11 +22,21 @@ public class UserServiceImpl implements UserService {
     private CreatorApplyFormMongoDao creatorApplyFormMongoDao;
 
 
+
+
     @Override
     public UserProfileEntity saveUserProfile(UserProfileEntity userProfileEntity) {
+        QueryWrapper<UserProfileEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id",userProfileEntity.getUserId());
 
-    //TODO
-        return null;
+        userProfileEntity.setUpdatedAt(LocalDateTime.now());
+        int rst = userProfileDao.update(userProfileEntity,queryWrapper);
+
+        if(rst==1){
+            return  userProfileEntity;
+        }else {
+            throw new BaseException(500,"userProfile is empty");
+        }
     }
 
     @Override

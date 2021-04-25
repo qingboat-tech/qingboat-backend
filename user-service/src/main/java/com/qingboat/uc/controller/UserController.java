@@ -4,6 +4,7 @@ import com.qingboat.base.exception.BaseException;
 import com.qingboat.uc.entity.UserProfileEntity;
 import com.qingboat.uc.service.ProviderService;
 import com.qingboat.uc.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestAttributes;
@@ -15,6 +16,7 @@ import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
+@Slf4j
 public class UserController {
 
     @Autowired
@@ -24,23 +26,27 @@ public class UserController {
     @PostMapping("/saveUserProfile")
     @ResponseBody
     public UserProfileEntity saveUserProfile(@Valid @RequestBody UserProfileEntity userProfileEntity){
-        //TODO
-        return null;
+        Long uid = getUId();
+        log.info(" RequestParam: uid=" +uid + ",RequestBody"+userProfileEntity);
+        userProfileEntity.setUserId(uid);
+        userProfileEntity.setRole(2);
+        userProfileEntity.setStatus(0);
+
+        return userService.saveUserProfile(userProfileEntity);
     }
 
 
-    private String getUId(){
-        String StrUid = null;
+    private Long getUId(){
+        Long uid = null;
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();//这个RequestContextHolder是Springmvc提供来获得请求的东西
         if(requestAttributes !=null && requestAttributes instanceof ServletRequestAttributes){
             HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
-            Long uid = (Long) request.getAttribute("UID");
-            if (uid == null){
-                throw new BaseException(401,"AUTH_ERROR");
-            }
-            StrUid = String.valueOf(uid);
+            uid = (Long) request.getAttribute("UID");
         }
-        return StrUid;
+        if (uid == null){
+            throw new BaseException(401,"AUTH_ERROR");
+        }
+        return uid;
     }
 
 }

@@ -1,5 +1,7 @@
 package com.qingboat.uc.entity;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -13,12 +15,12 @@ public class UserProfileEntity {
     private Long id;
     private Long userId;
     private String nickname;
-    private String headingUrl;
+    private String headimgUrl;
 
     private Integer industryId;
     private String description;
     private String phone;
-    private String expertiseArea; //创作者标签： json String, 格式：[{'key':'技术'}]
+    private JSONArray expertiseArea; //创作者标签： json String, 格式：[{'key':'技术'}]
 
     private LocalDateTime createAt;
     private LocalDateTime updatedAt;
