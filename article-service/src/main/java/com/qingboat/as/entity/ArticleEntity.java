@@ -16,9 +16,9 @@ public class ArticleEntity {
     @Id
     private String id;      //文章Id
 
-    private String title;   //文章标题
+    private String title = "";   //文章标题
 
-    private String desc;    //文章描述
+    private String desc = "";    //文章描述
 
     private Integer status = 0; // 0:草稿；1：审核中；2：审核驳回；3：审核通过；4：已发布
 
@@ -30,15 +30,15 @@ public class ArticleEntity {
 
     private String authorId;//作者Id
 
-    private String authorName;//作者姓名
+    private String authorName = "";//作者姓名
 
-    private String authorHeadImg;//作者图像
+    private String authorHeadImg = "";//作者图像
 
-    private String imgUrl;  //文章封面图片
+    private String imgUrl= "";  //文章封面图片
 
     private JSONArray data;    //文章数据
 
-    private String parentId; //父文章Id
+    private String parentId = ""; //父文章Id
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
