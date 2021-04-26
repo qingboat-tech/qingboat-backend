@@ -185,11 +185,11 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public boolean increaseStarCountByArticleId(String articleId) {
+    public boolean increaseStarCountByArticleId(String articleId,int numble) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(articleId));
         Update update = new Update();
-        update.inc("starCount");
+        update.inc("starCount",numble);
         UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
         if (result.getModifiedCount() <=0){
             throw new BaseException(500,"ArticleEntity_is_not_exist");
@@ -201,10 +201,10 @@ public class ArticleServiceImpl implements ArticleService {
     public Long handleStarCountByArticleId(String articleId, Long userId) {
         if (hasStar(articleId,userId)){
             redisUtil.remove("STAR_"+articleId,userId.toString());
+            increaseStarCountByArticleId(articleId,-1);
         }else {
-            if(increaseStarCountByArticleId(articleId)){
-                redisUtil.sSet("STAR_"+articleId,userId.toString());
-            }
+            redisUtil.sSet("STAR_"+articleId,userId.toString());
+            increaseStarCountByArticleId(articleId,1);
         }
         //返回当前 starCount
         ArticleEntity articleEntity = articleMongoDao.findBaseInfoById(articleId);

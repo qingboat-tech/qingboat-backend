@@ -69,7 +69,7 @@ public interface ArticleService {
     /**
      * 增加点赞数
      */
-    boolean increaseStarCountByArticleId(String articleId);
+    boolean increaseStarCountByArticleId(String articleId,int numble);
     Long handleStarCountByArticleId(String articleId,Long userId);
     /**
      * 判断该人是否点赞
