@@ -70,6 +70,11 @@ public interface ArticleService {
      * 增加点赞数
      */
     boolean increaseStarCountByArticleId(String articleId);
+    Long handleStarCountByArticleId(String articleId,Long userId);
+    /**
+     * 判断该人是否点赞
+     */
+    boolean hasStar(String articleId,Long userId);
 
     /**
      * 增加阅读数

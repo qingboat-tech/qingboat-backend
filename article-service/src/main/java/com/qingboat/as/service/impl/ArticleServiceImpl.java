@@ -6,6 +6,7 @@ import com.mongodb.client.result.UpdateResult;
 import com.qingboat.as.dao.ArticleMongoDao;
 import com.qingboat.as.entity.ArticleEntity;
 import com.qingboat.as.service.ArticleService;
+import com.qingboat.as.utils.RedisUtil;
 import com.qingboat.base.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -29,6 +30,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Override
     public ArticleEntity findArticleById(String articleId) {
@@ -191,6 +195,28 @@ public class ArticleServiceImpl implements ArticleService {
             throw new BaseException(500,"ArticleEntity_is_not_exist");
         }
         return true;
+    }
+
+    @Override
+    public Long handleStarCountByArticleId(String articleId, Long userId) {
+        if (hasStar(articleId,userId)){
+            redisUtil.remove("STAR_"+articleId,userId.toString());
+        }else {
+            if(increaseStarCountByArticleId(articleId)){
+                redisUtil.sSet("STAR_"+articleId,userId.toString());
+            }
+        }
+        //返回当前 starCount
+        ArticleEntity articleEntity = articleMongoDao.findBaseInfoById(articleId);
+        if (articleEntity!=null){
+            return articleEntity.getStarCount();
+        }
+        return 0l;
+    }
+
+    @Override
+    public boolean hasStar(String articleId, Long userId) {
+        return redisUtil.sHasKey("STAR_"+articleId,userId.toString());
     }
 
     @Override
