@@ -98,6 +98,147 @@ public class ArticleServiceImpl implements ArticleService {
         articleMongoDao.deleteById(articleId);
     }
 
+    @Override
+    public Page<ArticleEntity> findDraftListByAuthorId(String authorId, int pageIndex, boolean needInit) {
+
+        if (pageIndex<0){
+            pageIndex = 0;
+        }
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdTime");
+        Pageable pageable = PageRequest.of(pageIndex, 10, sort);
+        Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,0,pageable);
+        return page;
+    }
+
+    @Override
+    public Page<ArticleEntity> findReviewListByAuthorId(String authorId, int pageIndex, boolean needInit) {
+        if (pageIndex<0){
+            pageIndex = 0;
+        }
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdTime");
+        Pageable pageable = PageRequest.of(pageIndex, 10, sort);
+        Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,1,pageable);
+        return page;
+    }
+
+    @Override
+    public Page<ArticleEntity> findRefuseListByAuthorId(String authorId, int pageIndex, boolean needInit) {
+
+        if (pageIndex<0){
+            pageIndex = 0;
+        }
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdTime");
+        Pageable pageable = PageRequest.of(pageIndex, 10, sort);
+        Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,2,pageable);
+        return page;
+    }
+
+    @Override
+    public Page<ArticleEntity> findPublishListByAuthorId(String authorId, int pageIndex, boolean needInit) {
+
+        if (pageIndex<0){
+            pageIndex = 0;
+        }
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdTime");
+        Pageable pageable = PageRequest.of(pageIndex, 10, sort);
+        Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,4,pageable);
+        return page;
+    }
+
+    @Override
+    public List<ArticleEntity> findByAuthorIdByReadCountDesc(String authorId) {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdByReadCountDesc(authorId,pageable);
+        if (page != null ){
+            return page.getContent();
+        }
+        return null;
+    }
+
+    @Override
+    public List<ArticleEntity> findByAuthorIdByUpdateTimeDesc(String authorId) {
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdTime");
+        Pageable pageable = PageRequest.of(0, 10, sort);
+        Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,4,pageable);
+        if (page!=null){
+            return page.getContent();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean increaseCommentCountByArticleId(String articleId) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(articleId));
+        Update update = new Update();
+        update.inc("commentCount");
+        UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
+        if (result.getModifiedCount() <=0){
+            throw new BaseException(500,"ArticleEntity_is_not_exist");
+        }
+        return true;
+    }
+
+    @Override
+    public boolean increaseStarCountByArticleId(String articleId) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(articleId));
+        Update update = new Update();
+        update.inc("starCount");
+        UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
+        if (result.getModifiedCount() <=0){
+            throw new BaseException(500,"ArticleEntity_is_not_exist");
+        }
+        return true;
+    }
+
+    @Override
+    public boolean increaseReadCountByArticleId(String articleId) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(articleId));
+        Update update = new Update();
+        update.inc("readCount");
+        UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
+        if (result.getModifiedCount() <=0){
+            throw new BaseException(500,"ArticleEntity_is_not_exist");
+        }
+        return true;
+    }
+
+    @Override
+    public boolean submitReviewByArticleId(String articleId, int scope) {
+        if (scope!=0 && scope!=1){
+            throw new BaseException(500,"ArticleEntity_scope_error");
+        }
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(articleId));
+        Update update = new Update();
+        update.set("status",1);
+        update.set("scope",scope);
+        UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
+        if (result.getModifiedCount() <=0){
+            throw new BaseException(500,"ArticleEntity_is_not_exist");
+        }
+        return true;
+    }
+
+    @Override
+    public boolean reviewByArticleId(String articleId, int status) {
+        if (status!=2 && status!=4){
+            throw new BaseException(500,"ArticleEntity_status_error");
+        }
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(articleId));
+        Update update = new Update();
+        update.set("status",status);
+        UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
+        if (result.getModifiedCount() <=0){
+            throw new BaseException(500,"ArticleEntity_is_not_exist");
+        }
+        return true;
+    }
+
 
     private void initArticle(String authorId){
         log.info(" ======initArticle====== authorId:"+authorId);
