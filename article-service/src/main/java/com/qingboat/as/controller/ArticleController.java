@@ -1,17 +1,15 @@
 package com.qingboat.as.controller;
 
 import com.qingboat.as.entity.ArticleEntity;
-import com.qingboat.as.entity.UserEntity;
 import com.qingboat.as.service.ArticleService;
 import com.qingboat.as.service.UserService;
 import com.qingboat.as.utils.AliyunOssUtil;
 import com.qingboat.as.utils.RssUtil;
 import com.qingboat.as.utils.sensi.SensitiveFilter;
-import com.qingboat.as.vo.ArticleVo;
+import com.qingboat.as.vo.ArticlePublishVo;
 import com.qingboat.base.exception.BaseException;
 import com.rometools.rome.io.FeedException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.util.StringUtils;
@@ -22,7 +20,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -39,48 +36,119 @@ public class ArticleController {
     private UserService userService;
 
 
-    @GetMapping(value = "/findDraftListByAuthorId")
+    //=======================针对 creator 接口=============================
+
+    @GetMapping(value = "/findDraftArticleList")
     @ResponseBody
-    public Page<ArticleEntity> findDraftListByAuthorId(@RequestParam("pageIndex") int pageIndex) {
+    public Page<ArticleEntity> findDraftArticleList(@RequestParam("pageIndex") int pageIndex) {
         String uid = getUId();
-        return articleService.findDraftListByAuthorId(uid,pageIndex,false);
+        return articleService.findDraftListByAuthorId(uid,pageIndex);
     }
 
-    @RequestMapping(value = "/findByAuthorId", method = RequestMethod.GET)
+    @GetMapping(value = "/findReviewArticleList")
     @ResponseBody
-    public Page<ArticleEntity> findByAuthorId(@RequestParam("pageIndex") int pageIndex) {
+    public Page<ArticleEntity> findReviewingArticleList(@RequestParam("pageIndex") int pageIndex) {
         String uid = getUId();
-        return articleService.findByAuthorId(uid,pageIndex,true);
+        return articleService.findReviewListByAuthorId(uid,pageIndex);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ArticleVo findByArticleId(@PathVariable("id") String id) throws InvocationTargetException, IllegalAccessException {
+    @GetMapping(value = "/findRefuseArticleList")
+    @ResponseBody
+    public Page<ArticleEntity> findRefuseArticleList(@RequestParam("pageIndex") int pageIndex) {
+        String uid = getUId();
+        return articleService.findRefuseListByAuthorId(uid,pageIndex);
+    }
+
+    @GetMapping(value = "/findPublishArticleList")
+    @ResponseBody
+    public Page<ArticleEntity> findPublishArticleList(@RequestParam("pageIndex") int pageIndex) {
+        String uid = getUId();
+        return articleService.findPublishListByAuthorId(uid,pageIndex);
+    }
+
+    @GetMapping(value = "/preview/{id}")
+    @ResponseBody
+    public ArticleEntity findByArticleId(@PathVariable("id") String id)  {
         ArticleEntity articleEntity = articleService.findArticleById(id);
-        ArticleVo vo   =  new ArticleVo();
-
-        BeanUtils.copyProperties(articleEntity,vo);
-
-        if (articleEntity!=null && !StringUtils.isEmpty(articleEntity.getAuthorId())){
-            UserEntity user =userService.findByUserId(Long.parseLong(articleEntity.getAuthorId()));
-            if (user!=null ){
-                vo.setAuthorNickName(user.getNickname());
-                vo.setAuthorImgUrl(user.getHeadimgUrl());
-            }
+        String userId = getUId();
+        if (articleEntity !=null && userId.equals(articleEntity.getAuthorId()) ){
+            return articleEntity;
+        }else {
+            throw new BaseException(500,"System_auth_error");
         }
-        return vo;
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @PostMapping(value = "/")
     @ResponseBody
     public ArticleEntity saveArticle(@Valid @RequestBody ArticleEntity article) {
         String uid = getUId();
-        article.setAuthorId(uid);
-        return articleService.saveArticle(article);
+        return articleService.saveArticle(article,uid);
     }
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public void deleteArticleById(@PathVariable("id") String id) {
-       articleService.removeArticleById(id);
+
+    @DeleteMapping(value = "/{id}")
+    @ResponseBody
+    public Boolean delArticle(@PathVariable("id") String id) {
+        String uid = getUId();
+        return articleService.removeArticleById(id,uid);
     }
+
+    @PostMapping(value = "/submitReview")
+    @ResponseBody
+    public Boolean submitReview(@Valid @RequestBody ArticlePublishVo articlePublishVo) {
+        String uid = getUId();
+        Boolean rst =articleService.submitReviewByArticleId(articlePublishVo.getArticleId(),uid,articlePublishVo.getScope());
+
+        //TODO 发送消息给氢舟客服，通知其审核。
+
+        return rst;
+    }
+
+
+    //=======================针对 reader 接口=============================
+
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public Page<ArticleEntity> list() {
+        //TODO 很复杂
+        return null;
+    }
+
+    @GetMapping(value = "/{id}")
+    public ArticleEntity viewArticleByArticleId(@PathVariable("id") String id) {
+        ArticleEntity articleEntity = articleService.findArticleById(id);
+        if (articleEntity!=null){
+
+            if (articleEntity.getScope() ==0){
+                articleService.increaseReadCountByArticleId(id);//增加该文章阅读数
+                return articleEntity;
+            }
+
+            String readerId = getUId();
+            String authorId = articleEntity.getAuthorId();
+            if (readerId.equals(authorId)){
+                return articleEntity;
+            }
+
+            //TODO  检查该readerId 是否订阅了authorId
+            if(true){
+                articleService.increaseReadCountByArticleId(id);//增加该文章阅读数
+                return articleEntity;
+            }else {
+                articleEntity.setData(null);
+                return articleEntity;
+            }
+        }
+        return articleEntity;
+
+    }
+
+    @PostMapping(value = "/star/{id}")
+    @ResponseBody
+    public Long star(@PathVariable("id") String id){
+        return articleService.handleStarCountByArticleId(id,Long.parseLong(getUId()));
+    }
+
+
+
 
     @RequestMapping(value = "/rss")
     public Boolean readRss(@RequestBody Map<String,String> param) throws IOException, FeedException {
@@ -133,13 +201,7 @@ public class ArticleController {
 
     }
 
-    @GetMapping(value = "/star")
-    @ResponseBody
-    public Long star( @RequestParam(value = "articleId")String articleId) {
 
-        return articleService.handleStarCountByArticleId(articleId,Long.parseLong(getUId()));
-
-    }
 
 
     private String getUId(){

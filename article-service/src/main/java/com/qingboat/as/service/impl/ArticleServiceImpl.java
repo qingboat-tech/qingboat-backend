@@ -5,7 +5,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.mongodb.client.result.UpdateResult;
 import com.qingboat.as.dao.ArticleMongoDao;
 import com.qingboat.as.entity.ArticleEntity;
+import com.qingboat.as.entity.UserEntity;
 import com.qingboat.as.service.ArticleService;
+import com.qingboat.as.service.UserService;
 import com.qingboat.as.utils.RedisUtil;
 import com.qingboat.base.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
@@ -34,22 +36,43 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private RedisUtil redisUtil;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public ArticleEntity findArticleById(String articleId) {
         return  articleMongoDao.findArticleEntityById(articleId);
     }
 
     @Override
-    public ArticleEntity saveArticle(ArticleEntity articleEntity) {
+    public ArticleEntity saveArticle(ArticleEntity articleEntity ,String operatorId) {
+
 
         if (articleEntity.getId() == null){
             articleEntity.setId(ObjectId.get().toString());
             articleEntity.setCreatedTime(LocalDateTime.now());
             articleEntity.setUpdatedTime(LocalDateTime.now());
+
+            UserEntity userEntity = userService.findByUserId(Long.parseLong(operatorId));
+
+            if (userEntity!=null){
+                if (userEntity.getRole() ==2){
+                    throw new BaseException(500,"userId="+operatorId +" is reader");
+                }
+                articleEntity.setAuthorId(operatorId);
+                articleEntity.setAuthorNickName(userEntity.getNickname());
+                articleEntity.setAuthorImgUrl(userEntity.getHeadimgUrl());
+            }else{
+                throw new BaseException(500,"user is null");
+            }
+
             return articleMongoDao.save(articleEntity);
         }
+
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(articleEntity.getId()));
+        query.addCriteria(Criteria.where("authorId").is(operatorId));  // TODO 检查语法是否正确
+
         Update update = new Update();
         if (articleEntity.getData()!=null){
             update.set("data",articleEntity.getData());
@@ -98,12 +121,22 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public void removeArticleById(String articleId) {
-        articleMongoDao.deleteById(articleId);
+    public Boolean removeArticleById(String articleId,String authorId) {
+        ArticleEntity articleEntity = articleMongoDao.findBaseInfoById(articleId);
+
+        if (articleEntity!=null && authorId.equals(articleEntity.getAuthorId())){
+            if (articleEntity.getStatus() == 4){
+                //已发布状态，禁止删除
+                return Boolean.FALSE;
+            }
+            articleMongoDao.deleteById(articleId);
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
     }
 
     @Override
-    public Page<ArticleEntity> findDraftListByAuthorId(String authorId, int pageIndex, boolean needInit) {
+    public Page<ArticleEntity> findDraftListByAuthorId(String authorId, int pageIndex) {
 
         if (pageIndex<0){
             pageIndex = 0;
@@ -115,7 +148,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Page<ArticleEntity> findReviewListByAuthorId(String authorId, int pageIndex, boolean needInit) {
+    public Page<ArticleEntity> findReviewListByAuthorId(String authorId, int pageIndex) {
         if (pageIndex<0){
             pageIndex = 0;
         }
@@ -126,7 +159,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Page<ArticleEntity> findRefuseListByAuthorId(String authorId, int pageIndex, boolean needInit) {
+    public Page<ArticleEntity> findRefuseListByAuthorId(String authorId, int pageIndex) {
 
         if (pageIndex<0){
             pageIndex = 0;
@@ -138,7 +171,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Page<ArticleEntity> findPublishListByAuthorId(String authorId, int pageIndex, boolean needInit) {
+    public Page<ArticleEntity> findPublishListByAuthorId(String authorId, int pageIndex) {
 
         if (pageIndex<0){
             pageIndex = 0;
@@ -200,18 +233,17 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public Long handleStarCountByArticleId(String articleId, Long userId) {
         if (hasStar(articleId,userId)){
-            redisUtil.remove("STAR_"+articleId,userId.toString());
-            increaseStarCountByArticleId(articleId,-1);
+            boolean rst = increaseStarCountByArticleId(articleId,-1);
+            if (rst){
+                redisUtil.remove("STAR_"+articleId,userId.toString());
+            }
         }else {
-            redisUtil.sSet("STAR_"+articleId,userId.toString());
-            increaseStarCountByArticleId(articleId,1);
+            boolean rst =increaseStarCountByArticleId(articleId,1);
+            if (rst){
+                redisUtil.sSet("STAR_"+articleId,userId.toString());
+            }
         }
-        //返回当前 starCount
-        ArticleEntity articleEntity = articleMongoDao.findBaseInfoById(articleId);
-        if (articleEntity!=null){
-            return articleEntity.getStarCount();
-        }
-        return 0l;
+        return  redisUtil.size("STAR_"+articleId);
     }
 
     @Override
@@ -233,12 +265,14 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public boolean submitReviewByArticleId(String articleId, int scope) {
+    public boolean submitReviewByArticleId(String articleId,String operatorId, int scope) {
         if (scope!=0 && scope!=1){
             throw new BaseException(500,"ArticleEntity_scope_error");
         }
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(articleId));
+        query.addCriteria(Criteria.where("authorId").is(operatorId)); //TODO 检查语法是否正确
+
         Update update = new Update();
         update.set("status",1);
         update.set("scope",scope);

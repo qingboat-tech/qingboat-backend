@@ -15,4 +15,8 @@ public class UserEntity implements Serializable {
 
     private String nickname;
 
+    private Integer role;  // 1:创作者；2：阅读者
+
+    private Integer status; // 0: 待审核；1：审核通过；-1：审核不通过
+
 }

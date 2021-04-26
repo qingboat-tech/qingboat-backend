@@ -23,33 +23,33 @@ public interface ArticleService {
      * @return
      */
 
-    ArticleEntity saveArticle(ArticleEntity articleEntity);
+    ArticleEntity saveArticle(ArticleEntity articleEntity ,String operatorId);
 
     Page<ArticleEntity> findByAuthorId(String authorId,int pageIndex,boolean needInit);
 
     List<ArticleEntity> findAllByParentId(String parentId);
 
-    void removeArticleById(String articleId);
+    Boolean removeArticleById(String articleId,String autherId);
 
     /**
      * 查询草稿箱列表
      */
-    Page<ArticleEntity> findDraftListByAuthorId(String authorId,int pageIndex,boolean needInit);
+    Page<ArticleEntity> findDraftListByAuthorId(String authorId,int pageIndex);
 
     /**
      * 查询审核中列表
      */
-    Page<ArticleEntity> findReviewListByAuthorId(String authorId,int pageIndex,boolean needInit);
+    Page<ArticleEntity> findReviewListByAuthorId(String authorId,int pageIndex);
 
     /**
      * 查询审核不通过列表
      */
-    Page<ArticleEntity> findRefuseListByAuthorId(String authorId,int pageIndex,boolean needInit);
+    Page<ArticleEntity> findRefuseListByAuthorId(String authorId,int pageIndex);
 
     /**
      * 查询已发布列表
      */
-    Page<ArticleEntity> findPublishListByAuthorId(String authorId,int pageIndex,boolean needInit);
+    Page<ArticleEntity> findPublishListByAuthorId(String authorId,int pageIndex);
 
     /**
      * 查询最热列表 ，size =10
@@ -84,7 +84,7 @@ public interface ArticleService {
     /**
      * 提交文章审核
      */
-    boolean submitReviewByArticleId(String articleId,int scope);
+    boolean submitReviewByArticleId(String articleId,String operatorId, int scope);
 
     /**
      * 文章审核

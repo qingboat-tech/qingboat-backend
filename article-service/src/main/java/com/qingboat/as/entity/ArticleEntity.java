@@ -30,9 +30,9 @@ public class ArticleEntity {
 
     private String authorId;//作者Id
 
-    private String authorName = "";//作者姓名
+    private String authorNickName = "";//作者姓名
 
-    private String authorHeadImg = "";//作者图像
+    private String authorImgUrl = "";//作者图像
 
     private String imgUrl= "";  //文章封面图片
 
