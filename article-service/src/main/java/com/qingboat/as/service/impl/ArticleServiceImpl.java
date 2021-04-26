@@ -70,8 +70,7 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         Query query = new Query();
-        query.addCriteria(Criteria.where("id").is(articleEntity.getId()));
-        query.addCriteria(Criteria.where("authorId").is(operatorId));  // TODO 检查语法是否正确
+        query.addCriteria(Criteria.where("id").is(articleEntity.getId()).and("authorId").is(operatorId));
 
         Update update = new Update();
         if (articleEntity.getData()!=null){
@@ -270,8 +269,8 @@ public class ArticleServiceImpl implements ArticleService {
             throw new BaseException(500,"ArticleEntity_scope_error");
         }
         Query query = new Query();
-        query.addCriteria(Criteria.where("id").is(articleId));
-        query.addCriteria(Criteria.where("authorId").is(operatorId)); //TODO 检查语法是否正确
+        query.addCriteria(Criteria.where("id").is(articleId)
+                .and("authorId").is(operatorId));
 
         Update update = new Update();
         update.set("status",1);
