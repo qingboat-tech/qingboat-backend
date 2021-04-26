@@ -39,6 +39,12 @@ public class ArticleController {
     private UserService userService;
 
 
+    @GetMapping(value = "/findDraftListByAuthorId")
+    @ResponseBody
+    public Page<ArticleEntity> findDraftListByAuthorId(@RequestParam("pageIndex") int pageIndex) {
+        String uid = getUId();
+        return articleService.findDraftListByAuthorId(uid,pageIndex,false);
+    }
 
     @RequestMapping(value = "/findByAuthorId", method = RequestMethod.GET)
     @ResponseBody
@@ -124,6 +130,14 @@ public class ArticleController {
             return rst;
         }
         return  null;
+
+    }
+
+    @GetMapping(value = "/star")
+    @ResponseBody
+    public Long star( @RequestParam(value = "articleId")String articleId) {
+
+        return articleService.handleStarCountByArticleId(articleId,Long.parseLong(getUId()));
 
     }
 
