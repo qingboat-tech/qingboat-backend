@@ -20,13 +20,13 @@ public class ArticleEntity {
 
     private String desc = "";    //文章描述
 
-    private Integer status = 0; // 0:草稿；1：审核中；2：审核驳回；3：审核通过；4：已发布
+    private Integer status ; // 0:草稿；1：审核中；2：审核驳回；3：审核通过；4：已发布
 
-    private Integer type = 0; // 0:newsLetter；1：learnPathway
+    private Integer type ; // 0:newsLetter；1：learnPathway
 
-    private Integer scope = 0; //0:表示免费；1：收费
+    private Integer scope ; //0:表示免费；1：收费
 
-    private String categoryName =""; //
+    private String categoryName ; //
 
     private String authorId;//作者Id
 
@@ -48,9 +48,10 @@ public class ArticleEntity {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedTime;
 
-    private Long starCount  =0l ; //点赞数
-    private Long commentCount =0l ; //评论数
-    private Long readCount =0l ; //阅读数
+    private Long starCount ; //点赞数
+    private Long commentCount ; //评论数
+    private Long readCount ; //阅读数
+
 
 
 

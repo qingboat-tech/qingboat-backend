@@ -38,6 +38,9 @@ public class ArticleController {
 
     //=======================针对 creator 接口=============================
 
+    /**
+     * 根据作者分页查询草稿的文章列表
+     */
     @GetMapping(value = "/findDraftArticleList")
     @ResponseBody
     public Page<ArticleEntity> findDraftArticleList(@RequestParam("pageIndex") int pageIndex) {
@@ -45,6 +48,9 @@ public class ArticleController {
         return articleService.findDraftListByAuthorId(uid,pageIndex);
     }
 
+    /**
+     * 根据作者分页查询正在审核的文章列表
+     */
     @GetMapping(value = "/findReviewArticleList")
     @ResponseBody
     public Page<ArticleEntity> findReviewingArticleList(@RequestParam("pageIndex") int pageIndex) {
@@ -52,6 +58,9 @@ public class ArticleController {
         return articleService.findReviewListByAuthorId(uid,pageIndex);
     }
 
+    /**
+     * 根据作者分页查询审核未通过的文章列表
+     */
     @GetMapping(value = "/findRefuseArticleList")
     @ResponseBody
     public Page<ArticleEntity> findRefuseArticleList(@RequestParam("pageIndex") int pageIndex) {
@@ -59,6 +68,9 @@ public class ArticleController {
         return articleService.findRefuseListByAuthorId(uid,pageIndex);
     }
 
+    /**
+     * 根据作者分页查询已发布文章列表
+     */
     @GetMapping(value = "/findPublishArticleList")
     @ResponseBody
     public Page<ArticleEntity> findPublishArticleList(@RequestParam("pageIndex") int pageIndex) {
@@ -66,6 +78,29 @@ public class ArticleController {
         return articleService.findPublishListByAuthorId(uid,pageIndex);
     }
 
+    /**
+     * 根据作者查询最新发布的前10篇文章
+     */
+    @GetMapping(value = "/findByAuthorIdByUpdateTimeDesc")
+    @ResponseBody
+    public List<ArticleEntity> findByAuthorIdByUpdateTimeDesc() {
+        String uid = getUId();
+        return articleService.findByAuthorIdByUpdateTimeDesc(uid);
+    }
+
+    /**
+     * 根据作者查询最热发布的前10篇文章
+     */
+    @GetMapping(value = "/findByAuthorIdByReadCountDesc")
+    @ResponseBody
+    public List<ArticleEntity> findByAuthorIdByReadCountDesc() {
+        String uid = getUId();
+        return articleService.findByAuthorIdByReadCountDesc(uid);
+    }
+
+    /**
+     * 根据文章Id返回文章内容
+     */
     @GetMapping(value = "/preview/{id}")
     @ResponseBody
     public ArticleEntity findByArticleId(@PathVariable("id") String id)  {
@@ -78,6 +113,9 @@ public class ArticleController {
         }
     }
 
+    /**
+     * 添加or保存文章内容
+     */
     @PostMapping(value = "/")
     @ResponseBody
     public ArticleEntity saveArticle(@Valid @RequestBody ArticleEntity article) {
@@ -85,6 +123,9 @@ public class ArticleController {
         return articleService.saveArticle(article,uid);
     }
 
+    /**
+     * 根据文章Id删除文章，状态为4的（已发布）不能删除
+     */
     @DeleteMapping(value = "/{id}")
     @ResponseBody
     public Boolean delArticle(@PathVariable("id") String id) {
@@ -92,6 +133,9 @@ public class ArticleController {
         return articleService.removeArticleById(id,uid);
     }
 
+    /**
+     * 提交文章审核
+     */
     @PostMapping(value = "/submitReview")
     @ResponseBody
     public Boolean submitReview(@Valid @RequestBody ArticlePublishVo articlePublishVo) {

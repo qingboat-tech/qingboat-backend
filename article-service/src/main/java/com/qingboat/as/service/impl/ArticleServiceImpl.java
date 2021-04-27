@@ -52,6 +52,13 @@ public class ArticleServiceImpl implements ArticleService {
             articleEntity.setId(ObjectId.get().toString());
             articleEntity.setCreatedTime(LocalDateTime.now());
             articleEntity.setUpdatedTime(LocalDateTime.now());
+            articleEntity.setStatus(0);// 0:草稿；1：审核中；2：审核驳回；3：审核通过；4：已发布
+            articleEntity.setScope(0);//0:表示免费；1：收费
+            articleEntity.setType(0); // 0:newsLetter；1：learnPathway
+            articleEntity.setCategoryName("");
+            articleEntity.setStarCount(0l);
+            articleEntity.setCommentCount(0l);
+            articleEntity.setReadCount(0l);
 
             UserEntity userEntity = userService.findByUserId(Long.parseLong(operatorId));
 
