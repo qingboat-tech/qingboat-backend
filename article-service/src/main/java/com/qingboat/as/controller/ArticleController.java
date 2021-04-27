@@ -7,6 +7,7 @@ import com.qingboat.as.utils.AliyunOssUtil;
 import com.qingboat.as.utils.RssUtil;
 import com.qingboat.as.utils.sensi.SensitiveFilter;
 import com.qingboat.as.vo.ArticlePublishVo;
+import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
 import com.rometools.rome.io.FeedException;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,9 @@ public class ArticleController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FeishuService feishuService;
 
 
     //=======================针对 creator 接口=============================
@@ -143,7 +147,11 @@ public class ArticleController {
         Boolean rst =articleService.submitReviewByArticleId(articlePublishVo.getArticleId(),uid,articlePublishVo.getScope());
 
         //TODO 发送消息给氢舟客服，通知其审核。
-
+        FeishuService.TextBody textBody = new FeishuService.TextBody(
+                new StringBuilder().append("创作这提交文章审核").append("\n")
+                .append("创作者Id：").append(uid).append("\n")
+                .append("文章Id：").append(articlePublishVo.getArticleId()).append("\n").toString());
+        feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
         return rst;
     }
 
