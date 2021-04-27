@@ -1,11 +1,15 @@
 package com.qingboat.as.controller;
 
+import com.qingboat.as.entity.ArticleCommentEntity;
 import com.qingboat.as.entity.ArticleEntity;
+import com.qingboat.as.entity.UserEntity;
+import com.qingboat.as.service.ArticleCommentService;
 import com.qingboat.as.service.ArticleService;
 import com.qingboat.as.service.UserService;
 import com.qingboat.as.utils.AliyunOssUtil;
 import com.qingboat.as.utils.RssUtil;
 import com.qingboat.as.utils.sensi.SensitiveFilter;
+import com.qingboat.as.vo.ArticleCommentVo;
 import com.qingboat.as.vo.ArticlePublishVo;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
@@ -19,6 +23,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
+import sun.plugin.util.UserProfile;
 
 import java.io.IOException;
 import java.util.*;
@@ -35,6 +40,9 @@ public class ArticleController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ArticleCommentService articleCommentService;
 
     @Autowired
     private FeishuService feishuService;
@@ -193,13 +201,63 @@ public class ArticleController {
 
     }
 
+    //======================= 文章互动 =============================
+    // 点赞
     @PostMapping(value = "/star/{id}")
     @ResponseBody
     public Long star(@PathVariable("id") String id){
         return articleService.handleStarCountByArticleId(id,Long.parseLong(getUId()));
     }
 
+    // 评论
+    @PostMapping(value = "/comment")
+    @ResponseBody
+    public ArticleCommentEntity comment(@Valid @RequestBody ArticleCommentVo articleCommentVo){
+        String uidString = getUId();
+        Long uid = Long.parseLong(uidString);
 
+        ArticleCommentEntity articleCommentEntity = new ArticleCommentEntity();
+        articleCommentEntity.setArticleId(articleCommentVo.getArticleId());
+        articleCommentEntity.setContent(articleCommentVo.getContent());
+        articleCommentEntity.setUserId(uid);
+
+        UserEntity userOperate = userService.findByUserId(uid);
+        articleCommentEntity.setHeadImgUrl(userOperate.getHeadimgUrl());
+        articleCommentEntity.setNickName(userOperate.getNickname());
+
+        return articleCommentService.addArticleComment(articleCommentEntity);
+    }
+
+    // 删除评论
+    @DeleteMapping(value = "/{articleId}/comment/{id}")
+    @ResponseBody
+    public Boolean delComment(@PathVariable("id") String id, @PathVariable("articleId") String articleId) {
+
+        // TODO: service层验证这条评论是否可以删除，是不是自己的
+        return articleCommentService.removeArticleComment(articleId,Long.parseLong(id));
+    }
+
+    // 回复评论
+    @PostMapping(value = "/comment/replay")
+    @ResponseBody
+    public ArticleCommentEntity replyComment(@Valid @RequestBody ArticleCommentVo articleCommentVo) {
+        String uidString = getUId();
+        Long uid = Long.parseLong(uidString);
+
+        ArticleCommentEntity articleCommentEntity = new ArticleCommentEntity();
+        articleCommentEntity.setArticleId(articleCommentVo.getArticleId());
+        articleCommentEntity.setContent(articleCommentVo.getContent());
+        articleCommentEntity.setParentId(articleCommentVo.getParentId());
+
+        // 这是在用户信息
+        articleCommentEntity.setUserId(uid);
+
+        UserEntity userOperate = userService.findByUserId(uid);
+        articleCommentEntity.setHeadImgUrl(userOperate.getHeadimgUrl());
+        articleCommentEntity.setNickName(userOperate.getNickname());
+
+        return articleCommentService.replyComment(articleCommentEntity);
+    }
 
 
     @RequestMapping(value = "/rss")
