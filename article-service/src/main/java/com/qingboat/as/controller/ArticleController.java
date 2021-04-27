@@ -219,6 +219,7 @@ public class ArticleController {
         ArticleCommentEntity articleCommentEntity = new ArticleCommentEntity();
         articleCommentEntity.setArticleId(articleCommentVo.getArticleId());
         articleCommentEntity.setContent(articleCommentVo.getContent());
+        articleCommentEntity.setReplyList(new ArrayList<>());
         articleCommentEntity.setUserId(uid);
 
         UserEntity userOperate = userService.findByUserId(uid);
@@ -238,7 +239,7 @@ public class ArticleController {
     }
 
     // 回复评论
-    @PostMapping(value = "/comment/replay")
+    @PostMapping(value = "/comment/reply")
     @ResponseBody
     public ArticleCommentEntity replyComment(@Valid @RequestBody ArticleCommentVo articleCommentVo) {
         String uidString = getUId();

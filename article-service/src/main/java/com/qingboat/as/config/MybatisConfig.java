@@ -26,22 +26,32 @@ public class MybatisConfig {
         // 取消MyBatis Plus的最大分页500条的限制
         paginationInnerInterceptor.setMaxLimit(100000L);
 
-        HashMap<String, TableNameHandler> map = new HashMap<String, TableNameHandler>(2) {{
+        MyDynamicTableNameInterceptor myDynamicTableNameInterceptor = new MyDynamicTableNameInterceptor();
+
+        HashMap<String, MyTableNameHandler> map = new HashMap<String, MyTableNameHandler>(2) {{
             //整个函数返回的结果就是替换后的新表名，这个生成的表名的规则可以自己随便指定
 //            put("test_student", (sql, tableName, student) -> tableName + "_" +((SysStudent)student).getDepartCode());
 
-            put("apps_article_comment", new TableNameHandler() {
+            put("apps_article_comment", new MyTableNameHandler() {
                 @Override
-                public String dynamicTableName(String sql, String tableName) {
-
-                    return tableName+"_1";
+                public String dynamicTableName(String sql, String tableName,Object param) {
+                    log.debug(" SQL: "+ sql);
+                    log.debug(" tableName: "+ tableName);
+                    if (param instanceof  ArticleCommentEntity){
+                        String articleId = ((ArticleCommentEntity) param).getArticleId();
+                        int tableIndex = articleId.hashCode()%4 +1;
+                        System.err.println("======================");
+                        System.err.println("======================" +tableName +"_"+tableIndex);
+                        return tableName +"_"+tableIndex;
+                    }
+                    return tableName;
                 }
             });
         }};
 
-        DynamicTableNameInnerInterceptor dynamicTableNameInnerInterceptor = new DynamicTableNameInnerInterceptor();
-        dynamicTableNameInnerInterceptor.setTableNameHandlerMap(map);
-        interceptor.addInnerInterceptor(dynamicTableNameInnerInterceptor);
+//        DynamicTableNameInnerInterceptor dynamicTableNameInnerInterceptor = new DynamicTableNameInnerInterceptor();
+        myDynamicTableNameInterceptor.setTableNameHandlerMap(map);
+        interceptor.addInnerInterceptor(myDynamicTableNameInterceptor);
 
         interceptor.addInnerInterceptor(paginationInnerInterceptor);
 
