@@ -39,6 +39,8 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private UserService userService;
 
+    private static final String USER_STAR_PRE ="USER_STAR_";
+
     @Override
     public ArticleEntity findArticleById(String articleId) {
         return  articleMongoDao.findArticleEntityById(articleId);
@@ -242,20 +244,20 @@ public class ArticleServiceImpl implements ArticleService {
         if (hasStar(articleId,userId)){
             boolean rst = increaseStarCountByArticleId(articleId,-1);
             if (rst){
-                redisUtil.remove("STAR_"+articleId,userId.toString());
+                redisUtil.remove(USER_STAR_PRE+userId,articleId);
             }
         }else {
             boolean rst =increaseStarCountByArticleId(articleId,1);
             if (rst){
-                redisUtil.sSet("STAR_"+articleId,userId.toString());
+                redisUtil.sSet(USER_STAR_PRE+userId,articleId);
             }
         }
-        return  redisUtil.size("STAR_"+articleId);
+        return  redisUtil.size(USER_STAR_PRE+userId);
     }
 
     @Override
     public boolean hasStar(String articleId, Long userId) {
-        return redisUtil.sHasKey("STAR_"+articleId,userId.toString());
+        return redisUtil.sHasKey(USER_STAR_PRE+userId,articleId);
     }
 
     @Override
