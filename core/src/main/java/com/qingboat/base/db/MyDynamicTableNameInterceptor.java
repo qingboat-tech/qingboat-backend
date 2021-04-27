@@ -1,4 +1,4 @@
-package com.qingboat.as.config.db;
+package com.qingboat.base.db;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;

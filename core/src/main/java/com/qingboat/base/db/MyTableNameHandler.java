@@ -1,4 +1,4 @@
-package com.qingboat.as.config.db;
+package com.qingboat.base.db;
 
 public interface MyTableNameHandler {
     /**

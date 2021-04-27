@@ -1,6 +1,8 @@
 package com.qingboat.as.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qingboat.as.dao.ArticleCommentDao;
 import com.qingboat.as.entity.ArticleCommentEntity;
 import com.qingboat.as.entity.UserEntity;
@@ -54,5 +56,14 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
 
         articleCommentDao.update(entity,queryWrapper);
         return entity;
+    }
+
+    @Override
+    public IPage<ArticleCommentEntity> findArticleComment(String articleId, int pageIndex) {
+        IPage<ArticleCommentEntity> page = new Page<>(pageIndex, 10);
+        QueryWrapper<ArticleCommentEntity> queryWrapper = new QueryWrapper<>();
+        page =articleCommentDao.selectPage(page,queryWrapper);
+
+        return page;
     }
 }
