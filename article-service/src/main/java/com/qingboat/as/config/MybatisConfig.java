@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.DynamicTableNameInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.qingboat.as.entity.ArticleCommentEntity;
+import com.qingboat.as.entity.ReplyCommentEntity;
 import com.qingboat.base.db.MyDynamicTableNameInterceptor;
 import com.qingboat.base.db.MyTableNameHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,7 @@ public class MybatisConfig {
                         String articleId = ((ArticleCommentEntity) param).getArticleId();
                         StringBuilder dynamicTableName = new StringBuilder(tableName);
                         dynamicTableName.append("_");
-                        dynamicTableName.append(articleId.hashCode()%4 +1);
+                        dynamicTableName.append(Math.abs(articleId.hashCode()) %4 +1);
 
                         log.info(" dynamicTableName: "+ dynamicTableName);
                         return dynamicTableName.toString();
@@ -45,6 +46,23 @@ public class MybatisConfig {
                     return tableName;
                 }
             });
+            put("apps_reply_comment", new MyTableNameHandler() {
+                @Override
+                public String dynamicTableName(String sql, String tableName,Object param) {
+                    log.info(" SQL: "+ sql);
+                    if (param instanceof ReplyCommentEntity){
+                        String articleId = ((ReplyCommentEntity) param).getArticleId();
+                        StringBuilder dynamicTableName = new StringBuilder(tableName);
+                        dynamicTableName.append("_");
+                        dynamicTableName.append(Math.abs(articleId.hashCode()) %4 +1);
+
+                        log.info(" dynamicTableName: "+ dynamicTableName);
+                        return dynamicTableName.toString();
+                    }
+                    return tableName;
+                }
+            });
+
         }};
         myDynamicTableNameInterceptor.setTableNameHandlerMap(map);
         interceptor.addInnerInterceptor(myDynamicTableNameInterceptor);

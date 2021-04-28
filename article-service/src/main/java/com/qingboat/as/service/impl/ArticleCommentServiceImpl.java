@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qingboat.as.dao.ArticleCommentDao;
+import com.qingboat.as.dao.ReplyCommentDao;
 import com.qingboat.as.entity.ArticleCommentEntity;
+import com.qingboat.as.entity.ReplyCommentEntity;
 import com.qingboat.as.entity.UserEntity;
 import com.qingboat.as.service.ArticleCommentService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +25,13 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     @Autowired
     private ArticleCommentDao articleCommentDao;
 
+    @Autowired
+    private ReplyCommentDao replyCommentDao;
+
     @Override
     public ArticleCommentEntity addArticleComment(ArticleCommentEntity articleCommentEntity) {
         articleCommentEntity.setCreatedAt(new Date());
+        articleCommentEntity.setReplyCount(0l);
         articleCommentDao.insert(articleCommentEntity);
         return articleCommentEntity;
     }
@@ -33,8 +39,9 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     @Override
     public boolean removeArticleComment(String articleId, Long commentId) {
         QueryWrapper<ArticleCommentEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("id",commentId)
-            .eq("article_id",articleId);
+        ArticleCommentEntity entity = new ArticleCommentEntity();
+        entity.setId(commentId);
+        entity.setArticleId(articleId);
         int rst = articleCommentDao.delete(queryWrapper);
         if (rst>0){
             return true;
@@ -43,27 +50,44 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     }
 
     @Override
-    public ArticleCommentEntity replyComment(ArticleCommentEntity articleCommentEntity) {
-        QueryWrapper<ArticleCommentEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("id",articleCommentEntity.getId())
-                .eq("article_id",articleCommentEntity.getArticleId());
-        ArticleCommentEntity entity = articleCommentDao.selectOne(queryWrapper);
-        List<ArticleCommentEntity> replyList = entity.getReplyList();
-        if (replyList == null){
-            replyList = new ArrayList<>(1);
-        }
-        replyList.add(0,articleCommentEntity);
-
-        articleCommentDao.update(entity,queryWrapper);
-        return entity;
-    }
-
-    @Override
     public IPage<ArticleCommentEntity> findArticleComment(String articleId, int pageIndex) {
         IPage<ArticleCommentEntity> page = new Page<>(pageIndex, 10);
         QueryWrapper<ArticleCommentEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("created_at");
+        ArticleCommentEntity entity = new ArticleCommentEntity();
+        entity.setArticleId(articleId);
         page =articleCommentDao.selectPage(page,queryWrapper);
+        return page;
+    }
 
+    @Override
+    public ReplyCommentEntity replyComment(ReplyCommentEntity replyCommentEntity) {
+        replyCommentEntity.setCreatedAt(new Date());
+        replyCommentDao.insert(replyCommentEntity);
+        return replyCommentEntity;
+    }
+
+    @Override
+    public boolean removeReplyComment(String articleId, Long replyId) {
+        QueryWrapper<ReplyCommentEntity> queryWrapper = new QueryWrapper<>();
+        ReplyCommentEntity entity = new ReplyCommentEntity();
+        entity.setId(replyId);
+        entity.setArticleId(articleId);
+        int rst = replyCommentDao.delete(queryWrapper);
+        if (rst>0){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public IPage<ReplyCommentEntity> findArticleComment(String articleId, Long commentId, int pageIndex) {
+        IPage<ReplyCommentEntity> page = new Page<>(pageIndex, 10);
+        QueryWrapper<ReplyCommentEntity> queryWrapper = new QueryWrapper<>();
+        ReplyCommentEntity entity = new ReplyCommentEntity();
+        entity.setArticleId(articleId);
+        entity.setCommentId(commentId);
+        page =replyCommentDao.selectPage(page,queryWrapper);
         return page;
     }
 }

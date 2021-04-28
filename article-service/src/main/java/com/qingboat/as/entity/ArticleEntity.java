@@ -20,7 +20,7 @@ public class ArticleEntity {
 
     private String desc = "";    //文章描述
 
-    private Integer status ; // 0:草稿；1：审核中；2：审核驳回；3：审核通过；4：已发布
+    private Integer status ; // 0:草稿；1：审核中；2：审核驳回；3：审核通过；4：已发布；5：只读不可编辑；6：禁用
 
     private Integer type ; // 0:newsLetter；1：learnPathway
 
