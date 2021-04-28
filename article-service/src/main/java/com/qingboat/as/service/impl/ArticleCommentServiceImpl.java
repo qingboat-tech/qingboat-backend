@@ -37,11 +37,13 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     }
 
     @Override
-    public boolean removeArticleComment(String articleId, Long commentId) {
+    public boolean removeArticleComment(String articleId, Long commentId,Long userId) {
         QueryWrapper<ArticleCommentEntity> queryWrapper = new QueryWrapper<>();
         ArticleCommentEntity entity = new ArticleCommentEntity();
         entity.setId(commentId);
         entity.setArticleId(articleId);
+        entity.setUserId(userId);
+        queryWrapper.setEntity(entity);
         int rst = articleCommentDao.delete(queryWrapper);
         if (rst>0){
             return true;
@@ -56,6 +58,7 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
         queryWrapper.orderByDesc("created_at");
         ArticleCommentEntity entity = new ArticleCommentEntity();
         entity.setArticleId(articleId);
+        queryWrapper.setEntity(entity);
         page =articleCommentDao.selectPage(page,queryWrapper);
         return page;
     }
@@ -65,22 +68,24 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
         replyCommentEntity.setCreatedAt(new Date());
         replyCommentDao.insert(replyCommentEntity);
 
-        ArticleCommentEntity entity = new ArticleCommentEntity();
-        entity.setArticleId(replyCommentEntity.getArticleId());
-        entity.setId(replyCommentEntity.getCommentId());
+//        ArticleCommentEntity entity = new ArticleCommentEntity();
+//        entity.setArticleId(replyCommentEntity.getArticleId());
+//        entity.setId(replyCommentEntity.getCommentId());
 
-        Long replyCount = articleCommentDao.updateReplyCount(entity);
-        entity.setReplyCount(replyCount);
+//        Long replyCount = articleCommentDao.updateReplyCount(entity);
+//        entity.setReplyCount(replyCount);
 
         return replyCommentEntity;
     }
 
     @Override
-    public boolean removeReplyComment(String articleId, Long replyId) {
+    public boolean removeReplyComment(String articleId, Long replyId,Long userId) {
         QueryWrapper<ReplyCommentEntity> queryWrapper = new QueryWrapper<>();
         ReplyCommentEntity entity = new ReplyCommentEntity();
         entity.setId(replyId);
         entity.setArticleId(articleId);
+        entity.setUserId(userId);
+        queryWrapper.setEntity(entity);
         int rst = replyCommentDao.delete(queryWrapper);
         if (rst>0){
             return true;
@@ -89,12 +94,13 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     }
 
     @Override
-    public IPage<ReplyCommentEntity> findArticleComment(String articleId, Long commentId, int pageIndex) {
+    public IPage<ReplyCommentEntity> findReplyComment(String articleId, Long commentId, int pageIndex) {
         IPage<ReplyCommentEntity> page = new Page<>(pageIndex, 10);
         QueryWrapper<ReplyCommentEntity> queryWrapper = new QueryWrapper<>();
         ReplyCommentEntity entity = new ReplyCommentEntity();
         entity.setArticleId(articleId);
         entity.setCommentId(commentId);
+        queryWrapper.setEntity(entity);
         page =replyCommentDao.selectPage(page,queryWrapper);
         return page;
     }

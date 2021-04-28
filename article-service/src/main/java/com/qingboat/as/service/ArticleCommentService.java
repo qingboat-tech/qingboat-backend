@@ -8,14 +8,14 @@ public interface ArticleCommentService {
 
     ArticleCommentEntity addArticleComment(ArticleCommentEntity articleCommentEntity);
 
-    boolean removeArticleComment(String articleId,Long commentId);
+    boolean removeArticleComment(String articleId,Long commentId ,Long userId);
 
     IPage<ArticleCommentEntity> findArticleComment(String articleId, int pageIndex);
 
     ReplyCommentEntity replyComment(ReplyCommentEntity replyCommentEntity);
 
-    boolean removeReplyComment(String articleId,Long replyId);
+    boolean removeReplyComment(String articleId,Long replyId,Long userId);
 
-    IPage<ReplyCommentEntity> findArticleComment(String articleId,Long commentId, int pageIndex);
+    IPage<ReplyCommentEntity> findReplyComment(String articleId,Long commentId, int pageIndex);
 
 }

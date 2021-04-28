@@ -34,6 +34,7 @@ public class MybatisConfig {
                 @Override
                 public String dynamicTableName(String sql, String tableName,Object param) {
                     log.info(" SQL: "+ sql);
+                    log.info(" SQL.param: "+ param);
                     if (param instanceof  ArticleCommentEntity){
                         String articleId = ((ArticleCommentEntity) param).getArticleId();
                         StringBuilder dynamicTableName = new StringBuilder(tableName);
