@@ -64,6 +64,14 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     public ReplyCommentEntity replyComment(ReplyCommentEntity replyCommentEntity) {
         replyCommentEntity.setCreatedAt(new Date());
         replyCommentDao.insert(replyCommentEntity);
+
+        ArticleCommentEntity entity = new ArticleCommentEntity();
+        entity.setArticleId(replyCommentEntity.getArticleId());
+        entity.setId(replyCommentEntity.getCommentId());
+
+        Long replyCount = articleCommentDao.updateReplyCount(entity);
+        entity.setReplyCount(replyCount);
+
         return replyCommentEntity;
     }
 
