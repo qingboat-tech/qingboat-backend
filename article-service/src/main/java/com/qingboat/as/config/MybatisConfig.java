@@ -7,12 +7,13 @@ import com.qingboat.as.entity.ArticleCommentEntity;
 import com.qingboat.as.entity.ReplyCommentEntity;
 import com.qingboat.base.db.MyDynamicTableNameInterceptor;
 import com.qingboat.base.db.MyTableNameHandler;
+import com.qingboat.base.db.SwitchTableAspact;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Configuration
@@ -33,6 +34,11 @@ public class MybatisConfig {
             put("apps_article_comment", new MyTableNameHandler() {
                 @Override
                 public String dynamicTableName(String sql, String tableName,Object param) {
+
+                     Map<String,String> metaObj = SwitchTableAspact.threadLocal.get();
+
+                     System.err.println("SwitchTableAspact.threadLocal.map= " +metaObj);
+
                     log.info(" SQL: "+ sql);
                     log.info(" SQL.param: "+ param);
                     if (param instanceof  ArticleCommentEntity){
