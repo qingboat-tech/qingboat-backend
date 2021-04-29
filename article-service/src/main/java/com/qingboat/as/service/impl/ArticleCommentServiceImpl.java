@@ -68,12 +68,13 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
         replyCommentEntity.setCreatedAt(new Date());
         replyCommentDao.insert(replyCommentEntity);
 
-//        ArticleCommentEntity entity = new ArticleCommentEntity();
-//        entity.setArticleId(replyCommentEntity.getArticleId());
-//        entity.setId(replyCommentEntity.getCommentId());
+        ArticleCommentEntity entity = new ArticleCommentEntity();
+        entity.setArticleId(replyCommentEntity.getArticleId());
+        entity.setId(replyCommentEntity.getCommentId());
+        entity.setReplyCount(1l);
 
-//        Long replyCount = articleCommentDao.updateReplyCount(entity);
-//        entity.setReplyCount(replyCount);
+        Long replyCount = articleCommentDao.updateReplyCount(entity);
+        entity.setReplyCount(replyCount);
 
         return replyCommentEntity;
     }
@@ -86,10 +87,24 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
         entity.setArticleId(articleId);
         entity.setUserId(userId);
         queryWrapper.setEntity(entity);
-        int rst = replyCommentDao.delete(queryWrapper);
-        if (rst>0){
-            return true;
+        entity = replyCommentDao.selectOne(queryWrapper);
+        if (entity!= null){
+            ReplyCommentEntity delEntity = new ReplyCommentEntity();
+            delEntity.setId(replyId);
+            delEntity.setArticleId(articleId);
+            queryWrapper.setEntity(delEntity);
+
+            int rst = replyCommentDao.delete(queryWrapper);
+            if (rst>0){
+                ArticleCommentEntity commentEntity = new ArticleCommentEntity();
+                commentEntity.setArticleId(articleId);
+                commentEntity.setId(entity.getCommentId());
+                commentEntity.setReplyCount(-1l);
+                Long replyCount = articleCommentDao.updateReplyCount(commentEntity);
+                return true;
+            }
         }
+
         return false;
     }
 

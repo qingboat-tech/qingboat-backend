@@ -3,11 +3,11 @@
 
 <mapper namespace="com.qingboat.as.dao.ArticleCommentDao">
 
-    <update id="updateReplyCount" parameterType="com.qingboat.as.entity.ArticleCommentEntity" >
-        <selectKey resultType="java.lang.Long" keyProperty="replyCount" order="AFTER">
-            SELECT ac.reply_count FROM apps_article_comment AS ac WHERE WHERE ac.id = #{id} AND ac.article_id = #{articleId}
-        </selectKey>
-        UPDATE apps_article_comment AS ac SET ac.reply_count = ac.reply_count+1 WHERE ac.id = #{id} AND ac.article_id = #{articleId}
+    <update id="updateReplyCount"  parameterType="com.qingboat.as.entity.ArticleCommentEntity" >
+<!--        <selectKey resultType="java.lang.Long"  order="AFTER">-->
+<!--            SELECT ac.reply_count FROM apps_article_comment AS ac WHERE ac.id = #{id} AND ac.article_id = #{articleId}-->
+<!--        </selectKey>-->
+        UPDATE apps_article_comment AS ac SET ac.reply_count = ac.reply_count+ #{replyCount} WHERE ac.id = #{id} AND ac.article_id = #{articleId}
     </update>
 
 </mapper>
