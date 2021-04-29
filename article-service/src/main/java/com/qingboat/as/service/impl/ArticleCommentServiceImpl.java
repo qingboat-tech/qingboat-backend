@@ -80,7 +80,7 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     }
 
     @Override
-    public boolean removeReplyComment(String articleId, Long replyId,Long userId) {
+    public boolean removeReplyComment(String articleId, Long replyId, Long userId) {
         QueryWrapper<ReplyCommentEntity> queryWrapper = new QueryWrapper<>();
         ReplyCommentEntity entity = new ReplyCommentEntity();
         entity.setId(replyId);

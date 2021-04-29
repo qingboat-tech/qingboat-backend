@@ -11,5 +11,6 @@ import java.io.Serializable;
 public class ArticleCommentVo {
     private String articleId;
     private String content;
+    private Long commentId;
 }
 
