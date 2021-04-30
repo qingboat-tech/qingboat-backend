@@ -21,7 +21,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping(value = "/comment")
 @Slf4j
-public class ArticleCommentController {
+public class ArticleCommentController extends BaseController {
 
 
     @Autowired
@@ -37,7 +37,7 @@ public class ArticleCommentController {
     @PostMapping(value = "/create")
     @ResponseBody
     public ArticleCommentEntity comment(@Valid @RequestBody ArticleCommentVo articleCommentVo){
-        String uidString = getUId();
+        String uidString = getUIdStr();
         Long uid = Long.parseLong(uidString);
 
         ArticleCommentEntity articleCommentEntity = new ArticleCommentEntity();
@@ -61,7 +61,7 @@ public class ArticleCommentController {
         return articleCommentService.removeArticleComment(
                 articleCommentVo.getArticleId(),
                 articleCommentVo.getCommentId(),
-                Long.parseLong(getUId()));
+                getUId());
     }
 
     // reply列表
@@ -69,20 +69,6 @@ public class ArticleCommentController {
     @ResponseBody
     public IPage<ArticleCommentEntity> list(@RequestParam("pageIndex") int pageIndex, @RequestParam("articleId") String articleId) {
         return articleCommentService.findArticleComment(articleId,pageIndex);
-    }
-
-    private String getUId(){
-        String StrUid = null;
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();//这个RequestContextHolder是Springmvc提供来获得请求的东西
-        if(requestAttributes !=null && requestAttributes instanceof  ServletRequestAttributes){
-            HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
-            Long uid = (Long) request.getAttribute("UID");
-            if (uid == null){
-                throw new BaseException(401,"AUTH_ERROR");
-            }
-            StrUid = String.valueOf(uid);
-        }
-        return StrUid;
     }
 
 

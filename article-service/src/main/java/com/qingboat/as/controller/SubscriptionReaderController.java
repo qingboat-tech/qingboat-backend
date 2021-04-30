@@ -26,7 +26,7 @@ import java.util.*;
 @RestController
 @RequestMapping(value = "/readersubscription")
 @Slf4j
-public class SubscriptionReaderController {
+public class SubscriptionReaderController extends BaseController {
 
     @Autowired
     private UserService userService;
@@ -70,20 +70,6 @@ public class SubscriptionReaderController {
         IPage<UserSubscriptionEntity> page = new Page<>(pageIndex, 10);
 
         return userSubscriptionService.page(page,queryWrapper);
-    }
-
-
-    private Long getUId(){
-        Long uid =  0l;
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();//这个RequestContextHolder是Springmvc提供来获得请求的东西
-        if(requestAttributes !=null && requestAttributes instanceof  ServletRequestAttributes){
-            HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
-            uid = (Long) request.getAttribute("UID");
-            if (uid == null){
-                throw new BaseException(401,"AUTH_ERROR");
-            }
-        }
-        return uid;
     }
 
 

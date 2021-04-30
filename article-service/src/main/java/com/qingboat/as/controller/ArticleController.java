@@ -32,7 +32,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping(value = "/article")
 @Slf4j
-public class ArticleController {
+public class ArticleController extends BaseController {
 
     @Autowired
     private ArticleService articleService;
@@ -55,7 +55,7 @@ public class ArticleController {
     @GetMapping(value = "/findDraftArticleList")
     @ResponseBody
     public Page<ArticleEntity> findDraftArticleList(@RequestParam("pageIndex") int pageIndex) {
-        String uid = getUId();
+        String uid = getUIdStr();
         return articleService.findDraftListByAuthorId(uid,pageIndex);
     }
 
@@ -65,7 +65,7 @@ public class ArticleController {
     @GetMapping(value = "/findReviewArticleList")
     @ResponseBody
     public Page<ArticleEntity> findReviewingArticleList(@RequestParam("pageIndex") int pageIndex) {
-        String uid = getUId();
+        String uid = getUIdStr();
         return articleService.findReviewListByAuthorId(uid,pageIndex);
     }
 
@@ -75,7 +75,7 @@ public class ArticleController {
     @GetMapping(value = "/findRefuseArticleList")
     @ResponseBody
     public Page<ArticleEntity> findRefuseArticleList(@RequestParam("pageIndex") int pageIndex) {
-        String uid = getUId();
+        String uid = getUIdStr();
         return articleService.findRefuseListByAuthorId(uid,pageIndex);
     }
 
@@ -85,7 +85,7 @@ public class ArticleController {
     @GetMapping(value = "/findPublishArticleList")
     @ResponseBody
     public Page<ArticleEntity> findPublishArticleList(@RequestParam("pageIndex") int pageIndex) {
-        String uid = getUId();
+        String uid = getUIdStr();
         return articleService.findPublishListByAuthorId(uid,pageIndex);
     }
 
@@ -95,7 +95,7 @@ public class ArticleController {
     @GetMapping(value = "/findByAuthorIdByUpdateTimeDesc")
     @ResponseBody
     public List<ArticleEntity> findByAuthorIdByUpdateTimeDesc() {
-        String uid = getUId();
+        String uid = getUIdStr();
         return articleService.findByAuthorIdByUpdateTimeDesc(uid);
     }
 
@@ -105,7 +105,7 @@ public class ArticleController {
     @GetMapping(value = "/findByAuthorIdByReadCountDesc")
     @ResponseBody
     public List<ArticleEntity> findByAuthorIdByReadCountDesc() {
-        String uid = getUId();
+        String uid = getUIdStr();
         return articleService.findByAuthorIdByReadCountDesc(uid);
     }
 
@@ -116,7 +116,7 @@ public class ArticleController {
     @ResponseBody
     public ArticleEntity findByArticleId(@PathVariable("id") String id)  {
         ArticleEntity articleEntity = articleService.findArticleById(id);
-        String userId = getUId();
+        String userId = getUIdStr();
         if (articleEntity !=null && userId.equals(articleEntity.getAuthorId()) ){
             return articleEntity;
         }else {
@@ -130,7 +130,7 @@ public class ArticleController {
     @PostMapping(value = "/")
     @ResponseBody
     public ArticleEntity saveArticle(@Valid @RequestBody ArticleEntity article) {
-        String uid = getUId();
+        String uid = getUIdStr();
         return articleService.saveArticle(article,uid);
     }
 
@@ -140,7 +140,7 @@ public class ArticleController {
     @DeleteMapping(value = "/{id}")
     @ResponseBody
     public Boolean delArticle(@PathVariable("id") String id) {
-        String uid = getUId();
+        String uid = getUIdStr();
         return articleService.removeArticleById(id,uid);
     }
 
@@ -150,7 +150,7 @@ public class ArticleController {
     @PostMapping(value = "/submitReview")
     @ResponseBody
     public Boolean submitReview(@Valid @RequestBody ArticlePublishVo articlePublishVo) {
-        String uid = getUId();
+        String uid = getUIdStr();
         Boolean rst =articleService.submitReviewByArticleId(articlePublishVo.getArticleId(),uid,articlePublishVo.getScope());
 
         //TODO 发送消息给氢舟客服，通知其审核。
@@ -181,7 +181,7 @@ public class ArticleController {
                 return articleEntity;
             }
 
-            String readerId = getUId();
+            String readerId = getUIdStr();
             String authorId = articleEntity.getAuthorId();
             if (readerId.equals(authorId)){
                 return articleEntity;
@@ -205,7 +205,7 @@ public class ArticleController {
     @PostMapping(value = "/star/{id}")
     @ResponseBody
     public Long star(@PathVariable("id") String id){
-        return articleService.handleStarCountByArticleId(id,Long.parseLong(getUId()));
+        return articleService.handleStarCountByArticleId(id,Long.parseLong(getUIdStr()));
     }
 
 
@@ -260,24 +260,6 @@ public class ArticleController {
         return  null;
 
     }
-
-
-
-
-    private String getUId(){
-        String StrUid = null;
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();//这个RequestContextHolder是Springmvc提供来获得请求的东西
-        if(requestAttributes !=null && requestAttributes instanceof  ServletRequestAttributes){
-            HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
-            Long uid = (Long) request.getAttribute("UID");
-            if (uid == null){
-                throw new BaseException(401,"AUTH_ERROR");
-            }
-            StrUid = String.valueOf(uid);
-        }
-        return StrUid;
-    }
-
 
 
 }

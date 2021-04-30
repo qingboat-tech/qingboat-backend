@@ -26,7 +26,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/creatorsubscription")
 @Slf4j
-public class UserSubscriptionController {
+public class UserSubscriptionController extends BaseController {
 
     @Autowired
     private UserService userService;
@@ -45,9 +45,9 @@ public class UserSubscriptionController {
     @GetMapping(value = "/list")
     @ResponseBody
     public IPage<UserSubscriptionEntity> findSubscriptionList(@RequestParam("pageIndex") int pageIndex) {
-        String uid = getUId();
+        Long uid = getUId();
         UserSubscriptionEntity entity = new UserSubscriptionEntity();
-        entity.setSubscriberId(Long.parseLong(uid));
+        entity.setSubscriberId(uid);
 
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntity(entity);
@@ -64,7 +64,7 @@ public class UserSubscriptionController {
     @ResponseBody
     public Integer getCurrentSubscriptionCount() {
         // TODO: redis缓存
-        String uid = getUId();
+        Long uid = getUId();
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(UserSubscriptionEntity::getCreatorId, uid);
         return userSubscriptionService.count(queryWrapper);
@@ -78,7 +78,7 @@ public class UserSubscriptionController {
     @ResponseBody
     public Integer getLastSubscriptionCount() {
         // TODO: redis缓存
-        String uid = getUId();
+        Long uid = getUId();
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
         LocalDate today = LocalDate.now();
         LocalDate yesterday = today.minusDays(1);
@@ -98,7 +98,7 @@ public class UserSubscriptionController {
     @GetMapping(value = "/getBenefits")
     @ResponseBody
     public List<BenefitEntity> getBenefits() {
-        String uid = getUId();
+        Long uid = getUId();
         return null;
     }
 
@@ -108,7 +108,7 @@ public class UserSubscriptionController {
     @PostMapping(value = "/tiers/add")
     @ResponseBody
     public MemberTierEntity addMemberTierEntityList() {
-        String uid = getUId();
+        Long uid = getUId();
         return null;
     }
 
@@ -118,7 +118,7 @@ public class UserSubscriptionController {
     @PostMapping(value = "/memberTiers/add")
     @ResponseBody
     public List<MemberTierBenefitEntity> addMemberTierBenefitEntityList() {
-        String uid = getUId();
+        Long uid = getUId();
         return null;
     }
 
@@ -131,7 +131,7 @@ public class UserSubscriptionController {
     @GetMapping(value = "/tiers")
     @ResponseBody
     public List<MemberTierEntity> getMemberTierEntityList(@RequestParam("pageIndex") int pageIndex) {
-        String uid = getUId();
+        Long uid = getUId();
         return null;
     }
 
@@ -141,7 +141,7 @@ public class UserSubscriptionController {
     @GetMapping(value = "/creators")
     @ResponseBody
     public List<UserSubscriptionEntity> getCreatorEntityList(@RequestParam("pageIndex") int pageIndex) {
-        String uid = getUId();
+        Long uid = getUId();
         return null;
     }
 
@@ -151,24 +151,10 @@ public class UserSubscriptionController {
 //    @GetMapping(value = "/tiers")
 //    @ResponseBody
 //    public List<MemberTierEntity> getMemberTierEntityList(@RequestParam("pageIndex") int pageIndex) {
-//        String uid = getUId();
+//        Long uid = getUId();
 //        return null;
 //    }
 
-
-    private String getUId(){
-        String StrUid = null;
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();//这个RequestContextHolder是Springmvc提供来获得请求的东西
-        if(requestAttributes !=null && requestAttributes instanceof  ServletRequestAttributes){
-            HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
-            Long uid = (Long) request.getAttribute("UID");
-            if (uid == null){
-                throw new BaseException(401,"AUTH_ERROR");
-            }
-            StrUid = String.valueOf(uid);
-        }
-        return StrUid;
-    }
 
 
 
