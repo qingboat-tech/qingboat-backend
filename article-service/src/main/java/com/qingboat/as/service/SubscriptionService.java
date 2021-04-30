@@ -1,7 +1,6 @@
 package com.qingboat.as.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.qingboat.as.entity.CreatorUserSubscriptionEntity;
 import com.qingboat.as.entity.UserSubscriptionEntity;
 
 public interface SubscriptionService {

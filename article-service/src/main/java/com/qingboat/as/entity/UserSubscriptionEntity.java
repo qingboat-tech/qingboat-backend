@@ -24,10 +24,13 @@ public class UserSubscriptionEntity implements Serializable {
     private Date startDate;
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date expire_date;
+    private Date expireDate;
 
     private Long  memberTierId;
-    private Long  orderId;
+
+    private String subscribeDuration = "month";  // month or year
+
+    private Long  orderId;    // 当是免费订阅的，则 orderId 为0 表示
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdAt;

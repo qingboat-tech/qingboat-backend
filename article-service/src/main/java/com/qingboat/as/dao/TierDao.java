@@ -1,12 +1,12 @@
 package com.qingboat.as.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.qingboat.as.entity.CreatorUserSubscriptionEntity;
+import com.qingboat.as.entity.TierEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @Mapper
-public interface CreatorUserSubscriptionDao extends BaseMapper<CreatorUserSubscriptionEntity> {
+public interface TierDao extends BaseMapper<TierEntity> {
 
 }
