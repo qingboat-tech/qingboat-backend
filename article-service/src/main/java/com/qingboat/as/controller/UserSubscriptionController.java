@@ -83,7 +83,10 @@ public class UserSubscriptionController {
         LocalDate today = LocalDate.now();
         LocalDate yesterday = today.minusDays(1);
         log.info(yesterday.toString() + LocalDate.now());
-        queryWrapper.lambda().gt(UserSubscriptionEntity::getCreatedAt, yesterday).lt(UserSubscriptionEntity::getCreatedAt, today);
+        queryWrapper.lambda().
+                gt(UserSubscriptionEntity::getCreatedAt, yesterday).
+                lt(UserSubscriptionEntity::getCreatedAt, today).
+                eq(UserSubscriptionEntity::getCreatorId, uid);
         return userSubscriptionService.count(queryWrapper);
 
     }
