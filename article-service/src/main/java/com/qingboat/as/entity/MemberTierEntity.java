@@ -26,6 +26,8 @@ public class MemberTierEntity implements Serializable {
     private Integer price ;  // 价格（分）
     private Double  discount;  //打折率（什么类型？）
     private String currency; //  币种
+
+    @TableField("`desc`")
     private String desc;  // 描述
 
     @TableField(exist = false)

@@ -2,29 +2,31 @@ package com.qingboat.as.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.qingboat.as.entity.*;
-
+import com.qingboat.as.entity.BenefitEntity;
+import com.qingboat.as.entity.MemberTierBenefitEntity;
+import com.qingboat.as.entity.MemberTierEntity;
+import com.qingboat.as.entity.UserSubscriptionEntity;
 import com.qingboat.as.service.UserService;
 import com.qingboat.as.service.UserSubscriptionService;
-
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.List;
 
 @RestController
-@RequestMapping(value = "/subscription")
+@RequestMapping(value = "/creatorsubscription")
 @Slf4j
-public class SubscriptionController {
+public class UserSubscriptionController {
 
     @Autowired
     private UserService userService;
@@ -35,7 +37,6 @@ public class SubscriptionController {
     @Autowired
     private UserSubscriptionService userSubscriptionService;
 
-
     //=======================针对 creator 接口=============================
 
     /**
@@ -44,9 +45,15 @@ public class SubscriptionController {
     @GetMapping(value = "/list")
     @ResponseBody
     public IPage<UserSubscriptionEntity> findSubscriptionList(@RequestParam("pageIndex") int pageIndex) {
-        Long uid = getUId();
+        String uid = getUId();
+        UserSubscriptionEntity entity = new UserSubscriptionEntity();
+        entity.setSubscriberId(Long.parseLong(uid));
 
-        return null;
+        QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.setEntity(entity);
+
+        IPage<UserSubscriptionEntity> page = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(pageIndex, 10);
+        return userSubscriptionService.page(page, queryWrapper);
     }
 
 
@@ -55,9 +62,13 @@ public class SubscriptionController {
      */
     @GetMapping(value = "/currentCount")
     @ResponseBody
-    public Integer getCurrentSubscriptionCount(@RequestParam("pageIndex") int pageIndex) {
-        Long uid = getUId();
-        return 0;
+    public Integer getCurrentSubscriptionCount() {
+        // TODO: redis缓存
+        String uid = getUId();
+        QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(UserSubscriptionEntity::getCreatorId, uid);
+        return userSubscriptionService.count(queryWrapper);
+
     }
 
     /**
@@ -65,9 +76,16 @@ public class SubscriptionController {
      */
     @GetMapping(value = "/lastCount")
     @ResponseBody
-    public Integer getLastSubscriptionCount(@RequestParam("pageIndex") int pageIndex) {
-        Long uid = getUId();
-        return 0;
+    public Integer getLastSubscriptionCount() {
+        // TODO: redis缓存
+        String uid = getUId();
+        QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
+        log.info(yesterday.toString() + LocalDate.now());
+        queryWrapper.lambda().gt(UserSubscriptionEntity::getCreatedAt, yesterday).lt(UserSubscriptionEntity::getCreatedAt, today);
+        return userSubscriptionService.count(queryWrapper);
+
     }
 
 
@@ -77,7 +95,7 @@ public class SubscriptionController {
     @GetMapping(value = "/getBenefits")
     @ResponseBody
     public List<BenefitEntity> getBenefits() {
-        Long uid = getUId();
+        String uid = getUId();
         return null;
     }
 
@@ -87,7 +105,7 @@ public class SubscriptionController {
     @PostMapping(value = "/tiers/add")
     @ResponseBody
     public MemberTierEntity addMemberTierEntityList() {
-        Long uid = getUId();
+        String uid = getUId();
         return null;
     }
 
@@ -97,7 +115,7 @@ public class SubscriptionController {
     @PostMapping(value = "/memberTiers/add")
     @ResponseBody
     public List<MemberTierBenefitEntity> addMemberTierBenefitEntityList() {
-        Long uid = getUId();
+        String uid = getUId();
         return null;
     }
 
@@ -110,7 +128,7 @@ public class SubscriptionController {
     @GetMapping(value = "/tiers")
     @ResponseBody
     public List<MemberTierEntity> getMemberTierEntityList(@RequestParam("pageIndex") int pageIndex) {
-        Long uid = getUId();
+        String uid = getUId();
         return null;
     }
 
@@ -119,16 +137,9 @@ public class SubscriptionController {
      */
     @GetMapping(value = "/creators")
     @ResponseBody
-    public IPage<UserSubscriptionEntity> getCreatorEntityList(@RequestParam("pageIndex") int pageIndex) {
-        UserSubscriptionEntity entity = new UserSubscriptionEntity();
-        entity.setSubscriberId(getUId());
-
-        QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.setEntity(entity);
-
-        IPage<UserSubscriptionEntity> page = new Page<>(pageIndex, 10);
-
-        return userSubscriptionService.page(page,queryWrapper);
+    public List<UserSubscriptionEntity> getCreatorEntityList(@RequestParam("pageIndex") int pageIndex) {
+        String uid = getUId();
+        return null;
     }
 
     /**
@@ -137,22 +148,23 @@ public class SubscriptionController {
 //    @GetMapping(value = "/tiers")
 //    @ResponseBody
 //    public List<MemberTierEntity> getMemberTierEntityList(@RequestParam("pageIndex") int pageIndex) {
-//        Long uid = getUId();
+//        String uid = getUId();
 //        return null;
 //    }
 
 
-    private Long getUId(){
-        Long uid =  0l;
+    private String getUId(){
+        String StrUid = null;
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();//这个RequestContextHolder是Springmvc提供来获得请求的东西
         if(requestAttributes !=null && requestAttributes instanceof  ServletRequestAttributes){
             HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
-            uid = (Long) request.getAttribute("UID");
+            Long uid = (Long) request.getAttribute("UID");
             if (uid == null){
                 throw new BaseException(401,"AUTH_ERROR");
             }
+            StrUid = String.valueOf(uid);
         }
-        return uid;
+        return StrUid;
     }
 
 

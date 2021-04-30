@@ -24,7 +24,7 @@ public class UserSubscriptionEntity implements Serializable {
     private Date startDate;
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date expire_Date;
+    private Date expire_date;
 
     private Long  memberTierId;
     private Long  orderId;
