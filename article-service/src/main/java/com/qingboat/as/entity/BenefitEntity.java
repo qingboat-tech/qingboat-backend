@@ -16,6 +16,8 @@ public class BenefitEntity implements Serializable  {
     @TableId(type = IdType.AUTO)
     private Long id;
 
+    private Long ownerId;
+
     private String name;
 
     private String desc;

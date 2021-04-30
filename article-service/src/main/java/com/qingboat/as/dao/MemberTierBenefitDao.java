@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @Mapper
-public interface MemberBenefitDao extends BaseMapper<MemberTierBenefitEntity> {
+public interface MemberTierBenefitDao extends BaseMapper<MemberTierBenefitEntity> {
 
 }
