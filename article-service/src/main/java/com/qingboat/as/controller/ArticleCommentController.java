@@ -2,35 +2,21 @@ package com.qingboat.as.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.qingboat.as.entity.ArticleCommentEntity;
-import com.qingboat.as.entity.ArticleEntity;
-import com.qingboat.as.entity.ReplyCommentEntity;
 import com.qingboat.as.entity.UserEntity;
 import com.qingboat.as.service.ArticleCommentService;
-import com.qingboat.as.service.ArticleService;
 import com.qingboat.as.service.UserService;
-import com.qingboat.as.utils.AliyunOssUtil;
-import com.qingboat.as.utils.RssUtil;
-import com.qingboat.as.utils.sensi.SensitiveFilter;
-import com.qingboat.as.vo.ArticleCommentDelVo;
 import com.qingboat.as.vo.ArticleCommentVo;
-import com.qingboat.as.vo.ArticlePublishVo;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
-import com.rometools.rome.io.FeedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.util.*;
 
 @RestController
 @RequestMapping(value = "/comment")
@@ -69,12 +55,12 @@ public class ArticleCommentController {
     // 删除
     @DeleteMapping(value = "/delete")
     @ResponseBody
-    public Boolean delComment(@Valid @RequestBody ArticleCommentDelVo articleCommentDelVo) {
+    public Boolean delComment(@Valid @RequestBody ArticleCommentVo articleCommentVo) {
 
         // TODO: service层验证这条评论是否可以删除，是不是自己的
         return articleCommentService.removeArticleComment(
-                articleCommentDelVo.getArticleId(),
-                articleCommentDelVo.getId(),
+                articleCommentVo.getArticleId(),
+                articleCommentVo.getCommentId(),
                 Long.parseLong(getUId()));
     }
 
