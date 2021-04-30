@@ -5,22 +5,16 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qingboat.as.entity.*;
 
-import com.qingboat.as.service.MemberTierBenefitService;
-import com.qingboat.as.service.MemberTierService;
+import com.qingboat.as.service.TierService;
 import com.qingboat.as.service.UserService;
 import com.qingboat.as.service.UserSubscriptionService;
 
 import com.qingboat.base.api.FeishuService;
-import com.qingboat.base.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
 
@@ -39,10 +33,9 @@ public class ReaderSubscriptionController extends BaseController {
     private UserSubscriptionService userSubscriptionService;
 
     @Autowired
-    private MemberTierService memberTierService;
+    private TierService tierService;
 
-    @Autowired
-    private MemberTierBenefitService memberTierBenefitService;
+
 
 
     //=======================针对 reader 接口=============================
@@ -51,21 +44,15 @@ public class ReaderSubscriptionController extends BaseController {
      */
     @GetMapping(value = "/tiers")
     @ResponseBody
-    public List<MemberTierEntity> getMemberTierEntityList(@Valid @RequestParam("creatorId") String creatorId) {
-        MemberTierEntity memberTierEntity = new MemberTierEntity();
-        memberTierEntity.setCreatorId(Long.parseLong(creatorId));
-        QueryWrapper<MemberTierEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.setEntity(memberTierEntity);
+    public List<TierEntity> getTierEntityList(@Valid @RequestParam("creatorId") Long creatorId) {
 
-        List<MemberTierEntity> list = memberTierService.list(queryWrapper);
-        if (list!=null && !list.isEmpty()){
-            for (MemberTierEntity entity :list ) {
-                QueryWrapper<MemberTierBenefitEntity> wrapper = new QueryWrapper<>();
-                wrapper.eq("member_tier_id",entity.getId());
-                entity.setMemberTierBenefitEntityList(memberTierBenefitService.list(wrapper));
-            }
-        }
-        return list;
+        TierEntity TierEntity = new TierEntity();
+        TierEntity.setCreatorId(creatorId);
+
+        QueryWrapper<TierEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.setEntity(TierEntity);
+
+        return tierService.list(queryWrapper);
     }
 
     /**
@@ -81,8 +68,120 @@ public class ReaderSubscriptionController extends BaseController {
         queryWrapper.setEntity(entity);
 
         IPage<UserSubscriptionEntity> page = new Page<>(pageIndex, 10);
+        //TODO 需要返回creator 昵称和图像
 
         return userSubscriptionService.page(page,queryWrapper);
+    }
+
+    /**
+     * 读者订阅 Creator Tier
+     */
+    @PostMapping(value = "/subscribe")
+    @ResponseBody
+    public UserSubscriptionEntity userSubscription(@RequestBody UserSubscriptionEntity userSubscriptionEntity) {
+
+        Long subscriberId = getUId();
+        Long  creatorId = userSubscriptionEntity.getCreatorId();
+        Long  memberTierId = userSubscriptionEntity.getMemberTierId();
+        Long orderId = userSubscriptionEntity.getOrderId();
+        TierEntity entity = tierService.getById(memberTierId);
+
+//        if (entity !=null){
+//            QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+//            UserSubscriptionEntity queryEntity = new UserSubscriptionEntity();
+//            queryEntity.setSubscriberId(subscriberId);
+//            queryEntity.setCreatorId(creatorId);
+//            UserSubscriptionEntity beforeUserSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
+//
+//            if (beforeUserSubscriptionEntity !=null){
+//                if (entity.getId().equals( beforeUserSubscriptionEntity.getMemberTierId() )){
+//                    //续订逻辑
+//                    if (beforeUserSubscriptionEntity.getOrderId().equals(0L)){ // 续订免费套餐，直接返回
+//                        return userSubscriptionEntity;
+//                    }else{
+//                        Date startTime = beforeUserSubscriptionEntity.getExpireDate();
+//                        Calendar cal = Calendar.getInstance();
+//                        cal.setTime(startTime);
+//
+//                        cal.add(Calendar.DAY_OF_MONTH,entity.getDuration());
+//
+//                        beforeUserSubscriptionEntity.setOrderId(orderId);
+//                        beforeUserSubscriptionEntity.setStartDate(startTime);
+//                        beforeUserSubscriptionEntity.setExpireDate(cal.getTime());
+//                        beforeUserSubscriptionEntity.setCreatedAt(null);
+//                        beforeUserSubscriptionEntity.setUpdatedAt(null);
+//                        userSubscriptionService.updateById(beforeUserSubscriptionEntity);
+//                    }
+//
+//                }else {
+//                    // 更改套餐，查询上次订阅的Tier
+//                    TierEntity beforeEntity = tierService.getById(beforeUserSubscriptionEntity.getMemberTierId());
+//                    beforeUserSubscriptionEntity.setMemberTierId(beforeEntity.getId());
+//
+//                    if(beforeUserSubscriptionEntity.getOrderId().equals(0L)){ // 上次是免费订阅的
+//                        Calendar cal = Calendar.getInstance();
+//                        cal.setTime(new Date());
+//                        cal.add(Calendar.DAY_OF_MONTH,entity.getDuration());
+//                        Date expireDate = cal.getTime();
+//
+//                        beforeUserSubscriptionEntity.setOrderId(orderId);
+//                        beforeUserSubscriptionEntity.setMemberTierId(memberTierId);
+//                        beforeUserSubscriptionEntity.setStartDate(new Date());
+//                        beforeUserSubscriptionEntity.setExpireDate(expireDate);
+//
+//                        beforeUserSubscriptionEntity.setCreatedAt(null);
+//                        beforeUserSubscriptionEntity.setUpdatedAt(null);
+//                        userSubscriptionService.updateById(beforeUserSubscriptionEntity);
+//
+//                    }else {
+//                        if (orderId.equals( 0l)){ //本次改为免费订阅
+//                            if (beforeUserSubscriptionEntity.getExpireDate().after(new Date())){
+//                                throw new BaseException(500,"上次订阅还未到期，不能转免费订阅");
+//                            }
+//                            Calendar cal = Calendar.getInstance();
+//                            cal.setTime(new Date());
+//                            cal.add(Calendar.YEAR,+30);
+//                            Date expireDate = cal.getTime();
+//
+//                            beforeUserSubscriptionEntity.setOrderId(orderId);
+//                            beforeUserSubscriptionEntity.setMemberTierId(memberTierId);
+//                            beforeUserSubscriptionEntity.setExpireDate(expireDate);
+//
+//                            beforeUserSubscriptionEntity.setCreatedAt(null);
+//                            beforeUserSubscriptionEntity.setUpdatedAt(null);
+//                            userSubscriptionService.updateById(beforeUserSubscriptionEntity);
+//
+//                        }else {
+//                            Date startTime = beforeUserSubscriptionEntity.getExpireDate();
+//                            Calendar cal = Calendar.getInstance();
+//                            cal.setTime(startTime);
+//                            cal.add(Calendar.DAY_OF_MONTH,entity.getDuration());
+//
+//
+//                            beforeUserSubscriptionEntity.setOrderId(orderId);
+//                            beforeUserSubscriptionEntity.setMemberTierId(memberTierId);
+//                            beforeUserSubscriptionEntity.setStartDate(startTime);
+//                            beforeUserSubscriptionEntity.setExpireDate(cal.getTime());
+//
+//                            beforeUserSubscriptionEntity.setCreatedAt(null);
+//                            beforeUserSubscriptionEntity.setUpdatedAt(null);
+//                            userSubscriptionService.updateById(beforeUserSubscriptionEntity);
+//
+//                        }
+//
+//                    }
+//
+//                }
+//            }else { //新订阅
+//              //  userSubscriptionEntity
+//
+//            }
+//
+//        }
+
+//        return userSubscriptionService.page(page,queryWrapper);
+
+        return null;
     }
 
 

@@ -3,26 +3,18 @@ package com.qingboat.as.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.qingboat.as.entity.BenefitEntity;
-import com.qingboat.as.entity.MemberTierBenefitEntity;
-import com.qingboat.as.entity.MemberTierEntity;
+import com.qingboat.as.entity.TierEntity;
 import com.qingboat.as.entity.UserSubscriptionEntity;
 import com.qingboat.as.service.BenefitService;
+import com.qingboat.as.service.TierService;
 import com.qingboat.as.service.UserService;
 import com.qingboat.as.service.UserSubscriptionService;
 import com.qingboat.base.api.FeishuService;
-import com.qingboat.base.exception.BaseException;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
-import java.time.Period;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -41,6 +33,9 @@ public class CreatorSubscriptionController extends BaseController {
 
     @Autowired
     private BenefitService benefitService;
+
+    @Autowired
+    private TierService tierService;
 
     //=======================针对 creator 接口=============================
 
@@ -102,40 +97,20 @@ public class CreatorSubscriptionController extends BaseController {
     @GetMapping(value = "/getBenefits")
     @ResponseBody
     public List<BenefitEntity> getBenefits() {
-
-        QueryWrapper<BenefitEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda()
-                .eq(BenefitEntity::getOwnerId, getUId());
-        Integer userCount = benefitService.count(queryWrapper);
-
-        if  (userCount.equals(0) ) {
-            QueryWrapper<BenefitEntity> queryWrapperSys = new QueryWrapper<>();
-            queryWrapperSys.lambda()
-                    .eq(BenefitEntity::getOwnerId, 0);
-            return benefitService.list(queryWrapperSys);
-        }
-
-        return benefitService.list(queryWrapper);
+        return benefitService.list();
     }
 
     /**
      * 创建会员等级的接口
      */
-    @PostMapping(value = "/tiers/add")
+    @PostMapping(value = "/tier/saveOrUpdate")
     @ResponseBody
-    public MemberTierEntity addMemberTierEntityList() {
+    public TierEntity addCreatorTierEntity(@RequestBody TierEntity tierEntity) {
         Long uid = getUId();
-        return null;
+        tierEntity.setCreatorId(uid);
+        tierService.saveOrUpdate(tierEntity);
+        return tierEntity;
     }
 
-    /**
-     * 创建会员和权益的组合关系表
-     */
-    @PostMapping(value = "/memberTiers/add")
-    @ResponseBody
-    public List<MemberTierBenefitEntity> addMemberTierBenefitEntityList() {
-        Long uid = getUId();
-        return null;
-    }
 
 }
