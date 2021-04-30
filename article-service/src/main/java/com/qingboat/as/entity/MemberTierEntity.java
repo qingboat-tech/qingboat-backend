@@ -23,7 +23,7 @@ public class MemberTierEntity implements Serializable {
     private Long creatorId; //用户id，creator的用户id
 
     private Integer duration;  // 周期 (单位：天)
-    private Double price ;  // 价格（分）
+    private Integer price ;  // 价格（分）
     private Double  discount;  //打折率（什么类型？）
     private String currency; //  币种
     private String desc;  // 描述
