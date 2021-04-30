@@ -35,7 +35,7 @@ public class MybatisConfig {
                 @Override
                 public String dynamicTableName(String sql, String tableName,Object param) {
 
-                     Map<String,String> metaObj = SwitchTableAspact.threadLocal.get();
+                     Map<String,Object> metaObj = SwitchTableAspact.getSwitchMeta();
 
                      System.err.println("SwitchTableAspact.threadLocal.map= " +metaObj);
 

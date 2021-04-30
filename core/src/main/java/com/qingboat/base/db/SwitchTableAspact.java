@@ -14,7 +14,24 @@ import java.util.Map;
 @Component
 public class SwitchTableAspact {
 
-    public static ThreadLocal< Map<String,String>> threadLocal = new ThreadLocal<>();
+    private static ThreadLocal< Map<String,Object>> switchMetaThreadLocal = new ThreadLocal<>();
+
+    public static void setSwitchMeta(String tableName,Object meta){
+        Map<String,Object> map = switchMetaThreadLocal.get();
+        if (map == null){
+            map = new HashMap<>();
+            switchMetaThreadLocal.set(map);
+        }
+        map.put(tableName,meta);
+    }
+    public static Map<String,Object> getSwitchMeta(){
+        return switchMetaThreadLocal.get();
+    }
+
+    public static void removeSwitchMeta(){
+        switchMetaThreadLocal.remove();
+    }
+
 
     @Pointcut("@annotation(com.qingboat.base.db.SwitchTable)")
     public void switchTable(){}
@@ -24,7 +41,7 @@ public class SwitchTableAspact {
         MethodSignature signature= (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
 
-        Map<String,String>  switchTableMap = new HashMap<>(); // Key：表名称，value：分表因子
+        Map<String,Object>  switchTableMap = new HashMap<>(); // Key：表名称，value：分表因子
 
         Parameter[] parameters = method.getParameters();
         Object[] args = joinPoint.getArgs();
@@ -36,19 +53,19 @@ public class SwitchTableAspact {
             }
         }
         if (!switchTableMap.isEmpty()){
-            threadLocal.set(switchTableMap);
+            switchMetaThreadLocal.set(switchTableMap);
             System.err.println(" ChangeTableAspact aspectBefore :" +switchTableMap);
         }
     }
     @After("switchTable()")
     public void aspectAfter(JoinPoint joinPoint) {
         System.err.println(" ChangeTableAspact aspectAfter " );
-        threadLocal.remove();
+        switchMetaThreadLocal.remove();
     }
     @AfterThrowing(value = "switchTable()",throwing="e")
     public void aspectAfterThrowing(JoinPoint joinPoint,Exception e) {
         System.err.println(" ChangeTableAspact aspectAfterThrowing " );
-        threadLocal.remove();
+        switchMetaThreadLocal.remove();
     }
 
 
