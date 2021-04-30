@@ -26,7 +26,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/creatorsubscription")
 @Slf4j
-public class UserSubscriptionController extends BaseController {
+public class CreatorSubscriptionController extends BaseController {
 
     @Autowired
     private UserService userService;

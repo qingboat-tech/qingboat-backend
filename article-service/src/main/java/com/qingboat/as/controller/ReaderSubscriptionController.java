@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qingboat.as.entity.*;
 
+import com.qingboat.as.service.MemberTierBenefitService;
 import com.qingboat.as.service.MemberTierService;
 import com.qingboat.as.service.UserService;
 import com.qingboat.as.service.UserSubscriptionService;
@@ -26,7 +27,7 @@ import java.util.*;
 @RestController
 @RequestMapping(value = "/readersubscription")
 @Slf4j
-public class SubscriptionReaderController extends BaseController {
+public class ReaderSubscriptionController extends BaseController {
 
     @Autowired
     private UserService userService;
@@ -40,6 +41,10 @@ public class SubscriptionReaderController extends BaseController {
     @Autowired
     private MemberTierService memberTierService;
 
+    @Autowired
+    private MemberTierBenefitService memberTierBenefitService;
+
+
     //=======================针对 reader 接口=============================
     /**
      * 获取某creator的全部会员等级的列表接口
@@ -52,7 +57,15 @@ public class SubscriptionReaderController extends BaseController {
         QueryWrapper<MemberTierEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntity(memberTierEntity);
 
-        return memberTierService.list(queryWrapper);
+        List<MemberTierEntity> list = memberTierService.list(queryWrapper);
+        if (list!=null && !list.isEmpty()){
+            for (MemberTierEntity entity :list ) {
+                QueryWrapper<MemberTierBenefitEntity> wrapper = new QueryWrapper<>();
+                wrapper.eq("member_tier_id",entity.getId());
+                entity.setMemberTierBenefitEntityList(memberTierBenefitService.list(wrapper));
+            }
+        }
+        return list;
     }
 
     /**
