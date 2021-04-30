@@ -1,29 +1,24 @@
 package com.qingboat.as.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qingboat.as.entity.*;
-import com.qingboat.as.service.ArticleCommentService;
-import com.qingboat.as.service.ArticleService;
+
 import com.qingboat.as.service.UserService;
-import com.qingboat.as.utils.AliyunOssUtil;
-import com.qingboat.as.utils.RssUtil;
-import com.qingboat.as.utils.sensi.SensitiveFilter;
-import com.qingboat.as.vo.ArticlePublishVo;
+import com.qingboat.as.service.UserSubscriptionService;
+
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
-import com.rometools.rome.io.FeedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.multipart.MultipartFile;
+
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -37,6 +32,9 @@ public class SubscriptionController {
     @Autowired
     private FeishuService feishuService;
 
+    @Autowired
+    private UserSubscriptionService userSubscriptionService;
+
 
     //=======================针对 creator 接口=============================
 
@@ -45,8 +43,9 @@ public class SubscriptionController {
      */
     @GetMapping(value = "/list")
     @ResponseBody
-    public Page<UserSubscriptionEntity> findSubscriptionList(@RequestParam("pageIndex") int pageIndex) {
-        String uid = getUId();
+    public IPage<UserSubscriptionEntity> findSubscriptionList(@RequestParam("pageIndex") int pageIndex) {
+        Long uid = getUId();
+
         return null;
     }
 
@@ -57,7 +56,7 @@ public class SubscriptionController {
     @GetMapping(value = "/currentCount")
     @ResponseBody
     public Integer getCurrentSubscriptionCount(@RequestParam("pageIndex") int pageIndex) {
-        String uid = getUId();
+        Long uid = getUId();
         return 0;
     }
 
@@ -67,7 +66,7 @@ public class SubscriptionController {
     @GetMapping(value = "/lastCount")
     @ResponseBody
     public Integer getLastSubscriptionCount(@RequestParam("pageIndex") int pageIndex) {
-        String uid = getUId();
+        Long uid = getUId();
         return 0;
     }
 
@@ -78,7 +77,7 @@ public class SubscriptionController {
     @GetMapping(value = "/getBenefits")
     @ResponseBody
     public List<BenefitEntity> getBenefits() {
-        String uid = getUId();
+        Long uid = getUId();
         return null;
     }
 
@@ -88,7 +87,7 @@ public class SubscriptionController {
     @PostMapping(value = "/tiers/add")
     @ResponseBody
     public MemberTierEntity addMemberTierEntityList() {
-        String uid = getUId();
+        Long uid = getUId();
         return null;
     }
 
@@ -98,7 +97,7 @@ public class SubscriptionController {
     @PostMapping(value = "/memberTiers/add")
     @ResponseBody
     public List<MemberTierBenefitEntity> addMemberTierBenefitEntityList() {
-        String uid = getUId();
+        Long uid = getUId();
         return null;
     }
 
@@ -111,7 +110,7 @@ public class SubscriptionController {
     @GetMapping(value = "/tiers")
     @ResponseBody
     public List<MemberTierEntity> getMemberTierEntityList(@RequestParam("pageIndex") int pageIndex) {
-        String uid = getUId();
+        Long uid = getUId();
         return null;
     }
 
@@ -120,9 +119,16 @@ public class SubscriptionController {
      */
     @GetMapping(value = "/creators")
     @ResponseBody
-    public List<UserSubscriptionEntity> getCreatorEntityList(@RequestParam("pageIndex") int pageIndex) {
-        String uid = getUId();
-        return null;
+    public IPage<UserSubscriptionEntity> getCreatorEntityList(@RequestParam("pageIndex") int pageIndex) {
+        UserSubscriptionEntity entity = new UserSubscriptionEntity();
+        entity.setSubscriberId(getUId());
+
+        QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.setEntity(entity);
+
+        IPage<UserSubscriptionEntity> page = new Page<>(pageIndex, 10);
+
+        return userSubscriptionService.page(page,queryWrapper);
     }
 
     /**
@@ -131,23 +137,22 @@ public class SubscriptionController {
 //    @GetMapping(value = "/tiers")
 //    @ResponseBody
 //    public List<MemberTierEntity> getMemberTierEntityList(@RequestParam("pageIndex") int pageIndex) {
-//        String uid = getUId();
+//        Long uid = getUId();
 //        return null;
 //    }
 
 
-    private String getUId(){
-        String StrUid = null;
+    private Long getUId(){
+        Long uid =  0l;
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();//这个RequestContextHolder是Springmvc提供来获得请求的东西
         if(requestAttributes !=null && requestAttributes instanceof  ServletRequestAttributes){
             HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
-            Long uid = (Long) request.getAttribute("UID");
+            uid = (Long) request.getAttribute("UID");
             if (uid == null){
                 throw new BaseException(401,"AUTH_ERROR");
             }
-            StrUid = String.valueOf(uid);
         }
-        return StrUid;
+        return uid;
     }
 
 
