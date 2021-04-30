@@ -6,6 +6,7 @@ import com.qingboat.as.entity.BenefitEntity;
 import com.qingboat.as.entity.MemberTierBenefitEntity;
 import com.qingboat.as.entity.MemberTierEntity;
 import com.qingboat.as.entity.UserSubscriptionEntity;
+import com.qingboat.as.service.BenefitService;
 import com.qingboat.as.service.UserService;
 import com.qingboat.as.service.UserSubscriptionService;
 import com.qingboat.base.api.FeishuService;
@@ -21,6 +22,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -36,6 +38,9 @@ public class CreatorSubscriptionController extends BaseController {
 
     @Autowired
     private UserSubscriptionService userSubscriptionService;
+
+    @Autowired
+    private BenefitService benefitService;
 
     //=======================针对 creator 接口=============================
 
@@ -82,7 +87,6 @@ public class CreatorSubscriptionController extends BaseController {
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
         LocalDate today = LocalDate.now();
         LocalDate yesterday = today.minusDays(1);
-        log.info(yesterday.toString() + LocalDate.now());
         queryWrapper.lambda().
                 gt(UserSubscriptionEntity::getCreatedAt, yesterday).
                 lt(UserSubscriptionEntity::getCreatedAt, today).
@@ -98,8 +102,20 @@ public class CreatorSubscriptionController extends BaseController {
     @GetMapping(value = "/getBenefits")
     @ResponseBody
     public List<BenefitEntity> getBenefits() {
-        Long uid = getUId();
-        return null;
+
+        QueryWrapper<BenefitEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(BenefitEntity::getOwnerId, getUId());
+        Integer userCount = benefitService.count(queryWrapper);
+
+        if  (userCount.equals(0) ) {
+            QueryWrapper<BenefitEntity> queryWrapperSys = new QueryWrapper<>();
+            queryWrapperSys.lambda()
+                    .eq(BenefitEntity::getOwnerId, 0);
+            return benefitService.list(queryWrapperSys);
+        }
+
+        return benefitService.list(queryWrapper);
     }
 
     /**
@@ -121,41 +137,5 @@ public class CreatorSubscriptionController extends BaseController {
         Long uid = getUId();
         return null;
     }
-
-
-
-    //=======================针对 reader 接口=============================
-    /**
-     * 获取某creator的全部会员等级的列表接口
-     */
-    @GetMapping(value = "/tiers")
-    @ResponseBody
-    public List<MemberTierEntity> getMemberTierEntityList(@RequestParam("pageIndex") int pageIndex) {
-        Long uid = getUId();
-        return null;
-    }
-
-    /**
-     * 读者获取订阅的creator用户列表
-     */
-    @GetMapping(value = "/creators")
-    @ResponseBody
-    public List<UserSubscriptionEntity> getCreatorEntityList(@RequestParam("pageIndex") int pageIndex) {
-        Long uid = getUId();
-        return null;
-    }
-
-    /**
-     * 获取该阅读者
-     */
-//    @GetMapping(value = "/tiers")
-//    @ResponseBody
-//    public List<MemberTierEntity> getMemberTierEntityList(@RequestParam("pageIndex") int pageIndex) {
-//        Long uid = getUId();
-//        return null;
-//    }
-
-
-
 
 }
