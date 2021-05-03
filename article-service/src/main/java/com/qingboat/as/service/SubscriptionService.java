@@ -20,9 +20,5 @@ public interface SubscriptionService {
     IPage<UserSubscriptionEntity> getUserSubscriptionList(Long userId);
 
 
-    /**
-     * 查询创作者户订阅列表（根据创作者Id分表）
-     */
-    IPage<CreatorUserSubscriptionEntity> getCreatorUserSubscriptionAllList(Long creatorId);
 
 }

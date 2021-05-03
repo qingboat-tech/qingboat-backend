@@ -233,8 +233,7 @@ public class ArticleController extends BaseController {
             throw new BaseException(500,"未订阅用户，禁止分享");
         }
 
-        String rawContent = articleEntity.getAuthorId() +"##" + articleId+"##"+  getUIdStr();
-        String refKey = AesEncryptUtils.encrypt(rawContent);
+        String refKey = articleEntity.getAuthorId() +"#" + articleId+"#"+  getUIdStr();
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_MONTH,10);
 
@@ -262,10 +261,19 @@ public class ArticleController extends BaseController {
             // 处理推荐逻辑，每个订阅者最多分享给5个好友阅读
             if (ref!= null){
                 try {
-                    String refKey = AesEncryptUtils.decrypt(ref);
-                    String[] refContent = refKey.split("##"); //验证其合法性
+                    String[] refContent = ref.split("#"); //验证其合法性
                     //refContent[0]  = authorId; refContent[1] = articleId; refContent[2] = subscriberId;
                     if (refContent!=null && refContent.length ==3 && authorId.equals(refContent[0]) && id.equals(refContent[1])){
+                        QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+                        queryWrapper.lambda()
+                                .eq(UserSubscriptionEntity::getSubscriberId,refContent[2])
+                                .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(articleEntity.getAuthorId()))
+                                .le(UserSubscriptionEntity::getExpireDate,new Date());
+                        UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
+                        if (userSubscriptionEntity==null){
+                            throw new BaseException(500,"本次分享已失效");
+                        }
+
                         if (redisUtil.isMember(ref,readerId)){
                             articleService.increaseReadCountByArticleId(id);//增加该文章阅读数
                             return articleEntity;

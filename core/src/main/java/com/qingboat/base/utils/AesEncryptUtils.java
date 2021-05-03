@@ -56,4 +56,16 @@ public class AesEncryptUtils {
     public static String decrypt(String encryptStr) throws Exception {
         return decrypt(encryptStr, KEY);
     }
+
+
+    public static void main(String[] arg) throws Exception {
+        String c = "21##607ea0ef7da9c379cebcc3f6##22";
+        String s = AesEncryptUtils.encrypt(c);
+        System.err.println( s );
+
+        s = AesEncryptUtils.decrypt(c);
+
+        System.err.println( s );
+
+    }
 }
