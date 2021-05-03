@@ -7,16 +7,19 @@ import com.qingboat.as.service.ArticleService;
 import com.qingboat.as.service.UserService;
 import com.qingboat.as.service.UserSubscriptionService;
 import com.qingboat.as.utils.AliyunOssUtil;
+import com.qingboat.as.utils.RedisUtil;
 import com.qingboat.as.utils.RssUtil;
 import com.qingboat.as.utils.sensi.SensitiveFilter;
 import com.qingboat.as.vo.ArticleCommentVo;
 import com.qingboat.as.vo.ArticlePublishVo;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
+import com.qingboat.base.utils.AesEncryptUtils;
 import com.rometools.rome.io.FeedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestAttributes;
@@ -49,6 +52,9 @@ public class ArticleController extends BaseController {
 
     @Autowired
     private UserSubscriptionService userSubscriptionService;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     //=======================针对 creator 接口=============================
 
@@ -168,6 +174,12 @@ public class ArticleController extends BaseController {
 
     //=======================针对 reader 接口=============================
 
+    /**
+     *
+     * @param pageIndex
+     * @param scope  0:表示免费；1：表示付费；-1：表示全部
+     * @return
+     */
     @RequestMapping(value = "/subscriptionArticleList", method = RequestMethod.GET)
     public Page<ArticleEntity> subscriptionArticleList(@RequestParam("pageIndex") int pageIndex, @RequestParam("scope") int scope) {
         Long subscriberId = getUId();
@@ -201,10 +213,45 @@ public class ArticleController extends BaseController {
         return  articleService.findByAuthorIdsAndScope(creatorIds,scope,pageIndex);
     }
 
+    @GetMapping(value = "/getRefKey")
+    public Map<String,Object> getRefKey(@RequestParam("articleId") String articleId) throws  Exception{
+        Map<String,Object> rstMap = new HashMap<>();
 
+        ArticleEntity articleEntity = articleService.findBaseInfoById(articleId);
+        if (articleEntity  == null){
+            throw  new BaseException(500,"推荐的文章不存在");
+        }
+        //检查该用户是否已订阅
+        QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(UserSubscriptionEntity::getSubscriberId,getUId())
+                .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(articleEntity.getAuthorId()))
+                .le(UserSubscriptionEntity::getExpireDate,new Date());
+        UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
 
+        if (userSubscriptionEntity == null){
+            throw new BaseException(500,"未订阅用户，禁止分享");
+        }
+
+        String rawContent = articleEntity.getAuthorId() +"##" + articleId+"##"+  getUIdStr();
+        String refKey = AesEncryptUtils.encrypt(rawContent);
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH,10);
+
+        rstMap.put("ref",refKey);
+        rstMap.put("expire",cal.getTime());
+
+        return rstMap;
+    }
+
+    /**
+     *
+     * @param id
+     * @param ref  推荐者唯一值
+     * @return
+     */
     @GetMapping(value = "/{id}")
-    public ArticleEntity viewArticleByArticleId(@PathVariable("id") String id) {
+    public ArticleEntity viewArticleByArticleId(@PathVariable("id") String id,@RequestParam("ref") String ref ) {
         ArticleEntity articleEntity = articleService.findArticleById(id);
         if (articleEntity!=null){
             String readerId = getUIdStr();
@@ -212,6 +259,32 @@ public class ArticleController extends BaseController {
             if (readerId.equals(authorId)){
                 return articleEntity;
             }
+            // 处理推荐逻辑，每个订阅者最多分享给5个好友阅读
+            if (ref!= null){
+                try {
+                    String refKey = AesEncryptUtils.decrypt(ref);
+                    String[] refContent = refKey.split("##"); //验证其合法性
+                    //refContent[0]  = authorId; refContent[1] = articleId; refContent[2] = subscriberId;
+                    if (refContent!=null && refContent.length ==3 && authorId.equals(refContent[0]) && id.equals(refContent[1])){
+                        if (redisUtil.isMember(ref,readerId)){
+                            articleService.increaseReadCountByArticleId(id);//增加该文章阅读数
+                            return articleEntity;
+                        }
+                        long size = redisUtil.size(ref);
+                        if (size> 5){
+                            throw new BaseException(500,"本次分享超出限量阅读，下次要手快哦");
+                        }else {
+                            redisUtil.sSet(ref,readerId);
+                            articleService.increaseReadCountByArticleId(id);//增加该文章阅读数
+                            return articleEntity;
+                        }
+                    }
+
+                } catch (Exception e) {
+                    throw new BaseException(500,"ref是参数无效");
+                }
+            }
+
             // 获取订阅信息
             QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
             queryWrapper.lambda()

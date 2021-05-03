@@ -100,5 +100,7 @@ public interface ArticleService {
 
     Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds,int pageIndex,int  scope);
 
+    ArticleEntity findBaseInfoById(String articleId);
+
 
 }

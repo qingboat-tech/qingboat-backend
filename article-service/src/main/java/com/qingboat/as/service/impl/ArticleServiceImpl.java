@@ -325,7 +325,15 @@ public class ArticleServiceImpl implements ArticleService {
         if ( authorIds == null || authorIds.isEmpty()){
             return  null;
         }
-        if (scope!=0 && scope!=1){
+        List<Integer> scopeList = new ArrayList<>();
+        if (scope ==0){
+            scopeList.add(0);
+        }else if (scope ==1){
+            scopeList.add(1);
+        }else if (scope ==-1){
+            scopeList.add(0);
+            scopeList.add(1);
+        }else {
             throw new BaseException(500,"ArticleEntity_scope_error");
         }
         if (pageIndex<0){
@@ -334,8 +342,13 @@ public class ArticleServiceImpl implements ArticleService {
         Sort sort = Sort.by(Sort.Direction.DESC, "createdTime");
         Pageable pageable = PageRequest.of(pageIndex, 10, sort);
 
-        Page<ArticleEntity> page = articleMongoDao.findByAuthorIdsAndScopeAndStatus(authorIds,scope,4,pageable);
+        Page<ArticleEntity> page = articleMongoDao.findByAuthorIdsAndScopeAndStatus(authorIds,scopeList,4,pageable);
         return page;
+    }
+
+    @Override
+    public ArticleEntity findBaseInfoById(String articleId){
+        return this.articleMongoDao.findBaseInfoById(articleId);
     }
 
 
