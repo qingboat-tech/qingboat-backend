@@ -15,11 +15,13 @@ public class BenefitEntity implements Serializable  {
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    private String category;
+    private String key;
 
     private String title;
 
     @TableField("`desc`")
     private String desc;
+
+    private String category;
 
 }

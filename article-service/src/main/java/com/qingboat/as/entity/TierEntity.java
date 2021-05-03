@@ -27,7 +27,6 @@ public class TierEntity implements Serializable {
 
     private Long creatorId; //用户id，creator的用户id
 
-    private Integer monthDuration = 30;  // 周期 (单位：天)
     private Integer monthPrice ;  // 价格（分）
     private Double  monthDiscount;  //打折率（什么类型？）
 
@@ -35,9 +34,10 @@ public class TierEntity implements Serializable {
     @TableField(exist = false)
     private String subscribeDuration = "month";  // month or year
 
-    private Integer yearDuration = 365;  // 周期 (单位：天)
     private Integer yearPrice ;  // 价格（分）
     private Double  yearDiscount;  //打折率（什么类型？）
+
+    private Integer limit; //限量设置
 
     private String currency; //  币种
 
