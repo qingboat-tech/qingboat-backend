@@ -1,11 +1,11 @@
 package com.qingboat.as.controller;
 
-import com.qingboat.as.entity.ArticleCommentEntity;
-import com.qingboat.as.entity.ArticleEntity;
-import com.qingboat.as.entity.UserEntity;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.qingboat.as.entity.*;
 import com.qingboat.as.service.ArticleCommentService;
 import com.qingboat.as.service.ArticleService;
 import com.qingboat.as.service.UserService;
+import com.qingboat.as.service.UserSubscriptionService;
 import com.qingboat.as.utils.AliyunOssUtil;
 import com.qingboat.as.utils.RssUtil;
 import com.qingboat.as.utils.sensi.SensitiveFilter;
@@ -25,6 +25,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -46,6 +47,8 @@ public class ArticleController extends BaseController {
     @Autowired
     private FeishuService feishuService;
 
+    @Autowired
+    private UserSubscriptionService userSubscriptionService;
 
     //=======================针对 creator 接口=============================
 
@@ -165,36 +168,74 @@ public class ArticleController extends BaseController {
 
     //=======================针对 reader 接口=============================
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public Page<ArticleEntity> list() {
-        //TODO 很复杂
-        return null;
+    @RequestMapping(value = "/subscriptionArticleList", method = RequestMethod.GET)
+    public Page<ArticleEntity> subscriptionArticleList(@RequestParam("pageIndex") int pageIndex, @RequestParam("scope") int scope) {
+        Long subscriberId = getUId();
+
+        QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+        LocalDate today = LocalDate.now();
+        queryWrapper.lambda()
+                .eq(UserSubscriptionEntity::getSubscriberId,subscriberId)
+                .lt(UserSubscriptionEntity::getExpireDate,today);
+
+        List<UserSubscriptionEntity> subscriptionEntityList = userSubscriptionService.list(queryWrapper);
+        if (subscriptionEntityList == null || subscriptionEntityList.isEmpty()){
+            return null;
+        }
+
+        List<String> creatorIds = new ArrayList<>();
+        if (scope  ==0){
+            for (UserSubscriptionEntity s: subscriptionEntityList) {
+                creatorIds.add(String.valueOf(s.getCreatorId()));
+            }
+        }else if (scope == 1){
+            for (UserSubscriptionEntity s: subscriptionEntityList) {
+                for (BenefitEntity benefitEntity : s.getBenefitList()) {
+                    if ("READ".equals(benefitEntity.getKey())) {
+                        creatorIds.add(String.valueOf(s.getCreatorId()));
+                        break;
+                    }
+                }
+            }
+        }
+        return  articleService.findByAuthorIdsAndScope(creatorIds,scope,pageIndex);
     }
+
+
 
     @GetMapping(value = "/{id}")
     public ArticleEntity viewArticleByArticleId(@PathVariable("id") String id) {
         ArticleEntity articleEntity = articleService.findArticleById(id);
         if (articleEntity!=null){
-
-            if (articleEntity.getScope() ==0){
-                articleService.increaseReadCountByArticleId(id);//增加该文章阅读数
-                return articleEntity;
-            }
-
             String readerId = getUIdStr();
             String authorId = articleEntity.getAuthorId();
             if (readerId.equals(authorId)){
                 return articleEntity;
             }
-
-            //TODO  检查该readerId 是否订阅了authorId
-            if(true){
-                articleService.increaseReadCountByArticleId(id);//增加该文章阅读数
-                return articleEntity;
-            }else {
-                articleEntity.setData(null);
-                return articleEntity;
+            // 获取订阅信息
+            QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda()
+                    .eq(UserSubscriptionEntity::getSubscriberId,getUId())
+                    .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(articleEntity.getAuthorId()))
+                    .le(UserSubscriptionEntity::getExpireDate,new Date());
+            UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
+            if (userSubscriptionEntity !=null ){
+                if (Integer.valueOf(0).equals(articleEntity.getScope()) ){ //免费文章
+                    articleService.increaseReadCountByArticleId(id);//增加该文章阅读数
+                    return articleEntity;
+                }else{//付费文章
+                    for (BenefitEntity benefitEntity :  userSubscriptionEntity.getBenefitList()) {
+                        if ("READ".equals(benefitEntity.getKey())){
+                            articleService.increaseReadCountByArticleId(id);//增加该文章阅读数
+                            return articleEntity;
+                        }
+                    }
+                    //TODO 免费订阅后，查看付费文章（处理试读）
+                    return articleEntity;
+                }
             }
+            //TODO 没有订阅，查看付费文章（处理试读）
+            return articleEntity;
         }
         return articleEntity;
 

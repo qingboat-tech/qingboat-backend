@@ -7,15 +7,13 @@ import com.qingboat.as.dao.ArticleCommentDao;
 import com.qingboat.as.dao.ReplyCommentDao;
 import com.qingboat.as.entity.ArticleCommentEntity;
 import com.qingboat.as.entity.ReplyCommentEntity;
-import com.qingboat.as.entity.UserEntity;
 import com.qingboat.as.service.ArticleCommentService;
+import com.qingboat.as.service.ArticleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Service
 @Slf4j
@@ -28,11 +26,16 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     @Autowired
     private ReplyCommentDao replyCommentDao;
 
+    @Autowired
+    private ArticleService articleService;
+
     @Override
     public ArticleCommentEntity addArticleComment(ArticleCommentEntity articleCommentEntity) {
         articleCommentEntity.setCreatedAt(new Date());
         articleCommentEntity.setReplyCount(0l);
         articleCommentDao.insert(articleCommentEntity);
+        //修改增加文章评论的数目
+        articleService.increaseCommentCountByArticleId(articleCommentEntity.getArticleId());
         return articleCommentEntity;
     }
 
@@ -46,6 +49,8 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
         queryWrapper.setEntity(entity);
         int rst = articleCommentDao.delete(queryWrapper);
         if (rst>0){
+            //修改减少文章评论的数目
+            articleService.decreaseCommentCountByArticleId(articleId);
             return true;
         }
         return false;

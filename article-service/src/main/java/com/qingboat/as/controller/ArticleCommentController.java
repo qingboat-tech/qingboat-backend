@@ -1,10 +1,12 @@
 package com.qingboat.as.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.qingboat.as.entity.ArticleCommentEntity;
-import com.qingboat.as.entity.UserEntity;
+import com.qingboat.as.entity.*;
 import com.qingboat.as.service.ArticleCommentService;
+import com.qingboat.as.service.ArticleService;
 import com.qingboat.as.service.UserService;
+import com.qingboat.as.service.UserSubscriptionService;
 import com.qingboat.as.vo.ArticleCommentVo;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
@@ -17,6 +19,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Date;
 
 @RestController
 @RequestMapping(value = "/comment")
@@ -33,31 +36,36 @@ public class ArticleCommentController extends BaseController {
     @Autowired
     private FeishuService feishuService;
 
+    @Autowired
+    UserSubscriptionService userSubscriptionService;
+
+    @Autowired
+    private ArticleService articleService;
+
     // 评论
     @PostMapping(value = "/create")
     @ResponseBody
     public ArticleCommentEntity comment(@Valid @RequestBody ArticleCommentVo articleCommentVo){
-        String uidString = getUIdStr();
-        Long uid = Long.parseLong(uidString);
+        Long uid = getUId();
+        if (checkCommentBenefit(articleCommentVo.getArticleId()) ){
+            ArticleCommentEntity articleCommentEntity = new ArticleCommentEntity();
+            articleCommentEntity.setArticleId(articleCommentVo.getArticleId());
+            articleCommentEntity.setContent(articleCommentVo.getContent());
+            articleCommentEntity.setUserId(uid);
 
-        ArticleCommentEntity articleCommentEntity = new ArticleCommentEntity();
-        articleCommentEntity.setArticleId(articleCommentVo.getArticleId());
-        articleCommentEntity.setContent(articleCommentVo.getContent());
-        articleCommentEntity.setUserId(uid);
+            UserEntity userOperate = userService.findByUserId(uid);
+            articleCommentEntity.setHeadImgUrl(userOperate.getHeadimgUrl());
+            articleCommentEntity.setNickName(userOperate.getNickname());
 
-        UserEntity userOperate = userService.findByUserId(uid);
-        articleCommentEntity.setHeadImgUrl(userOperate.getHeadimgUrl());
-        articleCommentEntity.setNickName(userOperate.getNickname());
-
-        return articleCommentService.addArticleComment(articleCommentEntity);
+            return articleCommentService.addArticleComment(articleCommentEntity);
+        }
+        throw new BaseException(500,"该用户没有评论权限");
     }
 
     // 删除
     @DeleteMapping(value = "/delete")
     @ResponseBody
     public Boolean delComment(@Valid @RequestBody ArticleCommentVo articleCommentVo) {
-
-        // TODO: service层验证这条评论是否可以删除，是不是自己的
         return articleCommentService.removeArticleComment(
                 articleCommentVo.getArticleId(),
                 articleCommentVo.getCommentId(),
@@ -69,6 +77,33 @@ public class ArticleCommentController extends BaseController {
     @ResponseBody
     public IPage<ArticleCommentEntity> list(@RequestParam("pageIndex") int pageIndex, @RequestParam("articleId") String articleId) {
         return articleCommentService.findArticleComment(articleId,pageIndex);
+    }
+
+
+    private boolean checkCommentBenefit(String articleId){
+        ArticleEntity articleEntity = articleService.findArticleById(articleId);
+        if (articleEntity == null){
+            throw  new BaseException(500,"评论的文章不存在");
+        }
+        boolean can = false;
+        if (getUIdStr().equals(articleEntity.getAuthorId())){
+            return true;
+        }else {
+            QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda()
+                    .eq(UserSubscriptionEntity::getCreatorId ,Long.parseLong(articleEntity.getAuthorId()))
+                    .eq(UserSubscriptionEntity::getSubscriberId,getUId())
+                    .le(UserSubscriptionEntity::getExpireDate,new Date());
+            UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
+            if (userSubscriptionEntity!=null){
+                for (BenefitEntity benefitEntity :userSubscriptionEntity.getBenefitList()) {
+                    if ("COMMENT".equals(benefitEntity.getKey())){
+                       return true;
+                    }
+                }
+            }
+        }
+        throw new BaseException(500,"该用户没有评论权限");
     }
 
 

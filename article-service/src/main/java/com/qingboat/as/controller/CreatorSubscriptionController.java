@@ -2,8 +2,10 @@ package com.qingboat.as.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qingboat.as.entity.BenefitEntity;
 import com.qingboat.as.entity.TierEntity;
+import com.qingboat.as.entity.UserEntity;
 import com.qingboat.as.entity.UserSubscriptionEntity;
 import com.qingboat.as.service.BenefitService;
 import com.qingboat.as.service.TierService;
@@ -47,12 +49,17 @@ public class CreatorSubscriptionController extends BaseController {
     public IPage<UserSubscriptionEntity> findSubscriptionList(@RequestParam("pageIndex") int pageIndex) {
         Long uid = getUId();
         UserSubscriptionEntity entity = new UserSubscriptionEntity();
-        entity.setSubscriberId(uid);
+        entity.setCreatorId(uid);
 
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntity(entity);
 
-        IPage<UserSubscriptionEntity> page = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(pageIndex, 10);
+        IPage<UserSubscriptionEntity> page = new Page<>(pageIndex, 10);
+        for (UserSubscriptionEntity user: page.getRecords()) {
+            UserEntity u = userService.findByUserId(user.getSubscriberId());
+            user.setSubscriberNickname(u.getNickname());
+            user.setSubscriberHeadImgUrl(u.getHeadimgUrl());
+        }
         return userSubscriptionService.page(page, queryWrapper);
     }
 
@@ -92,7 +99,7 @@ public class CreatorSubscriptionController extends BaseController {
 
 
     /**
-     * 获取creater的权益列表
+     * 获取系统的权益列表
      */
     @GetMapping(value = "/getBenefits")
     @ResponseBody

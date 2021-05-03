@@ -67,6 +67,12 @@ public interface ArticleService {
     boolean increaseCommentCountByArticleId(String articleId);
 
     /**
+     * 减少评论数
+     */
+    boolean decreaseCommentCountByArticleId(String articleId);
+
+
+    /**
      * 增加点赞数
      */
     boolean increaseStarCountByArticleId(String articleId,int numble);
@@ -90,5 +96,9 @@ public interface ArticleService {
      * 文章审核
      */
     boolean reviewByArticleId(String articleId,int status);
+
+
+    Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds,int pageIndex,int  scope);
+
 
 }

@@ -225,6 +225,18 @@ public class ArticleServiceImpl implements ArticleService {
         }
         return true;
     }
+    @Override
+    public boolean decreaseCommentCountByArticleId(String articleId) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(articleId));
+        Update update = new Update();
+        update.inc("commentCount",-1);
+        UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
+        if (result.getModifiedCount() <=0){
+            throw new BaseException(500,"ArticleEntity_is_not_exist");
+        }
+        return true;
+    }
 
     @Override
     public boolean increaseStarCountByArticleId(String articleId,int numble) {
@@ -306,6 +318,24 @@ public class ArticleServiceImpl implements ArticleService {
             throw new BaseException(500,"ArticleEntity_is_not_exist");
         }
         return true;
+    }
+
+    @Override
+    public Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds, int pageIndex, int scope) {
+        if ( authorIds == null || authorIds.isEmpty()){
+            return  null;
+        }
+        if (scope!=0 && scope!=1){
+            throw new BaseException(500,"ArticleEntity_scope_error");
+        }
+        if (pageIndex<0){
+            pageIndex = 0;
+        }
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdTime");
+        Pageable pageable = PageRequest.of(pageIndex, 10, sort);
+
+        Page<ArticleEntity> page = articleMongoDao.findByAuthorIdsAndScopeAndStatus(authorIds,scope,4,pageable);
+        return page;
     }
 
 
