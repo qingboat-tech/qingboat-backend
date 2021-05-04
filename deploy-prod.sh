@@ -37,9 +37,14 @@ case "$SVAR" in
   as)
     sudo systemctl restart qingboat-as.service
       ;;
+  us)
+    sudo systemctl restart qingboat-us.service
+      ;;
   *)
     sudo systemctl restart qingboat-ts.service
     sudo systemctl restart qingboat-as.service
+    sudo systemctl restart qingboat-us.service
+
       ;;
   esac
 

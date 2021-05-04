@@ -14,7 +14,7 @@ echo "SVAR set to: $SVAR"
 
 
 # 开始执行打包命令
-ssh $(whoami)@$(dig +short m.qingboat.com) << soff
+ssh $(whoami)@116.62.226.159 << soff
 sudo su - deploy<<EOF
 cd /srv/qingboat-backend
 
@@ -37,9 +37,13 @@ case "$SVAR" in
   as)
     sudo systemctl restart qingboat-as.service
       ;;
+  us)
+    sudo systemctl restart qingboat-us.service
+      ;;
   *)
     sudo systemctl restart qingboat-ts.service
     sudo systemctl restart qingboat-as.service
+    sudo systemctl restart qingboat-us.service
       ;;
   esac
 
