@@ -1,5 +1,6 @@
 package com.qingboat.as.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qingboat.as.entity.*;
 import com.qingboat.as.service.ArticleCommentService;
@@ -255,7 +256,7 @@ public class ArticleController extends BaseController {
         if (articleEntity!=null){
             String readerId = getUIdStr();
             String authorId = articleEntity.getAuthorId();
-            if (readerId.equals(authorId)){
+            if (readerId.equals(authorId)){  //创作者自己看自己的文章
                 return articleEntity;
             }
             // 处理推荐逻辑，每个订阅者最多分享给5个好友阅读
@@ -311,16 +312,58 @@ public class ArticleController extends BaseController {
                             return articleEntity;
                         }
                     }
-                    //TODO 免费订阅后，查看付费文章（处理试读）
+                    //免费订阅后，查看付费文章（处理试读）
+                    articleEntity.setData(subList(articleEntity.getData()));
+                    articleEntity.setStatus(7);
                     return articleEntity;
                 }
             }
-            //TODO 没有订阅，查看付费文章（处理试读）
+            //没有订阅，查看付费文章（处理试读）
+            articleEntity.setData(subList(articleEntity.getData()));
+            articleEntity.setStatus(7);
             return articleEntity;
         }
         return articleEntity;
 
     }
+
+    @GetMapping(value = "/getSubscribeInfo/{articleId}")
+    public Map<String,String> getSubscribeInfo(@PathVariable("articleId") String articleId) {
+
+        ArticleEntity articleEntity = articleService.findBaseInfoById(articleId);
+        if (articleEntity == null){
+            throw new BaseException(500,"该文章不存在");
+        }
+        Map<String,String> rstMap = new HashMap<>();
+
+        if (getUId().equals(Long.parseLong(articleEntity.getAuthorId()))){
+            rstMap.put("subscribeInfo","isAuthor");
+            return rstMap;
+        }
+
+        QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(UserSubscriptionEntity::getSubscriberId,getUId())
+                .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(articleEntity.getAuthorId()))
+                .le(UserSubscriptionEntity::getExpireDate,new Date());
+        UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
+        if (userSubscriptionEntity!=null){
+            if (Long.valueOf(0l).equals(userSubscriptionEntity.getOrderId()) && Integer.valueOf(0).equals(userSubscriptionEntity.getOrderPrice())){
+                if (Integer.valueOf(0).equals(articleEntity.getScope())){
+                    rstMap.put("subscribeInfo","isFreeSubscription");
+                }else {
+                    rstMap.put("subscribeInfo","isNoPaidSubscription");
+                }
+            }else {
+                rstMap.put("subscribeInfo","isPaidSubscription");
+            }
+        }else {
+            rstMap.put("subscribeInfo","isNoSubscription");
+        }
+       return rstMap;
+    }
+
+
 
     //======================= 文章互动 =============================
     // 点赞
@@ -381,6 +424,20 @@ public class ArticleController extends BaseController {
         }
         return  null;
 
+    }
+
+
+    private JSONArray subList(JSONArray jsonArray){
+        if (jsonArray == null || jsonArray.size() ==0){
+            return jsonArray;
+        }
+        int capacity =  (int) (jsonArray.size() * 0.3);
+        if (capacity == 0){
+            return jsonArray;
+        }else {
+            List dataList = jsonArray.subList(0,capacity);
+            return new JSONArray(dataList);
+        }
     }
 
 

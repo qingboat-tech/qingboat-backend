@@ -1,5 +1,6 @@
 package com.qingboat.as.controller;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -17,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -106,6 +109,77 @@ public class CreatorSubscriptionController extends BaseController {
     public List<BenefitEntity> getBenefits() {
         return benefitService.list();
     }
+
+    /**
+     * 获取creator会员等级列表
+     */
+    @GetMapping(value = "/getTierList")
+    @ResponseBody
+    public List<TierEntity> getTierList(@RequestParam("needMock") Integer needMock) {
+        QueryWrapper<TierEntity> wrapper = new QueryWrapper<>();
+        TierEntity tierEntity = new TierEntity();
+        tierEntity.setStatus(1);
+        tierEntity.setCreatorId(getUId());
+        wrapper.setEntity(tierEntity);
+        List<TierEntity> list = tierService.list(wrapper);
+        if (list!=null && !list.isEmpty()){
+            return list;
+        }
+        if (Integer.valueOf(1).equals(needMock)){
+            list = new ArrayList<>();
+            tierEntity = new TierEntity();
+            tierEntity.setCreatorId(getUId());
+            tierEntity.setTitle("免费订阅");
+            tierEntity.setCreatedAt(new Date());
+            tierEntity.setMonthPrice(0);
+            tierEntity.setMonthDiscount(10.00);
+            tierEntity.setDesc("免费订阅模板");
+
+            List<BenefitEntity> bList = new ArrayList<>();
+            BenefitEntity benefitEntity = new BenefitEntity();
+            benefitEntity.setId(1l);
+            benefitEntity.setKey("FREE");
+            benefitEntity.setTitle("每月推送优质免费文章");
+            bList.add(benefitEntity);
+
+            tierEntity.setBenefitList(bList);
+
+            list.add(tierEntity);
+
+            tierEntity = new TierEntity();
+            tierEntity.setCreatorId(getUId());
+            tierEntity.setTitle("方案一");
+            tierEntity.setCreatedAt(new Date());
+            tierEntity.setMonthPrice(800);
+            tierEntity.setMonthDiscount(10.00);
+            tierEntity.setYearPrice(9600);
+            tierEntity.setYearDiscount(8.00);
+            tierEntity.setDesc("付费订阅模板");
+            tierEntity.setLimit(100);
+
+            bList = new ArrayList<>();
+            benefitEntity = new BenefitEntity();
+            benefitEntity.setId(2l);
+            benefitEntity.setKey("READ");
+            benefitEntity.setTitle("订阅期无限制阅读");
+            bList.add(benefitEntity);
+
+            benefitEntity = new BenefitEntity();
+            benefitEntity.setId(3l);
+            benefitEntity.setKey("COMMENT");
+            benefitEntity.setTitle("评论区互动");
+            bList.add(benefitEntity);
+
+            tierEntity.setBenefitList(bList);
+
+            list.add(tierEntity);
+
+            return list;
+        }
+
+        return null;
+    }
+
 
     /**
      * 创建会员等级的接口
