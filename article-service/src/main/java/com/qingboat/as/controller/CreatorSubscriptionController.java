@@ -14,6 +14,7 @@ import com.qingboat.as.service.UserService;
 import com.qingboat.as.service.UserSubscriptionService;
 import com.qingboat.base.api.FeishuService;
 
+import com.qingboat.base.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -184,13 +185,34 @@ public class CreatorSubscriptionController extends BaseController {
     /**
      * 创建会员等级的接口
      */
-    @PostMapping(value = "/tier/saveOrUpdate")
+    @PostMapping(value = "/tier")
     @ResponseBody
     public TierEntity addCreatorTierEntity(@RequestBody TierEntity tierEntity) {
         Long uid = getUId();
         tierEntity.setCreatorId(uid);
+        tierEntity.setStatus(1);
         tierService.saveOrUpdate(tierEntity);
         return tierEntity;
+    }
+
+    /**
+     * 创建会员等级的接口
+     */
+    @DeleteMapping(value = "/tier/")
+    @ResponseBody
+    public TierEntity delTierEntity(@RequestParam("tierId") Long tierId) {
+        Long uid = getUId();
+        TierEntity tierEntity = tierService.getById(tierId);
+        if (tierEntity == null){
+            throw new BaseException(500,"操作失败：该会员等级不存在");
+        }
+        if (tierEntity.getCreatorId().equals(uid)){
+            tierEntity.setStatus(0);
+
+            tierService.updateById(tierEntity);
+            return tierEntity;
+        }
+        throw new BaseException(500,"操作失败：该会员等级不归属你哦");
     }
 
 

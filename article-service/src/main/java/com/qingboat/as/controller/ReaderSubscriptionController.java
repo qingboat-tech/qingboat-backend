@@ -47,11 +47,12 @@ public class ReaderSubscriptionController extends BaseController {
     @ResponseBody
     public List<TierEntity> getTierEntityList(@Valid @RequestParam("creatorId") Long creatorId) {
 
-        TierEntity TierEntity = new TierEntity();
-        TierEntity.setCreatorId(creatorId);
+        TierEntity tierEntity = new TierEntity();
+        tierEntity.setCreatorId(creatorId);
+        tierEntity.setStatus(1);
 
         QueryWrapper<TierEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.setEntity(TierEntity);
+        queryWrapper.setEntity(tierEntity);
 
         return tierService.list(queryWrapper);
     }
