@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@TableName("apps_user_subscription")// 映射数据库表名
+@TableName(value = "apps_usersubscription",autoResultMap = true)// 映射数据库表名
 public class UserSubscriptionEntity implements Serializable {
 
     @TableId(type = IdType.AUTO)

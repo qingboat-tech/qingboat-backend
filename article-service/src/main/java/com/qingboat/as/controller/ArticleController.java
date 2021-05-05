@@ -3,10 +3,7 @@ package com.qingboat.as.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qingboat.as.entity.*;
-import com.qingboat.as.service.ArticleCommentService;
-import com.qingboat.as.service.ArticleService;
-import com.qingboat.as.service.UserService;
-import com.qingboat.as.service.UserSubscriptionService;
+import com.qingboat.as.service.*;
 import com.qingboat.as.utils.AliyunOssUtil;
 import com.qingboat.as.utils.RedisUtil;
 import com.qingboat.as.utils.RssUtil;
@@ -56,6 +53,9 @@ public class ArticleController extends BaseController {
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private MessageService messageService;
 
     //=======================针对 creator 接口=============================
 
@@ -370,7 +370,12 @@ public class ArticleController extends BaseController {
     @PostMapping(value = "/star/{id}")
     @ResponseBody
     public Long star(@PathVariable("id") String id){
-        return articleService.handleStarCountByArticleId(id,Long.parseLong(getUIdStr()));
+        Long starCount = articleService.handleStarCountByArticleId(id,getUId());
+
+        //发送点赞通知
+        messageService.sendStarMessage(id,starCount);
+
+        return starCount;
     }
 
 

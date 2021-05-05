@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qingboat.as.entity.*;
 
+import com.qingboat.as.service.MessageService;
 import com.qingboat.as.service.TierService;
 import com.qingboat.as.service.UserService;
 import com.qingboat.as.service.UserSubscriptionService;
@@ -36,7 +37,8 @@ public class ReaderSubscriptionController extends BaseController {
     @Autowired
     private TierService tierService;
 
-
+    @Autowired
+    private MessageService messageService;
 
 
     //=======================针对 reader 接口=============================
@@ -89,10 +91,20 @@ public class ReaderSubscriptionController extends BaseController {
         Long  creatorId = userSubscriptionEntity.getCreatorId();
         Long  memberTierId = userSubscriptionEntity.getMemberTierId();
         Long orderId = userSubscriptionEntity.getOrderId();
+        Integer orderPrice = userSubscriptionEntity.getOrderPrice();
         String subscribeDuration = userSubscriptionEntity.getSubscribeDuration();
+
+        if (creatorId == null || memberTierId == null || orderId ==null || orderPrice == null ||  subscribeDuration==null  ){
+            throw new BaseException(500,"操作失败：请求参数非法");
+        }
+
         TierEntity entity = tierService.getById(memberTierId);
 
         if (entity !=null){
+            Integer subscriptionLimit = entity.getSubscribeLimit();
+            if (subscriptionLimit !=null && subscriptionLimit>0){
+                //TODO 检查订阅限额
+            }
 
             UserSubscriptionEntity queryEntity = new UserSubscriptionEntity();
             queryEntity.setSubscriberId(subscriberId);
@@ -108,6 +120,8 @@ public class ReaderSubscriptionController extends BaseController {
                 if (beforeUserSubscription.getMemberTierId().equals(memberTierId)){
                     if (beforeUserSubscription.getOrderId() ==0 ){ // 上次和这次都是免费订阅
                         log.info("上次和这次都是免费订阅 ");
+                        //发送订阅消息
+                        messageService.sendSubscriptionMessage(userSubscriptionEntity);
                         return userSubscriptionEntity;
                     }
                     // 会员续费
@@ -124,12 +138,16 @@ public class ReaderSubscriptionController extends BaseController {
                     }
 
                     beforeUserSubscription.setOrderId(orderId);
+                    beforeUserSubscription.setOrderPrice(orderPrice);
+                    beforeUserSubscription.setSubscribeDuration(subscribeDuration);
                     beforeUserSubscription.setStartDate(startTime);
                     beforeUserSubscription.setExpireDate(cal.getTime());
                     beforeUserSubscription.setBenefitList(entity.getBenefitList());
                     beforeUserSubscription.setCreatedAt(null);
                     beforeUserSubscription.setUpdatedAt(null);
                     userSubscriptionService.updateById(beforeUserSubscription);
+                    //发送订阅消息
+                    messageService.sendSubscriptionMessage(userSubscriptionEntity);
                     return beforeUserSubscription;
                 }else { // 免费转付费会员
                     TierEntity beforeTier  = tierService.getById(beforeUserSubscription.getMemberTierId());
@@ -148,12 +166,16 @@ public class ReaderSubscriptionController extends BaseController {
                         }
 
                         beforeUserSubscription.setOrderId(orderId);
+                        beforeUserSubscription.setOrderPrice(orderPrice);
+                        beforeUserSubscription.setSubscribeDuration(subscribeDuration);
                         beforeUserSubscription.setStartDate(startTime);
                         beforeUserSubscription.setExpireDate(cal.getTime());
                         beforeUserSubscription.setBenefitList(entity.getBenefitList());
                         beforeUserSubscription.setCreatedAt(null);
                         beforeUserSubscription.setUpdatedAt(null);
                         userSubscriptionService.updateById(beforeUserSubscription);
+                        //发送订阅消息
+                        messageService.sendSubscriptionMessage(userSubscriptionEntity);
                         return beforeUserSubscription;
                     }else {
                         throw  new BaseException(500 , "暂时不支持会员升级");
@@ -179,6 +201,8 @@ public class ReaderSubscriptionController extends BaseController {
             userSubscriptionEntity.setOrderId(orderId);
 
             userSubscriptionService.save(userSubscriptionEntity);
+            //发送订阅消息
+            messageService.sendSubscriptionMessage(userSubscriptionEntity);
             return userSubscriptionEntity;
 
         }else {

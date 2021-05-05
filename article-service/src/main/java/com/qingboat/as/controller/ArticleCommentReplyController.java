@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.qingboat.as.entity.ReplyCommentEntity;
 import com.qingboat.as.entity.UserEntity;
 import com.qingboat.as.service.ArticleCommentService;
+import com.qingboat.as.service.MessageService;
 import com.qingboat.as.service.UserService;
 import com.qingboat.as.vo.ArticleCommentReplyVo;
 import com.qingboat.base.api.FeishuService;
@@ -33,6 +34,9 @@ public class ArticleCommentReplyController extends BaseController {
     @Autowired
     private FeishuService feishuService;
 
+    @Autowired
+    private MessageService messageService;
+
     // 评论
     @PostMapping(value = "/create")
     @ResponseBody
@@ -51,7 +55,12 @@ public class ArticleCommentReplyController extends BaseController {
         replyCommentEntity.setHeadImgUrl(userOperate.getHeadimgUrl());
         replyCommentEntity.setNickName(userOperate.getNickname());
 
-        return articleCommentService.replyComment(replyCommentEntity);
+        replyCommentEntity = articleCommentService.replyComment(replyCommentEntity);
+
+        //发送评论回复消息
+        messageService.sendReplyCommentMessage(replyCommentEntity);
+
+        return replyCommentEntity;
     }
 
     // 删除评论

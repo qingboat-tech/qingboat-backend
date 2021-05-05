@@ -3,10 +3,7 @@ package com.qingboat.as.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.qingboat.as.entity.*;
-import com.qingboat.as.service.ArticleCommentService;
-import com.qingboat.as.service.ArticleService;
-import com.qingboat.as.service.UserService;
-import com.qingboat.as.service.UserSubscriptionService;
+import com.qingboat.as.service.*;
 import com.qingboat.as.vo.ArticleCommentVo;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
@@ -42,6 +39,9 @@ public class ArticleCommentController extends BaseController {
     @Autowired
     private ArticleService articleService;
 
+    @Autowired
+    private MessageService messageService;
+
     // 评论
     @PostMapping(value = "/create")
     @ResponseBody
@@ -57,7 +57,12 @@ public class ArticleCommentController extends BaseController {
             articleCommentEntity.setHeadImgUrl(userOperate.getHeadimgUrl());
             articleCommentEntity.setNickName(userOperate.getNickname());
 
-            return articleCommentService.addArticleComment(articleCommentEntity);
+            articleCommentEntity =  articleCommentService.addArticleComment(articleCommentEntity);
+
+            //发送评论消息
+            messageService.sendCommentMessage(articleCommentEntity);
+
+            return articleCommentEntity;
         }
         throw new BaseException(500,"该用户没有评论权限");
     }

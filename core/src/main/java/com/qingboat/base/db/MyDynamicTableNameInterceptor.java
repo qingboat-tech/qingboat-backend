@@ -94,20 +94,22 @@ public class MyDynamicTableNameInterceptor  implements InnerInterceptor {
         }
         if (parameter instanceof MapperMethod.ParamMap){
             MapperMethod.ParamMap paramMap = (MapperMethod.ParamMap) parameter;
-            Object ew = paramMap.get("ew");
 
-            if (ew instanceof QueryWrapper){
-                QueryWrapper queryWrapper = (QueryWrapper) ew;
-                return queryWrapper.getEntity();
-            }
-            if (ew instanceof UpdateWrapper){
-                UpdateWrapper updateWrapper = (UpdateWrapper) ew;
-                return updateWrapper.getEntity();
-            }
-
-            Object et = paramMap.get("et");
-            if (et != null){
-                return et;
+            if (paramMap.containsKey("ew")){
+                Object ew = paramMap.get("ew");
+                if (ew instanceof QueryWrapper){
+                    QueryWrapper queryWrapper = (QueryWrapper) ew;
+                    return queryWrapper.getEntity();
+                }
+                if (ew instanceof UpdateWrapper){
+                    UpdateWrapper updateWrapper = (UpdateWrapper) ew;
+                    return updateWrapper.getEntity();
+                }
+            }else if (paramMap.containsKey("et")){
+                Object et = paramMap.get("et");
+                if (et != null){
+                    return et;
+                }
             }
         }
         return parameter;

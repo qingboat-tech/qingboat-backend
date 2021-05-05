@@ -40,6 +40,17 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     }
 
     @Override
+    public ArticleCommentEntity findArticleComment(String articleId, Long commentId) {
+        ArticleCommentEntity entity = new ArticleCommentEntity();
+        entity.setId(commentId);
+        entity.setArticleId(articleId);
+
+        QueryWrapper<ArticleCommentEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.setEntity(entity);
+        return articleCommentDao.selectOne(queryWrapper);
+    }
+
+    @Override
     public boolean removeArticleComment(String articleId, Long commentId,Long userId) {
         QueryWrapper<ArticleCommentEntity> queryWrapper = new QueryWrapper<>();
         ArticleCommentEntity entity = new ArticleCommentEntity();
@@ -82,6 +93,18 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
         entity.setReplyCount(replyCount);
 
         return replyCommentEntity;
+    }
+
+    @Override
+    public ReplyCommentEntity findArticleReplyComment(String articleId, Long replyId) {
+        ReplyCommentEntity entity = new ReplyCommentEntity();
+        entity.setId(replyId);
+        entity.setArticleId(articleId);
+
+        QueryWrapper<ReplyCommentEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.setEntity(entity);
+        return replyCommentDao.selectOne(queryWrapper);
+
     }
 
     @Override

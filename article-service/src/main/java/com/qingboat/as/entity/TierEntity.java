@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-@TableName("apps_tier")// 映射数据库表名
+@TableName(value = "apps_tier",autoResultMap = true)// 映射数据库表名
 public class TierEntity implements Serializable {
 
     @TableId(type = IdType.AUTO)
@@ -37,7 +37,7 @@ public class TierEntity implements Serializable {
     private Integer yearPrice ;  // 价格（分）
     private Double  yearDiscount;  //打折率（什么类型？）
 
-    private Integer limit; //限量设置
+    private Integer subscribeLimit; //限量设置
 
     private String currency; //  币种
 

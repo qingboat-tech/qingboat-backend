@@ -1,19 +1,17 @@
 package com.qingboat.as.config;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.DynamicTableNameInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.qingboat.as.entity.ArticleCommentEntity;
+import com.qingboat.as.entity.MessageEntity;
 import com.qingboat.as.entity.ReplyCommentEntity;
 import com.qingboat.base.db.MyDynamicTableNameInterceptor;
 import com.qingboat.base.db.MyTableNameHandler;
-import com.qingboat.base.db.SwitchTableAspact;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @Configuration
@@ -27,6 +25,7 @@ public class MybatisConfig {
         // 取消MyBatis Plus的最大分页500条的限制
         paginationInnerInterceptor.setMaxLimit(100000L);
 
+
         MyDynamicTableNameInterceptor myDynamicTableNameInterceptor = new MyDynamicTableNameInterceptor();
 
         HashMap<String, MyTableNameHandler> map = new HashMap<String, MyTableNameHandler>(2) {{
@@ -34,10 +33,6 @@ public class MybatisConfig {
             put("apps_article_comment", new MyTableNameHandler() {
                 @Override
                 public String dynamicTableName(String sql, String tableName,Object param) {
-
-                     Map<String,Object> metaObj = SwitchTableAspact.getSwitchMeta();
-
-                     System.err.println("SwitchTableAspact.threadLocal.map= " +metaObj);
 
                     log.info(" SQL: "+ sql);
                     log.info(" SQL.param: "+ param);
@@ -70,7 +65,28 @@ public class MybatisConfig {
                 }
             });
 
+            put("apps_msg", new MyTableNameHandler() {
+                @Override
+                public String dynamicTableName(String sql, String tableName,Object param) {
+
+                    log.info(" SQL: "+ sql);
+                    log.info(" SQL.param: "+ param);
+                    if (param instanceof MessageEntity){
+                        Long to = ((MessageEntity) param).getTo();
+                        StringBuilder dynamicTableName = new StringBuilder(tableName);
+                        dynamicTableName.append("_");
+                        dynamicTableName.append(Math.abs(to.hashCode()) %16+1);
+
+                        log.info(" dynamicTableName: "+ dynamicTableName);
+                        return dynamicTableName.toString();
+                    }
+                    return tableName;
+                }
+            });
+
+
         }};
+
         myDynamicTableNameInterceptor.setTableNameHandlerMap(map);
         interceptor.addInnerInterceptor(myDynamicTableNameInterceptor);
         interceptor.addInnerInterceptor(paginationInnerInterceptor);

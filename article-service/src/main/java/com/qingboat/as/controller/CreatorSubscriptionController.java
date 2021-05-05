@@ -1,6 +1,5 @@
 package com.qingboat.as.controller;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -124,6 +123,8 @@ public class CreatorSubscriptionController extends BaseController {
         wrapper.setEntity(tierEntity);
         List<TierEntity> list = tierService.list(wrapper);
         if (list!=null && !list.isEmpty()){
+            //TODO 添加当前订阅的人数
+
             return list;
         }
         if (Integer.valueOf(1).equals(needMock)){
@@ -135,6 +136,7 @@ public class CreatorSubscriptionController extends BaseController {
             tierEntity.setMonthPrice(0);
             tierEntity.setMonthDiscount(10.00);
             tierEntity.setDesc("免费订阅模板");
+            tierEntity.setSubscribeCount(0);
 
             List<BenefitEntity> bList = new ArrayList<>();
             BenefitEntity benefitEntity = new BenefitEntity();
@@ -156,7 +158,8 @@ public class CreatorSubscriptionController extends BaseController {
             tierEntity.setYearPrice(9600);
             tierEntity.setYearDiscount(8.00);
             tierEntity.setDesc("付费订阅模板");
-            tierEntity.setLimit(100);
+            tierEntity.setSubscribeLimit(10000);
+            tierEntity.setSubscribeCount(0);
 
             bList = new ArrayList<>();
             benefitEntity = new BenefitEntity();
