@@ -89,9 +89,8 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
         entity.setId(replyCommentEntity.getCommentId());
         entity.setReplyCount(1l);
 
-        Long replyCount = articleCommentDao.updateReplyCount(entity);
-        entity.setReplyCount(replyCount);
-
+        articleCommentDao.updateReplyCount(entity);
+        replyCommentEntity.setReplyCount(entity.getReplyCount());
         return replyCommentEntity;
     }
 
@@ -128,7 +127,7 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
                 commentEntity.setArticleId(articleId);
                 commentEntity.setId(entity.getCommentId());
                 commentEntity.setReplyCount(-1l);
-                Long replyCount = articleCommentDao.updateReplyCount(commentEntity);
+                 articleCommentDao.updateReplyCount(commentEntity);
                 return true;
             }
         }

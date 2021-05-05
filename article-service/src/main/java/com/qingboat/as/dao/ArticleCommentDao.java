@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 @Mapper
 public interface ArticleCommentDao extends BaseMapper<ArticleCommentEntity> {
 
-    Long updateReplyCount(ArticleCommentEntity entity);
+    void updateReplyCount(ArticleCommentEntity entity);
 
 }
