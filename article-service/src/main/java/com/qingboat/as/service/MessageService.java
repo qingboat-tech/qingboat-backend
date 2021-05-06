@@ -6,7 +6,7 @@ import com.qingboat.as.entity.*;
 
 public interface MessageService  {
 
-    void sendSystemMessage(Object msg);
+    Boolean sendMessage(MessageEntity msg);
 
     void sendSubscriptionMessage(UserSubscriptionEntity userSubscriptionEntity);
 

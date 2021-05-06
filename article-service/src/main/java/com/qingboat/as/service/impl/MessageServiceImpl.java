@@ -1,5 +1,6 @@
 package com.qingboat.as.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -34,8 +35,11 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
 
     @Override
-    public void sendSystemMessage(Object msg) {
+    public Boolean sendMessage(MessageEntity msg) {
 
+        log.info("===sendMessage===" + JSON.toJSONString(msg));
+
+        return Boolean.TRUE;
     }
 
     @Override

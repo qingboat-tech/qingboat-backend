@@ -64,8 +64,11 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = "/findDraftArticleList")
     @ResponseBody
-    public Page<ArticleEntity> findDraftArticleList(@RequestParam("pageIndex") int pageIndex) {
+    public Page<ArticleEntity> findDraftArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex) {
         String uid = getUIdStr();
+        if (pageIndex == null){
+            pageIndex = 0;
+        }
         return articleService.findDraftListByAuthorId(uid,pageIndex);
     }
 
@@ -74,8 +77,11 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = "/findReviewArticleList")
     @ResponseBody
-    public Page<ArticleEntity> findReviewingArticleList(@RequestParam("pageIndex") int pageIndex) {
+    public Page<ArticleEntity> findReviewingArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex) {
         String uid = getUIdStr();
+        if (pageIndex == null){
+            pageIndex = 0;
+        }
         return articleService.findReviewListByAuthorId(uid,pageIndex);
     }
 
@@ -84,8 +90,11 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = "/findRefuseArticleList")
     @ResponseBody
-    public Page<ArticleEntity> findRefuseArticleList(@RequestParam("pageIndex") int pageIndex) {
+    public Page<ArticleEntity> findRefuseArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex) {
         String uid = getUIdStr();
+        if (pageIndex == null){
+            pageIndex = 0;
+        }
         return articleService.findRefuseListByAuthorId(uid,pageIndex);
     }
 
@@ -94,8 +103,11 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = "/findPublishArticleList")
     @ResponseBody
-    public Page<ArticleEntity> findPublishArticleList(@RequestParam("pageIndex") int pageIndex) {
+    public Page<ArticleEntity> findPublishArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex) {
         String uid = getUIdStr();
+        if (pageIndex == null){
+            pageIndex = 0;
+        }
         return articleService.findPublishListByAuthorId(uid,pageIndex);
     }
 
@@ -182,6 +194,7 @@ public class ArticleController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/subscriptionArticleList", method = RequestMethod.GET)
+    @ResponseBody
     public Page<ArticleEntity> subscriptionArticleList(@RequestParam("pageIndex") int pageIndex, @RequestParam(value = "scope",required = false) Integer scope) {
         Long subscriberId = getUId();
 
@@ -215,6 +228,7 @@ public class ArticleController extends BaseController {
     }
 
     @GetMapping(value = "/getInviteKey")
+    @ResponseBody
     public Map<String,Object> getInviteKey(@RequestParam("articleId") String articleId) throws  Exception{
         Map<String,Object> rstMap = new HashMap<>();
 
@@ -251,6 +265,7 @@ public class ArticleController extends BaseController {
      * @return
      */
     @GetMapping(value = "/{articleId}")
+    @ResponseBody
     public ArticleEntity viewArticleByArticleId(@PathVariable("articleId") String articleId,@RequestParam(value = "inviteKey",required = false) String inviteKey ) {
         ArticleEntity articleEntity = articleService.findArticleById(articleId);
         if (articleEntity!=null){
@@ -328,6 +343,7 @@ public class ArticleController extends BaseController {
     }
 
     @GetMapping(value = "/getSubscribeInfo/{articleId}")
+    @ResponseBody
     public Map<String,String> getSubscribeInfo(@PathVariable("articleId") String articleId) {
 
         ArticleEntity articleEntity = articleService.findBaseInfoById(articleId);
@@ -381,6 +397,7 @@ public class ArticleController extends BaseController {
 
 
     @RequestMapping(value = "/rss")
+    @ResponseBody
     public Boolean readRss(@RequestBody Map<String,String> param) throws IOException, FeedException {
         if (param !=null && param.containsKey("url")){
             String rssUrl = param.get("url");
@@ -395,6 +412,7 @@ public class ArticleController extends BaseController {
 
 
     @PostMapping(value = "/uploadFile")
+    @ResponseBody
     public Map<String,String> UploadFile(@RequestParam(value = "file") MultipartFile file) {
 
         try {

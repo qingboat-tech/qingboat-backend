@@ -21,6 +21,14 @@ public class MessageController extends BaseController {
 
     @Autowired
     private MessageService messageService;
+
+
+    @PostMapping(value = "/sendMessage")
+    @ResponseBody
+    public Boolean sendMessage(@RequestBody MessageEntity msg){
+        return messageService.sendMessage(msg);
+    }
+
     // reply列表
     @GetMapping(value = "/list")
     @ResponseBody

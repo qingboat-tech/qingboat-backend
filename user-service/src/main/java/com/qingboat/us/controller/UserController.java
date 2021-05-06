@@ -2,6 +2,8 @@ package com.qingboat.us.controller;
 
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
+import com.qingboat.us.api.MessageService;
+import com.qingboat.us.api.vo.MessageVo;
 import com.qingboat.us.entity.CreatorApplyFormEntity;
 import com.qingboat.us.entity.UserProfileEntity;
 import com.qingboat.us.service.UserService;
@@ -27,6 +29,9 @@ public class UserController {
     @Autowired
     private FeishuService feishuService;
 
+    @Autowired
+    private MessageService messageService;
+
 
     @PostMapping("/saveUserProfile")
     @ResponseBody
@@ -43,6 +48,14 @@ public class UserController {
     @GetMapping("/getUserProfile")
     @ResponseBody
     public UserProfileEntity getUserProfile(@RequestParam("userId") Long userId){
+        MessageVo msg = new MessageVo();
+        msg.setTo(1l);
+        msg.setMsgTitle("hello");
+        msg.setExtData("name","david");
+        msg.setExtData("age",12);
+        msg.setExtData("price",12.54);
+
+        messageService.sendMessage(msg);
         return userService.getUserProfile(userId);
     }
 
@@ -69,12 +82,29 @@ public class UserController {
 
     @PostMapping("/confirmCreator")
     @ResponseBody
-    public Map<String,Object> confirmCreator(@RequestBody Map<String,Object> param){
+    public Boolean confirmCreator(@RequestBody Map<String,Object> param){
         log.info(" confirmCreator, RequestParam: uid=" );
         String applyUId = String.valueOf(param.get("applyUserId"));
 
         Long applyUserId = Long.parseLong(applyUId);
         Boolean result = (Boolean) param.get("result");
+
+        Boolean rst = userService.confirmCreator(applyUserId,result);
+
+        if (rst){
+            MessageVo msg = new MessageVo();
+            msg.setTo(applyUserId);
+            msg.setMsgTitle("创作者申请成功");
+            msg.setMsgType(0);
+            msg.setSenderId(0l);
+            msg.setSenderName("小鲸");
+            msg.setSenderImgUrl("https://m.qingboat.com/static/admin/img/gis/move_vertex_on.svg");
+            msg.setMsgLink(null); // TODO
+            msg.setExtData("dataType","text");
+            msg.setExtData("content","恭喜您通过创作者审核，最懂你的粉丝可以订阅会员支持你的创作，让创作更纯粹!");
+        }
+
+        return rst;
 
 
 //        UserProfileEntity userProfileEntity = userService.applyCreator(uid);
@@ -88,7 +118,6 @@ public class UserController {
 //                        .append("创者者昵称：").append(userProfileEntity.getNickname()).append("\n").toString());
 //        feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
 
-        return param;
     }
 
 

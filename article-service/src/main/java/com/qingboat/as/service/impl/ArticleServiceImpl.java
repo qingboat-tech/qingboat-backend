@@ -150,7 +150,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (pageIndex<0){
             pageIndex = 0;
         }
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdTime");
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedTime");
         Pageable pageable = PageRequest.of(pageIndex, 10, sort);
         Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,0,pageable);
         return page;
@@ -161,7 +161,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (pageIndex<0){
             pageIndex = 0;
         }
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdTime");
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedTime");
         Pageable pageable = PageRequest.of(pageIndex, 10, sort);
         Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,1,pageable);
         return page;
@@ -173,7 +173,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (pageIndex<0){
             pageIndex = 0;
         }
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdTime");
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedTime");
         Pageable pageable = PageRequest.of(pageIndex, 10, sort);
         Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,2,pageable);
         return page;
@@ -185,7 +185,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (pageIndex<0){
             pageIndex = 0;
         }
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdTime");
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedTime");
         Pageable pageable = PageRequest.of(pageIndex, 10, sort);
         Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,4,pageable);
         return page;
@@ -204,7 +204,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public List<ArticleEntity> findByAuthorIdByUpdateTimeDesc(String authorId) {
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdTime");
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedTime");
         Pageable pageable = PageRequest.of(0, 10, sort);
         Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,4,pageable);
         if (page!=null){
@@ -339,7 +339,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (pageIndex<0){
             pageIndex = 0;
         }
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdTime");
+        Sort sort = Sort.by(Sort.Direction.DESC, "updatedTime");
         Pageable pageable = PageRequest.of(pageIndex, 10, sort);
 
         Page<ArticleEntity> page = articleMongoDao.findByAuthorIdsAndScopeAndStatus(authorIds,scopeList,4,pageable);

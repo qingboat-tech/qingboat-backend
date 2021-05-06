@@ -27,9 +27,18 @@ public class UserProfileEntity {
 
     private Integer role;  // 1:创作者；2：阅读者
 
+    private String profileName; // 创作者profile名称
+
+    private String creatorImgUrl; // 创作者profile图片
+
     private String profileImgUrl; // 创作者profile图片
 
     private String profileKey; // 创作者profile页面Key
+
+    private String profileDesc; // 创作者profile介绍
+
+    private String profileVideoLink; // profile视频链接
+
 
     private Integer status; // 0: 待审核；1：审核通过；-1：审核不通过
 

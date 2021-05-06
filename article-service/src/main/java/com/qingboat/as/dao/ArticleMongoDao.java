@@ -16,15 +16,15 @@ import java.util.List;
 public interface ArticleMongoDao extends MongoRepository<ArticleEntity, String> {
 
     @Query(value = "{'authorId':?0 ,'status':?1 , 'parentId': {'$eq':''} }" ,
-            fields = "{title:1,desc:1,imgUrl:1,authorId:1,createdTime:1,starCount:1,commentCount:1,readCount:1,status:1,type:1,scope:1}")
+            fields = "{title:1,desc:1,imgUrl:1,authorId:1,createdTime:1,updatedTime:1,starCount:1,commentCount:1,readCount:1,status:1,type:1,scope:1}")
     Page<ArticleEntity> findByAuthorIdAndStatus(String authorId,Integer status,  Pageable pageable);
 
     @Query(value = "{'authorId':{$in:?0} ,'scope'::{$in:?1} ,'status':?2 , 'parentId': {'$eq':''} }" ,
-            fields = "{title:1,desc:1,imgUrl:1,authorId:1,createdTime:1,starCount:1,commentCount:1,readCount:1,status:1,type:1,scope:1}")
+            fields = "{title:1,desc:1,imgUrl:1,authorId:1,createdTime:1,updatedTime:1,starCount:1,commentCount:1,readCount:1,status:1,type:1,scope:1}")
     Page<ArticleEntity> findByAuthorIdsAndScopeAndStatus(List<String> authorId,List<Integer> scope, Integer status, Pageable pageable);
 
     @Query(value = "{'authorId':?0 ,'status':{'$eq':4} , 'parentId': {'$eq':''} }" ,
-            fields = "{title:1,desc:1,imgUrl:1,authorId:1,createdTime:1,starCount:1,commentCount:1,readCount:1}",sort = "{readCount : -1,createdTime:-1 }")
+            fields = "{title:1,desc:1,imgUrl:1,authorId:1,createdTime:1,updatedTime:1,starCount:1,commentCount:1,readCount:1}",sort = "{readCount : -1,createdTime:-1 }")
     Page<ArticleEntity> findByAuthorIdByReadCountDesc(String authorId, Pageable pageable);
 
     @Query(value = "{'authorId':?0 , 'parentId': {'$eq':''} }" ,
