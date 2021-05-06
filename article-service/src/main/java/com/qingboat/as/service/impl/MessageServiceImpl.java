@@ -126,6 +126,9 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
         ArticleCommentEntity commentEntity = articleCommentService.findArticleComment(replyCommentEntity.getArticleId(),replyCommentEntity.getCommentId());
 
+        ArticleEntity articleEntity = articleService.findBaseInfoById(replyCommentEntity.getArticleId());
+
+
         MessageEntity msg = new MessageEntity();
         msg.setMsgType(MessageEntity.REPLY_MSG);
         msg.setMsgTitle(replyCommentEntity.getNickName()+" 回复了您一个评论");
@@ -136,6 +139,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         msg.setSenderImgUrl(replyCommentEntity.getHeadImgUrl());
         msg.setMsgLink(null); // TODO
         msg.setExtData("articleId",replyCommentEntity.getArticleId());
+        msg.setExtData("articleTitle",articleEntity.getTitle());
         msg.setExtData("replyCommentId",replyCommentEntity.getId());
         msg.setExtData("replyCommentContent",replyCommentEntity.getContent());
         msg.setExtData("replyUserId",replyCommentEntity.getUserId());
