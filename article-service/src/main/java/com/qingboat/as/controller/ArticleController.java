@@ -178,11 +178,11 @@ public class ArticleController extends BaseController {
     /**
      *
      * @param pageIndex
-     * @param scope  0:表示免费；1：表示付费；-1：表示全部
+     * @param scope  0:表示免费；1：表示付费；null：表示全部
      * @return
      */
     @RequestMapping(value = "/subscriptionArticleList", method = RequestMethod.GET)
-    public Page<ArticleEntity> subscriptionArticleList(@RequestParam("pageIndex") int pageIndex, @RequestParam("scope") int scope) {
+    public Page<ArticleEntity> subscriptionArticleList(@RequestParam("pageIndex") int pageIndex, @RequestParam(value = "scope",required = false) Integer scope) {
         Long subscriberId = getUId();
 
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();

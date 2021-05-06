@@ -98,7 +98,7 @@ public interface ArticleService {
     boolean reviewByArticleId(String articleId,int status);
 
 
-    Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds,int pageIndex,int  scope);
+    Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds,int pageIndex,Integer  scope);
 
     ArticleEntity findBaseInfoById(String articleId);
 

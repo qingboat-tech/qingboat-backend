@@ -321,7 +321,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds, int pageIndex, int scope) {
+    public Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds, int pageIndex, Integer scope) {
         if ( authorIds == null || authorIds.isEmpty()){
             return  null;
         }
@@ -330,7 +330,7 @@ public class ArticleServiceImpl implements ArticleService {
             scopeList.add(0);
         }else if (scope ==1){
             scopeList.add(1);
-        }else if (scope ==-1){
+        }else if (scope == null){
             scopeList.add(0);
             scopeList.add(1);
         }else {
