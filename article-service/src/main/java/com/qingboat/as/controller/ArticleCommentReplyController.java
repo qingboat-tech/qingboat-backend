@@ -77,8 +77,8 @@ public class ArticleCommentReplyController extends BaseController {
     // 评论
     @GetMapping(value = "/list")
     @ResponseBody
-    public IPage<ReplyCommentEntity> list(@RequestParam("pageIndex") int pageIndex, @RequestParam("commentId") long commentId, @RequestParam("articleId") String articleId) {
-        return articleCommentService.findReplyComment(articleId, commentId, pageIndex);
+    public IPage<ReplyCommentEntity> list(@RequestParam(value = "pageIndex",required = false) Integer pageIndex, @RequestParam(value = "pageSize",required = false) Integer pageSize,@RequestParam("commentId") long commentId, @RequestParam("articleId") String articleId) {
+        return articleCommentService.findReplyComment(articleId, commentId, pageIndex,pageSize);
     }
 
 

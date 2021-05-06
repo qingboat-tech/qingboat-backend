@@ -68,8 +68,11 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     }
 
     @Override
-    public IPage<ArticleCommentEntity> findArticleComment(String articleId, int pageIndex) {
-        IPage<ArticleCommentEntity> page = new Page<>(pageIndex, 10);
+    public IPage<ArticleCommentEntity> findArticleComment(String articleId, Integer pageIndex,Integer pageSize) {
+        if (pageSize == null || pageSize<1){
+            pageSize =10;
+        }
+        IPage<ArticleCommentEntity> page = new Page<>(pageIndex, pageSize);
         QueryWrapper<ArticleCommentEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByDesc("created_at");
         ArticleCommentEntity entity = new ArticleCommentEntity();
@@ -136,8 +139,11 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     }
 
     @Override
-    public IPage<ReplyCommentEntity> findReplyComment(String articleId, Long commentId, int pageIndex) {
-        IPage<ReplyCommentEntity> page = new Page<>(pageIndex, 10);
+    public IPage<ReplyCommentEntity> findReplyComment(String articleId, Long commentId, Integer pageIndex,Integer pageSize) {
+        if (pageSize == null || pageSize<1){
+            pageSize =10;
+        }
+        IPage<ReplyCommentEntity> page = new Page<>(pageIndex, pageSize);
         QueryWrapper<ReplyCommentEntity> queryWrapper = new QueryWrapper<>();
         ReplyCommentEntity entity = new ReplyCommentEntity();
         entity.setArticleId(articleId);

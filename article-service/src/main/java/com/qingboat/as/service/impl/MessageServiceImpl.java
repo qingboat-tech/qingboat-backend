@@ -172,7 +172,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
     }
 
     @Override
-    public IPage<MessageEntity> list(Long toUserId, Integer msgType,int pageIndex) {
+    public IPage<MessageEntity> list(Long toUserId, Integer msgType,Integer pageIndex,Integer pageSize) {
         MessageEntity entity = new MessageEntity();
         entity.setTo(toUserId);
         entity.setMsgType(msgType);
@@ -180,7 +180,11 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         queryWrapper.setEntity(entity);
         queryWrapper.orderByDesc("created_at");
 
-        IPage<MessageEntity> page = new Page<>(pageIndex, 10);
+        if (pageSize == null || pageSize<1){
+            pageSize =10;
+        }
+
+        IPage<MessageEntity> page = new Page<>(pageIndex, pageSize);
         page = this.page(page,queryWrapper);
         //同时更新为已读状态
         if (page.getRecords()!=null  && !page.getRecords().isEmpty()){

@@ -17,7 +17,7 @@ public interface MessageService  {
 
     void sendStarMessage(String articleId,Long starCount);
 
-    IPage<MessageEntity> list(Long toUserId, Integer msgType ,int pageIndex);
+    IPage<MessageEntity> list(Long toUserId, Integer msgType ,Integer pageIndex,Integer pageSize);
 
     MessageEntity getLastUnReadMessage(Long toUserId,Integer msgType);
 

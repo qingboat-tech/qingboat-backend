@@ -64,14 +64,18 @@ public class ReaderSubscriptionController extends BaseController {
      */
     @GetMapping(value = "/creators")
     @ResponseBody
-    public IPage<UserSubscriptionEntity> getCreatorEntityList(@RequestParam("pageIndex") int pageIndex) {
+    public IPage<UserSubscriptionEntity> getCreatorEntityList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,@RequestParam(value = "pageSize",required = false) Integer pageSize) {
         UserSubscriptionEntity entity = new UserSubscriptionEntity();
         entity.setSubscriberId(getUId());
 
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntity(entity);
 
-        IPage<UserSubscriptionEntity> page = new Page<>(pageIndex, 10);
+        if (pageSize == null || pageSize<1){
+            pageSize =10;
+        }
+
+        IPage<UserSubscriptionEntity> page = new Page<>(pageIndex, pageSize);
         for (UserSubscriptionEntity user: page.getRecords()) {
             UserEntity u = userService.findByUserId(user.getCreatorId());
             user.setCreatorNickname(u.getNickname());

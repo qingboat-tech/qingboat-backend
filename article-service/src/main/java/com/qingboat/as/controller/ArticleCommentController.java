@@ -80,8 +80,8 @@ public class ArticleCommentController extends BaseController {
     // reply列表
     @GetMapping(value = "/list")
     @ResponseBody
-    public IPage<ArticleCommentEntity> list(@RequestParam("pageIndex") int pageIndex, @RequestParam("articleId") String articleId) {
-        return articleCommentService.findArticleComment(articleId,pageIndex);
+    public IPage<ArticleCommentEntity> list(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,@RequestParam(value = "pageSize",required = false) Integer pageSize, @RequestParam("articleId") String articleId) {
+        return articleCommentService.findArticleComment(articleId,pageIndex,pageSize);
     }
 
 

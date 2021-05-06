@@ -12,7 +12,7 @@ public interface ArticleCommentService {
 
     boolean removeArticleComment(String articleId,Long commentId ,Long userId);
 
-    IPage<ArticleCommentEntity> findArticleComment(String articleId, int pageIndex);
+    IPage<ArticleCommentEntity> findArticleComment(String articleId, Integer pageIndex,Integer pageSize);
 
     ReplyCommentEntity replyComment(ReplyCommentEntity replyCommentEntity);
 
@@ -20,6 +20,6 @@ public interface ArticleCommentService {
 
     boolean removeReplyComment(String articleId,Long replyId,Long userId);
 
-    IPage<ReplyCommentEntity> findReplyComment(String articleId,Long commentId, int pageIndex);
+    IPage<ReplyCommentEntity> findReplyComment(String articleId,Long commentId, Integer pageIndex,Integer pageSize);
 
 }
