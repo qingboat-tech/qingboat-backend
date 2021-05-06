@@ -64,12 +64,9 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = "/findDraftArticleList")
     @ResponseBody
-    public Page<ArticleEntity> findDraftArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex) {
+    public Page<ArticleEntity> findDraftArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,@RequestParam(value = "pageSize",required = false) Integer pageSize) {
         String uid = getUIdStr();
-        if (pageIndex == null){
-            pageIndex = 0;
-        }
-        return articleService.findDraftListByAuthorId(uid,pageIndex);
+        return articleService.findDraftListByAuthorId(uid,pageIndex,pageSize);
     }
 
     /**
@@ -77,12 +74,9 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = "/findReviewArticleList")
     @ResponseBody
-    public Page<ArticleEntity> findReviewingArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex) {
+    public Page<ArticleEntity> findReviewingArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,@RequestParam(value = "pageSize",required = false) Integer pageSize) {
         String uid = getUIdStr();
-        if (pageIndex == null){
-            pageIndex = 0;
-        }
-        return articleService.findReviewListByAuthorId(uid,pageIndex);
+        return articleService.findReviewListByAuthorId(uid,pageIndex,pageSize);
     }
 
     /**
@@ -90,12 +84,9 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = "/findRefuseArticleList")
     @ResponseBody
-    public Page<ArticleEntity> findRefuseArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex) {
+    public Page<ArticleEntity> findRefuseArticleList(@RequestParam(value = "pageIndex",required = false)Integer pageIndex,@RequestParam(value = "pageSize",required = false) Integer pageSize ) {
         String uid = getUIdStr();
-        if (pageIndex == null){
-            pageIndex = 0;
-        }
-        return articleService.findRefuseListByAuthorId(uid,pageIndex);
+        return articleService.findRefuseListByAuthorId(uid,pageIndex,pageSize);
     }
 
     /**
@@ -103,12 +94,9 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = "/findPublishArticleList")
     @ResponseBody
-    public Page<ArticleEntity> findPublishArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex) {
+    public Page<ArticleEntity> findPublishArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,@RequestParam(value = "pageSize",required = false) Integer pageSize) {
         String uid = getUIdStr();
-        if (pageIndex == null){
-            pageIndex = 0;
-        }
-        return articleService.findPublishListByAuthorId(uid,pageIndex);
+        return articleService.findPublishListByAuthorId(uid,pageIndex,pageSize);
     }
 
     /**
@@ -195,7 +183,7 @@ public class ArticleController extends BaseController {
      */
     @RequestMapping(value = "/subscriptionArticleList", method = RequestMethod.GET)
     @ResponseBody
-    public Page<ArticleEntity> subscriptionArticleList(@RequestParam("pageIndex") int pageIndex, @RequestParam(value = "scope",required = false) Integer scope) {
+    public Page<ArticleEntity> subscriptionArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,@RequestParam(value = "pageSize",required = false) Integer pageSize, @RequestParam(value = "scope",required = false) Integer scope) {
         Long subscriberId = getUId();
 
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
@@ -224,7 +212,7 @@ public class ArticleController extends BaseController {
                 }
             }
         }
-        return  articleService.findByAuthorIdsAndScope(creatorIds,scope,pageIndex);
+        return  articleService.findByAuthorIdsAndScope(creatorIds,pageIndex,pageSize,scope);
     }
 
     @GetMapping(value = "/getInviteKey")

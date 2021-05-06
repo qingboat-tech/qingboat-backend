@@ -110,12 +110,15 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Page<ArticleEntity> findByAuthorId(String authorId ,int pageIndex,boolean needInit) {
-        if (pageIndex<0){
+    public Page<ArticleEntity> findByAuthorId(String authorId ,Integer pageIndex,Integer pageSize,boolean needInit) {
+        if (pageIndex ==null || pageIndex<0){
             pageIndex = 0;
         }
+        if (pageSize ==null || pageSize<1){
+            pageSize =10;
+        }
         Sort sort = Sort.by(Sort.Direction.DESC, "createdTime");
-        Pageable pageable = PageRequest.of(pageIndex, 10, sort);
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
         Page<ArticleEntity>  page =  articleMongoDao.findByAuthorId(authorId,pageable);
         if (page != null && page.isEmpty() && needInit && pageIndex ==0){
             initArticle(authorId);
@@ -145,48 +148,59 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Page<ArticleEntity> findDraftListByAuthorId(String authorId, int pageIndex) {
-
-        if (pageIndex<0){
+    public Page<ArticleEntity> findDraftListByAuthorId(String authorId, Integer pageIndex,Integer pageSize) {
+        if (pageIndex ==null || pageIndex<0){
             pageIndex = 0;
         }
+        if (pageSize ==null || pageSize<1){
+            pageSize =10;
+        }
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedTime");
-        Pageable pageable = PageRequest.of(pageIndex, 10, sort);
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
         Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,0,pageable);
         return page;
     }
 
     @Override
-    public Page<ArticleEntity> findReviewListByAuthorId(String authorId, int pageIndex) {
-        if (pageIndex<0){
+    public Page<ArticleEntity> findReviewListByAuthorId(String authorId, Integer pageIndex,Integer pageSize) {
+        if (pageIndex ==null || pageIndex<0){
             pageIndex = 0;
         }
+        if (pageSize ==null || pageSize<1){
+            pageSize =10;
+        }
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedTime");
-        Pageable pageable = PageRequest.of(pageIndex, 10, sort);
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
         Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,1,pageable);
         return page;
     }
 
     @Override
-    public Page<ArticleEntity> findRefuseListByAuthorId(String authorId, int pageIndex) {
+    public Page<ArticleEntity> findRefuseListByAuthorId(String authorId, Integer pageIndex,Integer pageSize) {
 
-        if (pageIndex<0){
+        if (pageIndex ==null || pageIndex<0){
             pageIndex = 0;
         }
+        if (pageSize ==null || pageSize<1){
+            pageSize =10;
+        }
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedTime");
-        Pageable pageable = PageRequest.of(pageIndex, 10, sort);
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
         Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,2,pageable);
         return page;
     }
 
     @Override
-    public Page<ArticleEntity> findPublishListByAuthorId(String authorId, int pageIndex) {
+    public Page<ArticleEntity> findPublishListByAuthorId(String authorId, Integer pageIndex,Integer pageSize) {
 
-        if (pageIndex<0){
+        if (pageIndex ==null || pageIndex<0){
             pageIndex = 0;
         }
+        if (pageSize ==null || pageSize<1){
+            pageSize =10;
+        }
         Sort sort = Sort.by(Sort.Direction.DESC, "updatedTime");
-        Pageable pageable = PageRequest.of(pageIndex, 10, sort);
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
         Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,4,pageable);
         return page;
     }
@@ -321,7 +335,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds, int pageIndex, Integer scope) {
+    public Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds, Integer pageIndex,Integer pageSize, Integer scope) {
         if ( authorIds == null || authorIds.isEmpty()){
             return  null;
         }

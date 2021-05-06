@@ -25,7 +25,7 @@ public interface ArticleService {
 
     ArticleEntity saveArticle(ArticleEntity articleEntity ,String operatorId);
 
-    Page<ArticleEntity> findByAuthorId(String authorId,int pageIndex,boolean needInit);
+    Page<ArticleEntity> findByAuthorId(String authorId,Integer pageIndex,Integer pageSize,boolean needInit);
 
     List<ArticleEntity> findAllByParentId(String parentId);
 
@@ -34,22 +34,22 @@ public interface ArticleService {
     /**
      * 查询草稿箱列表
      */
-    Page<ArticleEntity> findDraftListByAuthorId(String authorId,int pageIndex);
+    Page<ArticleEntity> findDraftListByAuthorId(String authorId,Integer pageIndex,Integer pageSize);
 
     /**
      * 查询审核中列表
      */
-    Page<ArticleEntity> findReviewListByAuthorId(String authorId,int pageIndex);
+    Page<ArticleEntity> findReviewListByAuthorId(String authorId,Integer pageIndex,Integer pageSize);
 
     /**
      * 查询审核不通过列表
      */
-    Page<ArticleEntity> findRefuseListByAuthorId(String authorId,int pageIndex);
+    Page<ArticleEntity> findRefuseListByAuthorId(String authorId,Integer pageIndex,Integer pageSize);
 
     /**
      * 查询已发布列表
      */
-    Page<ArticleEntity> findPublishListByAuthorId(String authorId,int pageIndex);
+    Page<ArticleEntity> findPublishListByAuthorId(String authorId,Integer pageIndex,Integer pageSize);
 
     /**
      * 查询最热列表 ，size =10
@@ -98,7 +98,7 @@ public interface ArticleService {
     boolean reviewByArticleId(String articleId,int status);
 
 
-    Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds,int pageIndex,Integer  scope);
+    Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds,Integer pageIndex,Integer pageSize,Integer  scope);
 
     ArticleEntity findBaseInfoById(String articleId);
 
