@@ -19,6 +19,8 @@ public interface MessageService  {
 
     IPage<MessageEntity> list(Long toUserId, Integer msgType ,int pageIndex);
 
+    MessageEntity getLastUnReadMessage(Long toUserId,Integer msgType);
+
     Integer getUnreadMessageCount(Long toUserId, Integer msgType);
 
 }

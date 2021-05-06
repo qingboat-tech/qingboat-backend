@@ -8,6 +8,10 @@ public interface UserService {
 
     UserProfileEntity applyCreator(Long uid);
 
+    UserProfileEntity getUserProfile(Long uid);
+
+    Boolean confirmCreator(Long applyUserId,Boolean rst);
+
     UserProfileEntity saveUserProfile(UserProfileEntity userProfileEntity);
 
     CreatorApplyFormEntity saveCreatorApplyForm(CreatorApplyFormEntity creatorApplyFormEntity);

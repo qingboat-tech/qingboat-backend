@@ -3,6 +3,7 @@ package com.qingboat.base.config;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qingboat.base.api.ApiResponse;
+import com.qingboat.base.exception.BaseException;
 import feign.FeignException;
 import feign.Response;
 import feign.Util;
@@ -28,6 +29,10 @@ public class FeignDecoder implements Decoder {
         JavaType javaType = mapper.getTypeFactory()
                 .constructParametricType(ApiResponse.class, mapper.getTypeFactory().constructType(type));
         ApiResponse<?> apiResponse = mapper.readValue(body, javaType);
+        if (200!=apiResponse.getCode() ){
+            //对方服务异常
+            throw new BaseException(apiResponse.getCode(),apiResponse.getMessage());
+        }
         return apiResponse.getData();
     }
 

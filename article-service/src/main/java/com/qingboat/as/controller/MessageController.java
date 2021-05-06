@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class MessageController extends BaseController {
 
-
     @Autowired
     private MessageService messageService;
     // reply列表
@@ -27,6 +26,13 @@ public class MessageController extends BaseController {
     @ResponseBody
     public IPage<MessageEntity> list(@RequestParam("pageIndex") int pageIndex, @RequestParam(value = "msgType",required = false) Integer msgType) {
         return messageService.list(getUId(),msgType,pageIndex);
+    }
+
+    // reply列表
+    @GetMapping(value = "/getLastUnReadMessage")
+    @ResponseBody
+    public MessageEntity getLastUnReadMessage( @RequestParam(value = "msgType",required = false) Integer msgType) {
+        return messageService.getLastUnReadMessage(getUId(),msgType);
     }
 
     // reply列表

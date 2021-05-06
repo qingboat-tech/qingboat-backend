@@ -199,6 +199,20 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
     }
 
     @Override
+    public MessageEntity getLastUnReadMessage(Long toUserId, Integer msgType) {
+        MessageEntity entity = new MessageEntity();
+        entity.setTo(toUserId);
+        entity.setMsgType(msgType);
+        entity.setReadFlag(0);
+
+        QueryWrapper<MessageEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.setEntity(entity);
+        queryWrapper.orderByDesc("created_at").last(" LIMIT 1");
+
+        return this.getOne(queryWrapper);
+    }
+
+    @Override
     public Integer getUnreadMessageCount(Long toUserId, Integer msgType) {
         MessageEntity entity = new MessageEntity();
         entity.setTo(toUserId);

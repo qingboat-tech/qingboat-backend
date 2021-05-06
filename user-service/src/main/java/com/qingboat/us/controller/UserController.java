@@ -1,5 +1,6 @@
 package com.qingboat.us.controller;
 
+import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
 import com.qingboat.us.entity.CreatorApplyFormEntity;
 import com.qingboat.us.entity.UserProfileEntity;
@@ -13,6 +14,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.math.BigInteger;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -20,6 +23,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FeishuService feishuService;
 
 
     @PostMapping("/saveUserProfile")
@@ -34,6 +40,13 @@ public class UserController {
         return userService.saveUserProfile(userProfileEntity);
     }
 
+    @GetMapping("/getUserProfile")
+    @ResponseBody
+    public UserProfileEntity getUserProfile(@RequestParam("userId") Long userId){
+        return userService.getUserProfile(userId);
+    }
+
+
     @GetMapping("/applyCreator")
     @ResponseBody
     public UserProfileEntity applyCreator(){
@@ -41,8 +54,41 @@ public class UserController {
         log.info(" applyCreator, RequestParam: uid=" +uid);
 
         UserProfileEntity userProfileEntity = userService.applyCreator(uid);
+        if(1== userProfileEntity.getRole() && 1 == userProfileEntity.getStatus()){
+            throw new BaseException(500,"操作失败：该用户已经是创作者");
+        }
+        // 发飞书通知
+        FeishuService.TextBody textBody = new FeishuService.TextBody(
+                new StringBuilder().append("===创者者申请===").append("\n")
+                        .append("创作者Id：").append(uid).append("\n")
+                        .append("创者者昵称：").append(userProfileEntity.getNickname()).append("\n").toString());
+        feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
 
         return null;
+    }
+
+    @PostMapping("/confirmCreator")
+    @ResponseBody
+    public Map<String,Object> confirmCreator(@RequestBody Map<String,Object> param){
+        log.info(" confirmCreator, RequestParam: uid=" );
+        String applyUId = String.valueOf(param.get("applyUserId"));
+
+        Long applyUserId = Long.parseLong(applyUId);
+        Boolean result = (Boolean) param.get("result");
+
+
+//        UserProfileEntity userProfileEntity = userService.applyCreator(uid);
+//        if(1== userProfileEntity.getRole() && 1 == userProfileEntity.getStatus()){
+//            throw new BaseException(500,"操作失败：该用户已经是创作者");
+//        }
+//        // 发飞书通知
+//        FeishuService.TextBody textBody = new FeishuService.TextBody(
+//                new StringBuilder().append("===创者者申请===").append("\n")
+//                        .append("创作者Id：").append(uid).append("\n")
+//                        .append("创者者昵称：").append(userProfileEntity.getNickname()).append("\n").toString());
+//        feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
+
+        return param;
     }
 
 

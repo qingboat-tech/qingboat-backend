@@ -28,6 +28,9 @@ public class UserProfileEntity {
     private Integer role;  // 1:创作者；2：阅读者
 
     private String profileImgUrl; // 创作者profile图片
+
+    private String profileKey; // 创作者profile页面Key
+
     private Integer status; // 0: 待审核；1：审核通过；-1：审核不通过
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")

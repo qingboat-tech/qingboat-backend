@@ -46,6 +46,38 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserProfileEntity getUserProfile(Long uid) {
+        QueryWrapper<UserProfileEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id",uid);
+        UserProfileEntity userProfileEntity = userProfileDao.selectOne(queryWrapper);
+        return userProfileEntity;
+    }
+
+    @Override
+    public Boolean confirmCreator(Long applyUserId, Boolean rst) {
+        if (rst == null){
+            throw new BaseException(500,"操作失败：请求参数里审批结果为空。");
+        }
+        QueryWrapper<UserProfileEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id",applyUserId);
+
+        UserProfileEntity userProfileEntity = new UserProfileEntity();
+        if (rst){
+            userProfileEntity.setStatus(1);
+        }else {
+            userProfileEntity.setStatus(-1);
+        }
+        userProfileEntity.setRole(1);
+
+        int updateCount = userProfileDao.update(userProfileEntity,queryWrapper);
+        if (updateCount == 1){
+
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
+
+    @Override
     public UserProfileEntity saveUserProfile(UserProfileEntity userProfileEntity) {
         QueryWrapper<UserProfileEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id",userProfileEntity.getUserId());
