@@ -25,14 +25,14 @@ public class MessageController extends BaseController {
     // reply列表
     @GetMapping(value = "/list")
     @ResponseBody
-    public IPage<MessageEntity> list(@RequestParam("pageIndex") int pageIndex, @RequestParam("msgType") Integer msgType) {
+    public IPage<MessageEntity> list(@RequestParam("pageIndex") int pageIndex, @RequestParam(value = "msgType",required = false) Integer msgType) {
         return messageService.list(getUId(),msgType,pageIndex);
     }
 
     // reply列表
     @GetMapping(value = "/unReadCount")
     @ResponseBody
-    public Integer unReadCount(@RequestParam("pageIndex") int pageIndex, @RequestParam("msgType") Integer msgType) {
+    public Integer unReadCount( @RequestParam(value = "msgType",required = false) Integer msgType) {
         return messageService.getUnreadMessageCount(getUId(),msgType);
     }
 
