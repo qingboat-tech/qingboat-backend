@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/creatorsubscription")
@@ -109,8 +110,42 @@ public class CreatorSubscriptionController extends BaseController {
     @GetMapping(value = "/getBenefits")
     @ResponseBody
     public List<BenefitEntity> getBenefits() {
-        return benefitService.list();
+        Long creatorId = getUId();
+        QueryWrapper<BenefitEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("creator_id",0).or().eq("creator_id",creatorId);
+        return benefitService.list(queryWrapper);
     }
+
+    /**
+     * 添加创作者的权益
+     */
+    @PostMapping(value = "/saveBenefit")
+    @ResponseBody
+    public BenefitEntity saveBenefit(@RequestBody BenefitEntity benefitEntity) {
+        Long creatorId = getUId();
+        String key = UUID.randomUUID().toString();
+        benefitEntity.setCreatorId(creatorId);
+        benefitEntity.setKey(key);
+
+        boolean rst =  benefitService.saveOrUpdate(benefitEntity);
+        if (rst){
+            return benefitEntity;
+        }
+        throw new BaseException(500,"添加创作者的权益失败");
+    }
+    /**
+     * 添加创作者的权益
+     */
+    @DeleteMapping(value = "/delBenefit")
+    @ResponseBody
+    public Boolean delBenefit(@RequestParam("benefitId") Long benefitId) {
+        Long creatorId = getUId();
+        QueryWrapper<BenefitEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id",benefitId).eq("creator_id",creatorId);
+        boolean rst = benefitService.remove(queryWrapper);
+        return rst;
+    }
+
 
     /**
      * 获取creator会员等级列表

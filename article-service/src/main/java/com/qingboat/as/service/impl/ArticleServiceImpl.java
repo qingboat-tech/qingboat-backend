@@ -5,10 +5,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.mongodb.client.result.UpdateResult;
 import com.qingboat.as.dao.ArticleMongoDao;
 import com.qingboat.as.entity.ArticleEntity;
+import com.qingboat.as.entity.BenefitEntity;
+import com.qingboat.as.entity.TierEntity;
 import com.qingboat.as.entity.UserEntity;
 import com.qingboat.as.service.ArticleService;
+import com.qingboat.as.service.TierService;
 import com.qingboat.as.service.UserService;
 import com.qingboat.as.utils.RedisUtil;
+import com.qingboat.as.utils.sensi.SensitiveFilter;
 import com.qingboat.base.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -18,6 +22,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -38,6 +43,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private TierService tierService;
 
     private static final String USER_STAR_PRE ="USER_STAR_";
 
@@ -83,6 +91,9 @@ public class ArticleServiceImpl implements ArticleService {
         query.addCriteria(Criteria.where("authorId").is(operatorId));
 
         Update update = new Update();
+        update.set("status",0);
+        update.set("suggestion","");
+
         if (articleEntity.getData()!=null){
             update.set("data",articleEntity.getData());
         }
@@ -300,17 +311,26 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public boolean submitReviewByArticleId(String articleId,String operatorId, int scope) {
-        if (scope!=0 && scope!=1){
-            throw new BaseException(500,"ArticleEntity_scope_error");
+    public boolean submitReviewByArticleId(String articleId,String operatorId, Set<Long> tierIdSet) {
+        if (tierIdSet == null || tierIdSet.isEmpty()){
+            throw new BaseException(500,"操作失败：发布的文章没有选择套餐范围");
         }
+        Set<String> benefitKeySet = new HashSet<>();
+
+        List<TierEntity> tierList = tierService.listByIds(tierIdSet);
+        for (TierEntity tier:tierList) {
+            for (BenefitEntity benefit:tier.getBenefitList() ) {
+                benefitKeySet.add(benefit.getKey());
+            }
+        }
+
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(articleId));
         query.addCriteria(Criteria.where("authorId").is(operatorId));
 
         Update update = new Update();
         update.set("status",1);
-        update.set("scope",scope);
+        update.set("benefit",benefitKeySet);
         UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
         if (result.getModifiedCount() <=0){
             throw new BaseException(500,"ArticleEntity_is_not_exist");
@@ -332,6 +352,75 @@ public class ArticleServiceImpl implements ArticleService {
             throw new BaseException(500,"ArticleEntity_is_not_exist");
         }
         return true;
+    }
+
+    @Override
+    @Async
+    public void asyncReviewByArticleId(String articleId) {
+        ArticleEntity articleEntity = articleMongoDao.findArticleEntityById(articleId);
+        if (articleEntity!= null){
+            SensitiveFilter sensitiveFilter = SensitiveFilter.DEFAULT;
+            String title = articleEntity.getTitle();
+            String desc = articleEntity.getDesc();
+            String data = articleEntity.getData().toString();
+
+            boolean pass = false;
+
+            String filter = sensitiveFilter.filter(title,'*');
+            if (!title.equals(filter)){
+                Query query = new Query();
+                query.addCriteria(Criteria.where("id").is(articleId));
+
+                Update update = new Update();
+                update.set("status",2);
+                update.set("suggestion","文章标题有敏感词");
+
+                UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
+
+                //发送消息
+                return;
+            }
+            filter = sensitiveFilter.filter(desc,'*');
+            if (!desc.equals(filter)){
+                Query query = new Query();
+                query.addCriteria(Criteria.where("id").is(articleId));
+
+                Update update = new Update();
+                update.set("status",2);
+                update.set("suggestion","文章描述有敏感词");
+
+                UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
+
+                //发送消息
+                return;
+            }
+            filter = sensitiveFilter.filter(data,'*');
+            if (!data.equals(filter)){
+                Query query = new Query();
+                query.addCriteria(Criteria.where("id").is(articleId));
+
+                Update update = new Update();
+                update.set("status",2);
+                update.set("suggestion","文章内容有敏感词");
+
+                UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
+
+                //发送消息
+                return;
+            }
+            Query query = new Query();
+            query.addCriteria(Criteria.where("id").is(articleId));
+
+            Update update = new Update();
+            update.set("status",4);
+            update.set("suggestion","文章内容有敏感词");
+
+            UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
+
+            //发送消息
+
+        }
+
     }
 
     @Override
@@ -363,6 +452,29 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public ArticleEntity findBaseInfoById(String articleId){
         return this.articleMongoDao.findBaseInfoById(articleId);
+    }
+
+    @Override
+    public boolean topArticle(String articleId, Long userId) {
+        //1、取消置顶
+        Query cancelQuery = new Query();
+        cancelQuery.addCriteria(Criteria.where("top").is(1));
+        cancelQuery.addCriteria(Criteria.where("authorId").is(String.valueOf(userId)));
+        Update cancelTopUpdate = new Update();
+        cancelTopUpdate.set("top",0);
+        mongoTemplate.updateFirst(cancelQuery, cancelTopUpdate, ArticleEntity.class);
+
+        //2、置顶
+        Query query = new Query();
+        query.addCriteria(Criteria.where("id").is(articleId));
+        query.addCriteria(Criteria.where("authorId").is(String.valueOf(userId)));
+
+        Update update = new Update();
+        update.set("top",1);
+        update.set("updatedTime",LocalDateTime.now());
+
+        UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
+        return true;
     }
 
 

@@ -15,7 +15,10 @@ public class BenefitEntity implements Serializable  {
     @TableId(type = IdType.AUTO)
     private Long id;
 
+    @TableField("`key`")
     private String key;
+
+    private Long creatorId;  //系统的则为0
 
     private String title;
 

@@ -138,6 +138,15 @@ public class ArticleController extends BaseController {
     }
 
     /**
+     * 设置置顶
+     */
+    @PostMapping(value = "/topArticle/{id}")
+    @ResponseBody
+    public Boolean topArticle(@PathVariable("id") String id) {
+        return articleService.topArticle(id,getUId());
+    }
+
+    /**
      * 根据文章Id删除文章，状态为4的（已发布）不能删除
      */
     @DeleteMapping(value = "/{id}")
@@ -154,7 +163,7 @@ public class ArticleController extends BaseController {
     @ResponseBody
     public Boolean submitReview(@Valid @RequestBody ArticlePublishVo articlePublishVo) {  //TODO 需要修改
         String uid = getUIdStr();
-        Boolean rst =articleService.submitReviewByArticleId(articlePublishVo.getArticleId(),uid,articlePublishVo.getScope());
+        Boolean rst =articleService.submitReviewByArticleId(articlePublishVo.getArticleId(),uid,articlePublishVo.getTierIds());
 
         //TODO 发送消息给氢舟客服，通知其审核。
         FeishuService.TextBody textBody = new FeishuService.TextBody(
@@ -162,6 +171,8 @@ public class ArticleController extends BaseController {
                 .append("创作者Id：").append(uid).append("\n")
                 .append("文章Id：").append(articlePublishVo.getArticleId()).append("\n").toString());
         feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
+
+        articleService.asyncReviewByArticleId(articlePublishVo.getArticleId());
         return rst;
     }
 

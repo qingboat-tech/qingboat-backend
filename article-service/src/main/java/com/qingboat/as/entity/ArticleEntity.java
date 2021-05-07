@@ -7,6 +7,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Document
@@ -20,10 +22,15 @@ public class ArticleEntity {
 
     private String desc = "";    //文章描述
 
+    private Integer top = 0 ; //是否置顶，1：表示置顶
+
     private Integer status ; // 0:草稿；1：审核中；2：审核驳回；3：审核通过；4：已发布；5：只读不可编辑；6：禁用 ,7: 试读
 
     private Integer type ; // 0:newsLetter；1：learnPathway
 
+    private String suggestion =""; // 审核被驳回的建议和原因
+
+    @Deprecated
     private Integer scope ; //0:表示免费；1：收费
 
     private String categoryName ; //
@@ -39,6 +46,8 @@ public class ArticleEntity {
     private JSONArray data;    //文章数据
 
     private String parentId = ""; //父文章Id
+
+    private Set<String> benefit = new HashSet<>();
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

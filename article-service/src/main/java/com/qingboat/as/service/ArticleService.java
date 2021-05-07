@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 import javax.xml.stream.events.Comment;
 import java.util.List;
+import java.util.Set;
 
 public interface ArticleService {
 
@@ -90,17 +91,26 @@ public interface ArticleService {
     /**
      * 提交文章审核
      */
-    boolean submitReviewByArticleId(String articleId,String operatorId, int scope);
+    boolean submitReviewByArticleId(String articleId,String operatorId, Set<Long> tierIdSet);
 
     /**
      * 文章审核
      */
     boolean reviewByArticleId(String articleId,int status);
 
+    /**
+     * 异步文章审核
+     */
+    void asyncReviewByArticleId(String articleId);
 
     Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds,Integer pageIndex,Integer pageSize,Integer  scope);
 
     ArticleEntity findBaseInfoById(String articleId);
+
+    /**
+     * 文章置顶
+     */
+    boolean topArticle(String articleId ,Long userId);
 
 
 }
