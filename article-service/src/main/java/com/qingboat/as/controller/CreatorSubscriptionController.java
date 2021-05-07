@@ -203,7 +203,7 @@ public class CreatorSubscriptionController extends BaseController {
     /**
      * 创建会员等级的接口
      */
-    @DeleteMapping(value = "/tier/")
+    @DeleteMapping(value = "/tier")
     @ResponseBody
     public TierEntity delTierEntity(@RequestParam("tierId") Long tierId) {
         Long uid = getUId();

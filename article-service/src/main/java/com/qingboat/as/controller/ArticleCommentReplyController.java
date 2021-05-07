@@ -8,15 +8,10 @@ import com.qingboat.as.service.MessageService;
 import com.qingboat.as.service.UserService;
 import com.qingboat.as.vo.ArticleCommentReplyVo;
 import com.qingboat.base.api.FeishuService;
-import com.qingboat.base.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -58,7 +53,7 @@ public class ArticleCommentReplyController extends BaseController {
         replyCommentEntity = articleCommentService.replyComment(replyCommentEntity);
 
         //发送评论回复消息
-        messageService.sendReplyCommentMessage(replyCommentEntity);
+        messageService.asyncSendReplyCommentMessage(replyCommentEntity);
 
         return replyCommentEntity;
     }

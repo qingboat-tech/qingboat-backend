@@ -8,27 +8,20 @@ import com.qingboat.as.utils.AliyunOssUtil;
 import com.qingboat.as.utils.RedisUtil;
 import com.qingboat.as.utils.RssUtil;
 import com.qingboat.as.utils.sensi.SensitiveFilter;
-import com.qingboat.as.vo.ArticleCommentVo;
 import com.qingboat.as.vo.ArticlePublishVo;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
-import com.qingboat.base.utils.AesEncryptUtils;
 import com.rometools.rome.io.FeedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -159,7 +152,7 @@ public class ArticleController extends BaseController {
      */
     @PostMapping(value = "/submitReview")
     @ResponseBody
-    public Boolean submitReview(@Valid @RequestBody ArticlePublishVo articlePublishVo) {
+    public Boolean submitReview(@Valid @RequestBody ArticlePublishVo articlePublishVo) {  //TODO 需要修改
         String uid = getUIdStr();
         Boolean rst =articleService.submitReviewByArticleId(articlePublishVo.getArticleId(),uid,articlePublishVo.getScope());
 
@@ -170,6 +163,16 @@ public class ArticleController extends BaseController {
                 .append("文章Id：").append(articlePublishVo.getArticleId()).append("\n").toString());
         feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
         return rst;
+    }
+
+    /**
+     * 文章审核
+     */
+    @PostMapping(value = "/reviewByArticleId")
+    @ResponseBody
+    public boolean reviewByArticleId(String articleId, int status){  //TODO
+
+        return true;
     }
 
 
@@ -377,7 +380,7 @@ public class ArticleController extends BaseController {
         Long starCount = articleService.handleStarCountByArticleId(id,getUId());
 
         //发送点赞通知
-        messageService.sendStarMessage(id,starCount);
+        messageService.asyncSendStarMessage(id,starCount);
 
         return starCount;
     }

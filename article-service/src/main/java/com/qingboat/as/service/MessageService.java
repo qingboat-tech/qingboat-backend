@@ -6,16 +6,16 @@ import com.qingboat.as.entity.*;
 
 public interface MessageService  {
 
-    Boolean sendMessage(MessageEntity msg);
+    void asyncSendMessage(MessageEntity msg);
 
-    void sendSubscriptionMessage(UserSubscriptionEntity userSubscriptionEntity);
+    void asyncSendSubscriptionMessage(UserSubscriptionEntity userSubscriptionEntity);
 
 
-    void sendCommentMessage(ArticleCommentEntity articleCommentEntity);
+    void asyncSendCommentMessage(ArticleCommentEntity articleCommentEntity);
 
-    void sendReplyCommentMessage(ReplyCommentEntity replyCommentEntity);
+    void asyncSendReplyCommentMessage(ReplyCommentEntity replyCommentEntity);
 
-    void sendStarMessage(String articleId,Long starCount);
+    void asyncSendStarMessage(String articleId, Long starCount);
 
     IPage<MessageEntity> list(Long toUserId, Integer msgType ,Integer pageIndex,Integer pageSize);
 

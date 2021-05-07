@@ -10,11 +10,7 @@ import com.qingboat.base.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Date;
 
@@ -60,7 +56,7 @@ public class ArticleCommentController extends BaseController {
             articleCommentEntity =  articleCommentService.addArticleComment(articleCommentEntity);
 
             //发送评论消息
-            messageService.sendCommentMessage(articleCommentEntity);
+            messageService.asyncSendCommentMessage(articleCommentEntity);
 
             return articleCommentEntity;
         }

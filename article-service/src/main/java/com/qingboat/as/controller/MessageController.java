@@ -1,18 +1,11 @@
 package com.qingboat.as.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.qingboat.as.entity.ArticleCommentEntity;
 import com.qingboat.as.entity.MessageEntity;
 import com.qingboat.as.service.MessageService;
-import com.qingboat.base.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping(value = "/msg")
@@ -25,8 +18,8 @@ public class MessageController extends BaseController {
 
     @PostMapping(value = "/sendMessage")
     @ResponseBody
-    public Boolean sendMessage(@RequestBody MessageEntity msg){
-        return messageService.sendMessage(msg);
+    public void sendMessage(@RequestBody MessageEntity msg){
+        messageService.asyncSendMessage(msg);
     }
 
     // reply列表

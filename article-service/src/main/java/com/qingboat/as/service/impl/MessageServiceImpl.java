@@ -33,18 +33,23 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
     @Autowired
     private ArticleCommentService articleCommentService;
 
-
     @Override
-    public Boolean sendMessage(MessageEntity msg) {
+    @Async
+    public void asyncSendMessage(MessageEntity msg) {
 
         log.info("===sendMessage===" + JSON.toJSONString(msg));
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        log.info("===sendMessage=== end " );
 
-        return Boolean.TRUE;
     }
 
     @Override
     @Async
-    public void sendSubscriptionMessage(UserSubscriptionEntity userSubscriptionEntity) {
+    public void asyncSendSubscriptionMessage(UserSubscriptionEntity userSubscriptionEntity) {
         // 产生两条消息，一个给订阅者，一个给创作者
         //1、发给订阅者
         UserEntity subscribeUser = userService.findByUserId(userSubscriptionEntity.getSubscriberId());
@@ -97,7 +102,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
     @Override
     @Async
-    public void sendCommentMessage(ArticleCommentEntity articleCommentEntity) {
+    public void asyncSendCommentMessage(ArticleCommentEntity articleCommentEntity) {
 
         ArticleEntity articleEntity = articleService.findBaseInfoById(articleCommentEntity.getArticleId());
 
@@ -122,12 +127,10 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
     @Override
     @Async
-    public void sendReplyCommentMessage(ReplyCommentEntity replyCommentEntity) {
+    public void asyncSendReplyCommentMessage(ReplyCommentEntity replyCommentEntity) {
 
         ArticleCommentEntity commentEntity = articleCommentService.findArticleComment(replyCommentEntity.getArticleId(),replyCommentEntity.getCommentId());
-
         ArticleEntity articleEntity = articleService.findBaseInfoById(replyCommentEntity.getArticleId());
-
 
         MessageEntity msg = new MessageEntity();
         msg.setMsgType(MessageEntity.REPLY_MSG);
@@ -152,7 +155,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
     @Override
     @Async
-    public void sendStarMessage(String articleId, Long starCount) {
+    public void asyncSendStarMessage(String articleId, Long starCount) {
         if (starCount %10 != 0){
             return;
         }

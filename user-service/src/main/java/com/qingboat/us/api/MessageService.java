@@ -12,5 +12,5 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface MessageService {
 
     @RequestMapping(value = "/msg/sendMessage" , method = RequestMethod.POST)
-    Boolean sendMessage(@RequestBody MessageVo messageVo);
+    void sendMessage(@RequestBody MessageVo messageVo);
 }

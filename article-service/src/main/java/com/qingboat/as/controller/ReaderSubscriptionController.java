@@ -125,7 +125,7 @@ public class ReaderSubscriptionController extends BaseController {
                     if (beforeUserSubscription.getOrderId() ==0 ){ // 上次和这次都是免费订阅
                         log.info("上次和这次都是免费订阅 ");
                         //发送订阅消息
-                        messageService.sendSubscriptionMessage(userSubscriptionEntity);
+                        messageService.asyncSendSubscriptionMessage(userSubscriptionEntity);
                         return userSubscriptionEntity;
                     }
                     // 会员续费
@@ -151,7 +151,7 @@ public class ReaderSubscriptionController extends BaseController {
                     beforeUserSubscription.setUpdatedAt(null);
                     userSubscriptionService.updateById(beforeUserSubscription);
                     //发送订阅消息
-                    messageService.sendSubscriptionMessage(userSubscriptionEntity);
+                    messageService.asyncSendSubscriptionMessage(userSubscriptionEntity);
                     return beforeUserSubscription;
                 }else { // 免费转付费会员
                     TierEntity beforeTier  = tierService.getById(beforeUserSubscription.getMemberTierId());
@@ -179,7 +179,7 @@ public class ReaderSubscriptionController extends BaseController {
                         beforeUserSubscription.setUpdatedAt(null);
                         userSubscriptionService.updateById(beforeUserSubscription);
                         //发送订阅消息
-                        messageService.sendSubscriptionMessage(userSubscriptionEntity);
+                        messageService.asyncSendSubscriptionMessage(userSubscriptionEntity);
                         return beforeUserSubscription;
                     }else {
                         throw  new BaseException(500 , "暂时不支持会员升级");
@@ -206,7 +206,7 @@ public class ReaderSubscriptionController extends BaseController {
 
             userSubscriptionService.save(userSubscriptionEntity);
             //发送订阅消息
-            messageService.sendSubscriptionMessage(userSubscriptionEntity);
+            messageService.asyncSendSubscriptionMessage(userSubscriptionEntity);
             return userSubscriptionEntity;
 
         }else {

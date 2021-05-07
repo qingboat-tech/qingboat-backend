@@ -11,7 +11,7 @@ public class MessageTask {
     private int i;
 
 
-    @Scheduled(cron = "*/15 * * * * ?")
+//    @Scheduled(cron = "*/15 * * * * ?")
     public void execute() {
         log.info("thread id:{},FixedPrintTask execute times:{}", Thread.currentThread().getId(), ++i);
     }
