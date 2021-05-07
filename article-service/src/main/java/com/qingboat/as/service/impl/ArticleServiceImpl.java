@@ -199,7 +199,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Page<ArticleEntity> findPublishListByAuthorId(String authorId, Integer pageIndex,Integer pageSize) {
+    public Page<ArticleEntity> findPublishListByAuthorId(String authorId, Integer pageIndex,Integer pageSize,Boolean orderByHot) {
 
         if (pageIndex ==null || pageIndex<0){
             pageIndex = 0;
@@ -207,7 +207,13 @@ public class ArticleServiceImpl implements ArticleService {
         if (pageSize ==null || pageSize<1){
             pageSize =10;
         }
-        Sort sort = Sort.by(Sort.Direction.DESC, "top","updatedTime");
+        Sort sort = null;
+        if (orderByHot!=null && orderByHot){
+            sort = Sort.by(Sort.Direction.DESC, "readCount","updatedTime");
+        }else {
+            sort = Sort.by(Sort.Direction.DESC, "top","updatedTime");
+        }
+
         Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
         Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,4,pageable);
         return page;

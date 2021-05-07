@@ -88,9 +88,11 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = "/findPublishArticleList")
     @ResponseBody
-    public Page<ArticleEntity> findPublishArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,@RequestParam(value = "pageSize",required = false) Integer pageSize) {
+    public Page<ArticleEntity> findPublishArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,
+                                                      @RequestParam(value = "pageSize",required = false) Integer pageSize,
+                                                      @RequestParam(value = "hot",required = false) Boolean orderByHot ) {
         String uid = getUIdStr();
-        return articleService.findPublishListByAuthorId(uid,pageIndex,pageSize);
+        return articleService.findPublishListByAuthorId(uid,pageIndex,pageSize,orderByHot);
     }
 
     /**

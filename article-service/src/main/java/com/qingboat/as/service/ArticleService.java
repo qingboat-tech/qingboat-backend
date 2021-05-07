@@ -51,16 +51,18 @@ public interface ArticleService {
     /**
      * 查询已发布列表
      */
-    Page<ArticleEntity> findPublishListByAuthorId(String authorId,Integer pageIndex,Integer pageSize);
+    Page<ArticleEntity> findPublishListByAuthorId(String authorId,Integer pageIndex,Integer pageSize ,Boolean orderByHot);
 
     /**
      * 查询最热列表 ，size =10
      */
+    @Deprecated
     List<ArticleEntity> findByAuthorIdByReadCountDesc(String authorId);
 
     /**
      * 查询最新列表 ，size =10
      */
+    @Deprecated
     List<ArticleEntity> findByAuthorIdByUpdateTimeDesc(String authorId);
 
     /**
