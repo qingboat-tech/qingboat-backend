@@ -1,6 +1,7 @@
 package com.qingboat.as.service;
 
 import com.qingboat.as.entity.ArticleEntity;
+import com.qingboat.as.entity.UserSubscriptionEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -103,7 +104,11 @@ public interface ArticleService {
      */
     void asyncReviewByArticleId(String articleId);
 
-    Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds,Integer pageIndex,Integer pageSize,Integer  scope);
+//    @Deprecated
+//    Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds,Integer pageIndex,Integer pageSize,Integer  scope);
+
+    Page<ArticleEntity> findByAuthorIdsAndScope(List<UserSubscriptionEntity> subscriptionEntityList,Integer pageIndex,Integer pageSize);
+
 
     ArticleEntity findBaseInfoById(String articleId);
 

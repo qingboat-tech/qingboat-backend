@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.mongodb.client.result.UpdateResult;
 import com.qingboat.as.dao.ArticleMongoDao;
-import com.qingboat.as.entity.ArticleEntity;
-import com.qingboat.as.entity.BenefitEntity;
-import com.qingboat.as.entity.TierEntity;
-import com.qingboat.as.entity.UserEntity;
+import com.qingboat.as.entity.*;
 import com.qingboat.as.service.ArticleService;
 import com.qingboat.as.service.TierService;
 import com.qingboat.as.service.UserService;
@@ -210,7 +207,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (pageSize ==null || pageSize<1){
             pageSize =10;
         }
-        Sort sort = Sort.by(Sort.Direction.DESC, "updatedTime");
+        Sort sort = Sort.by(Sort.Direction.DESC, "top","updatedTime");
         Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
         Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,4,pageable);
         return page;
@@ -424,30 +421,76 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds, Integer pageIndex,Integer pageSize, Integer scope) {
-        if ( authorIds == null || authorIds.isEmpty()){
-            return  null;
-        }
-        List<Integer> scopeList = new ArrayList<>();
-        if (scope ==0){
-            scopeList.add(0);
-        }else if (scope ==1){
-            scopeList.add(1);
-        }else if (scope == null){
-            scopeList.add(0);
-            scopeList.add(1);
-        }else {
-            throw new BaseException(500,"ArticleEntity_scope_error");
+    public Page<ArticleEntity> findByAuthorIdsAndScope(List<UserSubscriptionEntity> subscriptionEntityList, Integer pageIndex, Integer pageSize){
+        Query query = new Query();
+        if (subscriptionEntityList == null || subscriptionEntityList.isEmpty()){
+            return null;
         }
         if (pageIndex<0){
             pageIndex = 0;
         }
-        Sort sort = Sort.by(Sort.Direction.DESC, "updatedTime");
-        Pageable pageable = PageRequest.of(pageIndex, 10, sort);
+        if (pageSize<1){
+            pageSize = 10;
+        }
 
-        Page<ArticleEntity> page = articleMongoDao.findByAuthorIdsAndScopeAndStatus(authorIds,scopeList,4,pageable);
-        return page;
+        Criteria[] criteriaList = new Criteria[subscriptionEntityList.size()];
+        for(int i=0;i<subscriptionEntityList.size();i++){
+            Set<String> benefitSet = new HashSet<>();
+            UserSubscriptionEntity entity = subscriptionEntityList.get(i);
+
+            for (BenefitEntity benefitEntity:entity.getBenefitList()) {
+                if (benefitEntity.getKey()!=null && !benefitEntity.getKey().isEmpty())
+                benefitSet.add(benefitEntity.getKey());
+            }
+            Criteria criteria = new Criteria().andOperator(
+                    Criteria.where("authorId").is(String.valueOf(entity.getCreatorId())),
+                    Criteria.where("benefit").in(benefitSet)
+            );
+            criteriaList[i]= criteria;
+        }
+        query.addCriteria(new Criteria().orOperator(criteriaList));
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "top","updatedTime");
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
+        int skip = pageable.getPageNumber()  * pageable.getPageSize();
+        query.with(sort);
+        query.skip(skip);
+        query.limit(pageable.getPageSize());
+
+        long total = mongoTemplate.count(query, ArticleEntity.class);
+        List articleEntityList = mongoTemplate.find(query,ArticleEntity.class);
+
+        Page studentPage = new PageImpl(articleEntityList, pageable, total);
+
+        return studentPage;
     }
+//
+//    @Override
+//    public Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds, Integer pageIndex,Integer pageSize, Integer scope) {
+//        if ( authorIds == null || authorIds.isEmpty()){
+//            return  null;
+//        }
+//        List<Integer> scopeList = new ArrayList<>();
+//        if (scope ==0){
+//            scopeList.add(0);
+//        }else if (scope ==1){
+//            scopeList.add(1);
+//        }else if (scope == null){
+//            scopeList.add(0);
+//            scopeList.add(1);
+//        }else {
+//            throw new BaseException(500,"ArticleEntity_scope_error");
+//        }
+//        if (pageIndex<0){
+//            pageIndex = 0;
+//        }
+//        Sort sort = Sort.by(Sort.Direction.DESC, "top","updatedTime");
+//
+//        Pageable pageable = PageRequest.of(pageIndex, 10, sort);
+//
+//        Page<ArticleEntity> page = articleMongoDao.findByAuthorIdsAndScopeAndStatus(authorIds,scopeList,4,pageable);
+//        return page;
+//    }
 
     @Override
     public ArticleEntity findBaseInfoById(String articleId){

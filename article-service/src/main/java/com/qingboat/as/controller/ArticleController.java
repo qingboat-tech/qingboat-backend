@@ -1,6 +1,7 @@
 package com.qingboat.as.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qingboat.as.entity.*;
 import com.qingboat.as.service.*;
@@ -193,41 +194,30 @@ public class ArticleController extends BaseController {
     /**
      *
      * @param pageIndex
-     * @param scope  0:表示免费；1：表示付费；null：表示全部
+     * @param creatorId  null：表示全部
      * @return
      */
     @RequestMapping(value = "/subscriptionArticleList", method = RequestMethod.GET)
     @ResponseBody
-    public Page<ArticleEntity> subscriptionArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,@RequestParam(value = "pageSize",required = false) Integer pageSize, @RequestParam(value = "scope",required = false) Integer scope) {
+    public Page<ArticleEntity> subscriptionArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,@RequestParam(value = "pageSize",required = false) Integer pageSize, @RequestParam(value = "creatorId",required = false) Long creatorId) {
         Long subscriberId = getUId();
 
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
         LocalDate today = LocalDate.now();
-        queryWrapper.lambda()
-                .eq(UserSubscriptionEntity::getSubscriberId,subscriberId)
-                .lt(UserSubscriptionEntity::getExpireDate,today);
+        LambdaQueryWrapper<UserSubscriptionEntity> lambdaQueryWrapper = queryWrapper.lambda();
+
+        lambdaQueryWrapper.eq(UserSubscriptionEntity::getSubscriberId,subscriberId);
+        lambdaQueryWrapper.lt(UserSubscriptionEntity::getExpireDate,today);
+        if (creatorId!=null){
+            lambdaQueryWrapper.eq(UserSubscriptionEntity::getCreatorId,creatorId);
+        }
 
         List<UserSubscriptionEntity> subscriptionEntityList = userSubscriptionService.list(queryWrapper);
         if (subscriptionEntityList == null || subscriptionEntityList.isEmpty()){
             return null;
         }
 
-        List<String> creatorIds = new ArrayList<>();
-        if (scope  ==0){
-            for (UserSubscriptionEntity s: subscriptionEntityList) {
-                creatorIds.add(String.valueOf(s.getCreatorId()));
-            }
-        }else if (scope == 1){
-            for (UserSubscriptionEntity s: subscriptionEntityList) {
-                for (BenefitEntity benefitEntity : s.getBenefitList()) {
-                    if ("READ".equals(benefitEntity.getKey())) {
-                        creatorIds.add(String.valueOf(s.getCreatorId()));
-                        break;
-                    }
-                }
-            }
-        }
-        return  articleService.findByAuthorIdsAndScope(creatorIds,pageIndex,pageSize,scope);
+        return  articleService.findByAuthorIdsAndScope(subscriptionEntityList,pageIndex,pageSize);
     }
 
     @GetMapping(value = "/getInviteKey")
