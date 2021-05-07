@@ -170,9 +170,10 @@ public class ArticleController extends BaseController {
      */
     @PostMapping(value = "/reviewByArticleId")
     @ResponseBody
-    public boolean reviewByArticleId(String articleId, int status){  //TODO
-
-        return true;
+    public boolean reviewByArticleId(@RequestBody Map<String,Object> param){  //TODO
+        String articleId = (String) param.get("articleId");
+        Integer status = (Integer) param.get("status");
+        return articleService.reviewByArticleId(articleId,status);
     }
 
 
