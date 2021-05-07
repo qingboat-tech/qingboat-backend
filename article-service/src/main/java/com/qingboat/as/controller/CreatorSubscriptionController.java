@@ -175,7 +175,7 @@ public class CreatorSubscriptionController extends BaseController {
      */
     @GetMapping(value = "/getTierList")
     @ResponseBody
-    public List<TierEntity> getTierList(@RequestParam("needMock") Integer needMock) {
+    public List<TierEntity> getTierList(@RequestParam(value = "needMock",required = false) Integer needMock) {
         QueryWrapper<TierEntity> wrapper = new QueryWrapper<>();
         TierEntity tierEntity = new TierEntity();
         tierEntity.setStatus(1);

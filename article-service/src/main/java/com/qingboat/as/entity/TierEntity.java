@@ -50,6 +50,7 @@ public class TierEntity implements Serializable {
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedAt;
 
+    @TableField("`status`")
     private int status;  // 0:表示删除，1：表示有效
 
 
