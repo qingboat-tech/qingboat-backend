@@ -113,7 +113,30 @@ public class CreatorSubscriptionController extends BaseController {
         Long creatorId = getUId();
         QueryWrapper<BenefitEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("creator_id",0).or().eq("creator_id",creatorId);
-        return benefitService.list(queryWrapper);
+        List<BenefitEntity> benefitEntityList = benefitService.list(queryWrapper);
+
+        QueryWrapper<TierEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("creatorId",creatorId);
+
+        List<TierEntity> tierEntityList = tierService.list(wrapper);
+
+        for (BenefitEntity benefitEntity: benefitEntityList){
+            String benefitKey = benefitEntity.getKey();
+            if (tierEntityList == null){
+                break;
+            }
+            for (TierEntity  tierEntity: tierEntityList){
+                if (tierEntity.getBenefitList() == null){
+                    break;
+                }
+                for (BenefitEntity b: tierEntity.getBenefitList()){
+                    if (benefitKey.equals(b.getKey())){
+                        benefitEntity.addUseCount();
+                    }
+                }
+            }
+        }
+        return benefitEntityList;
     }
 
     /**
