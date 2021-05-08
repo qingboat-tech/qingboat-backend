@@ -257,9 +257,9 @@ public class CreatorSubscriptionController extends BaseController {
         if (StringUtils.isEmpty(tierEntity.getTitle())){
             throw new BaseException(500,"操作失败：创建会员等级标题为空");
         }
-        if ("month".equals(tierEntity.getSubscribeDuration())
+        if (!("month".equals(tierEntity.getSubscribeDuration())
                 || "year".equals(tierEntity.getSubscribeDuration())
-                || "monthAndYear".equals(tierEntity.getSubscribeDuration())){
+                || "monthAndYear".equals(tierEntity.getSubscribeDuration()))){
             throw new BaseException(500,"操作失败：创建会员等级订阅周期参数错误");
         }
         tierEntity.setCurrency("CNY");
