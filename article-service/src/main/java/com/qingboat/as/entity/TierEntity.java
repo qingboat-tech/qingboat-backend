@@ -32,14 +32,14 @@ public class TierEntity implements Serializable {
 
     // 订阅周期
     @TableField(exist = false)
-    private String subscribeDuration = "month";  // month or year
+    private String subscribeDuration = "month";  // month or year or monthAndYear
 
     private Integer yearPrice ;  // 价格（分）
     private Double  yearDiscount;  //打折率（什么类型？）
 
     private Integer subscribeLimit; //限量设置
 
-    private String currency; //  币种
+    private String currency ="CNY"; //  币种
 
     @TableField(typeHandler = FastjsonTypeHandler.class)
     private List<BenefitEntity> benefitList;//权益列表： json String

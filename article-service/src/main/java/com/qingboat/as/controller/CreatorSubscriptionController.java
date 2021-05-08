@@ -16,6 +16,7 @@ import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -253,6 +254,43 @@ public class CreatorSubscriptionController extends BaseController {
     @PostMapping(value = "/tier")
     @ResponseBody
     public TierEntity addCreatorTierEntity(@RequestBody TierEntity tierEntity) {
+        if (StringUtils.isEmpty(tierEntity.getTitle())){
+            throw new BaseException(500,"操作失败：创建会员等级标题为空");
+        }
+        if ("month".equals(tierEntity.getSubscribeDuration())
+                || "year".equals(tierEntity.getSubscribeDuration())
+                || "monthAndYear".equals(tierEntity.getSubscribeDuration())){
+            throw new BaseException(500,"操作失败：创建会员等级订阅周期参数错误");
+        }
+        tierEntity.setCurrency("CNY");
+        if ("month".equals(tierEntity.getSubscribeDuration()) || "monthAndYear".equals(tierEntity.getSubscribeDuration()) ){
+            if (tierEntity.getMonthPrice() == null || tierEntity.getMonthPrice()<0){
+                tierEntity.setMonthPrice(0);
+            }
+            if (tierEntity.getMonthDiscount()>10 || tierEntity.getMonthDiscount()<0){
+                throw new BaseException(500,"操作失败：创建会员等级订阅月折扣参数错误");
+            }
+        }
+        if ("year".equals(tierEntity.getSubscribeDuration()) || "monthAndYear".equals(tierEntity.getSubscribeDuration()) ){
+            if (tierEntity.getYearPrice() == null || tierEntity.getYearPrice()<0){
+                tierEntity.setYearPrice(0);
+            }
+            if (tierEntity.getYearDiscount()>10 || tierEntity.getYearDiscount()<0){
+                throw new BaseException(500,"操作失败：创建会员等级订阅月折扣参数错误");
+            }
+        }
+        List<BenefitEntity> benefitEntityList = tierEntity.getBenefitList();
+        if (benefitEntityList !=null){
+            for (BenefitEntity benefitEntity:benefitEntityList){
+                if (StringUtils.isEmpty(benefitEntity.getKey())){
+                    throw new BaseException(500,"操作失败：创建会员等级订阅里的权益Key为空");
+                }
+                if (StringUtils.isEmpty(benefitEntity.getTitle())){
+                    throw new BaseException(500,"操作失败：创建会员等级订阅里的权益标题为空");
+                }
+            }
+        }
+
         Long uid = getUId();
         tierEntity.setCreatorId(uid);
         tierEntity.setStatus(1);
