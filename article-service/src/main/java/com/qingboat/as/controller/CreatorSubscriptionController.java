@@ -184,21 +184,43 @@ public class CreatorSubscriptionController extends BaseController {
         tierEntity.setStatus(1);
         tierEntity.setCreatorId(getUId());
         wrapper.setEntity(tierEntity);
-        List<TierEntity> list = tierService.list(wrapper);
-        if (list!=null && !list.isEmpty()){
-            //TODO 添加当前订阅的人数
+        wrapper.orderByAsc("month_price");
 
-            return list;
+        List<TierEntity> list = tierService.list(wrapper);
+
+        boolean hasFreeTier = false;
+        boolean hasPaidTier = false;
+
+        if (list!=null && !list.isEmpty()){
+            //添加当前订阅的人数
+            for (TierEntity tier:list){
+                QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+                queryWrapper.lambda().eq(UserSubscriptionEntity::getCreatorId, getUId())
+                                     .eq(UserSubscriptionEntity::getMemberTierId,tier.getId());
+                int count = userSubscriptionService.count(queryWrapper);
+                tier.setSubscribeCount(count);
+
+                if (tier.getMonthPrice() ==0 && !hasFreeTier){
+                    hasFreeTier = true;
+                }
+                if (tier.getMonthPrice() >0 && !hasPaidTier){
+                    hasPaidTier = true;
+                }
+            }
+            if (needMock == null){
+                return list;
+            }
         }
-        if (Integer.valueOf(1).equals(needMock)){
+        if (list == null){
             list = new ArrayList<>();
+        }
+        if (!hasFreeTier){
             tierEntity = new TierEntity();
             tierEntity.setCreatorId(getUId());
-            tierEntity.setTitle("免费订阅");
-            tierEntity.setCreatedAt(new Date());
+            tierEntity.setTitle("示例方案一：免费");
             tierEntity.setMonthPrice(0);
             tierEntity.setMonthDiscount(10.00);
-            tierEntity.setDesc("免费订阅模板");
+            tierEntity.setDesc("示例方案一模板");
             tierEntity.setSubscribeCount(0);
 
             List<BenefitEntity> bList = new ArrayList<>();
@@ -210,12 +232,12 @@ public class CreatorSubscriptionController extends BaseController {
 
             tierEntity.setBenefitList(bList);
 
-            list.add(tierEntity);
-
+            list.add(0,tierEntity);
+        }
+        if (!hasPaidTier){
             tierEntity = new TierEntity();
             tierEntity.setCreatorId(getUId());
-            tierEntity.setTitle("方案一");
-            tierEntity.setCreatedAt(new Date());
+            tierEntity.setTitle("示例方案二：付费");
             tierEntity.setMonthPrice(800);
             tierEntity.setMonthDiscount(10.00);
             tierEntity.setYearPrice(9600);
@@ -224,8 +246,8 @@ public class CreatorSubscriptionController extends BaseController {
             tierEntity.setSubscribeLimit(10000);
             tierEntity.setSubscribeCount(0);
 
-            bList = new ArrayList<>();
-            benefitEntity = new BenefitEntity();
+            List<BenefitEntity> bList = new ArrayList<>();
+            BenefitEntity benefitEntity = new BenefitEntity();
             benefitEntity.setId(2l);
             benefitEntity.setKey("READ");
             benefitEntity.setTitle("订阅期无限制阅读");
@@ -237,14 +259,20 @@ public class CreatorSubscriptionController extends BaseController {
             benefitEntity.setTitle("评论区互动");
             bList.add(benefitEntity);
 
+            benefitEntity = new BenefitEntity();
+            benefitEntity.setId(4l);
+            benefitEntity.setKey("WX_GROUP");
+            benefitEntity.setTitle("加入创作者微信群");
+            bList.add(benefitEntity);
+
             tierEntity.setBenefitList(bList);
 
             list.add(tierEntity);
 
-            return list;
+
         }
 
-        return null;
+        return list;
     }
 
 
