@@ -328,6 +328,9 @@ public class ArticleServiceImpl implements ArticleService {
         List<TierEntity> tierList = tierService.listByIds(tierIdSet);
         for (TierEntity tier:tierList) {
             if (tier.getCreatorId().equals(creatorId)){
+                if (tier.getBenefitList() == null){
+                    throw new BaseException(500,"操作失败：发布的套餐里没有添加会员权益");
+                }
                 for (BenefitEntity benefit:tier.getBenefitList() ) {
                     benefitKeySet.add(benefit.getKey());
                 }

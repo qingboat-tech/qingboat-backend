@@ -308,14 +308,15 @@ public class CreatorSubscriptionController extends BaseController {
             }
         }
         List<BenefitEntity> benefitEntityList = tierEntity.getBenefitList();
-        if (benefitEntityList !=null){
-            for (BenefitEntity benefitEntity:benefitEntityList){
-                if (StringUtils.isEmpty(benefitEntity.getKey())){
-                    throw new BaseException(500,"操作失败：创建会员等级订阅里的权益Key为空");
-                }
-                if (StringUtils.isEmpty(benefitEntity.getTitle())){
-                    throw new BaseException(500,"操作失败：创建会员等级订阅里的权益标题为空");
-                }
+        if (benefitEntityList == null || benefitEntityList.isEmpty()){
+            throw new BaseException(500,"操作失败：会员等级订阅里的权益不能为空");
+        }
+        for (BenefitEntity benefitEntity:benefitEntityList){
+            if (StringUtils.isEmpty(benefitEntity.getKey())){
+                throw new BaseException(500,"操作失败：创建会员等级订阅里的权益Key为空");
+            }
+            if (StringUtils.isEmpty(benefitEntity.getTitle())){
+                throw new BaseException(500,"操作失败：创建会员等级订阅里的权益标题为空");
             }
         }
 
