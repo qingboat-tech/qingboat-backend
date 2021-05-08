@@ -28,10 +28,10 @@ public class BenefitEntity implements Serializable  {
     private String category;
 
     @TableField(exist = false)
-    private int useCount = 0;
+    private int usedCount = 0;
 
-    public void addUseCount(){
-        ++useCount;
+    public void addUsedCount(){
+        ++usedCount;
     }
 
 }

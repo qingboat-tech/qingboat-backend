@@ -131,7 +131,7 @@ public class CreatorSubscriptionController extends BaseController {
                 }
                 for (BenefitEntity b: tierEntity.getBenefitList()){
                     if (benefitKey.equals(b.getKey())){
-                        benefitEntity.addUseCount();
+                        benefitEntity.addUsedCount();
                     }
                 }
             }
@@ -146,9 +146,11 @@ public class CreatorSubscriptionController extends BaseController {
     @ResponseBody
     public BenefitEntity saveBenefit(@RequestBody BenefitEntity benefitEntity) {
         Long creatorId = getUId();
-        String key = UUID.randomUUID().toString();
         benefitEntity.setCreatorId(creatorId);
-        benefitEntity.setKey(key);
+        if (benefitEntity.getKey() == null || benefitEntity.getKey().isEmpty()){
+            String key = UUID.randomUUID().toString();
+            benefitEntity.setKey(key);
+        }
 
         boolean rst =  benefitService.saveOrUpdate(benefitEntity);
         if (rst){
