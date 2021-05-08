@@ -32,8 +32,7 @@ public class TierEntity implements Serializable {
     private Double  monthDiscount;  //打折率（什么类型？）
 
     // 订阅周期
-    @TableField(exist = false)
-    private String subscribeDuration = "month";  // month or year or monthAndYear
+    private String subscribeDuration;  //free or month or year or monthAndYear
 
     private Integer yearPrice ;  // 价格（分）
     private Double  yearDiscount;  //打折率（什么类型？）

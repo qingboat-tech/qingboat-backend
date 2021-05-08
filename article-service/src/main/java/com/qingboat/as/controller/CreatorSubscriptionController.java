@@ -223,6 +223,7 @@ public class CreatorSubscriptionController extends BaseController {
             tierEntity.setMonthPrice(0);
             tierEntity.setMonthDiscount(10.00);
             tierEntity.setDesc("示例方案一模板");
+            tierEntity.setSubscribeDuration("free");
             tierEntity.setSubscribeCount(0);
 
             List<BenefitEntity> bList = new ArrayList<>();
@@ -241,6 +242,7 @@ public class CreatorSubscriptionController extends BaseController {
             tierEntity = new TierEntity();
             tierEntity.setCreatorId(getUId());
             tierEntity.setTitle("示例方案二：付费");
+            tierEntity.setSubscribeDuration("monthAndYear");
             tierEntity.setMonthPrice(800);
             tierEntity.setMonthDiscount(10.00);
             tierEntity.setYearPrice(9600);
