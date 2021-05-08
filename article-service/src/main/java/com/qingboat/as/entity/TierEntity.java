@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.qingboat.as.utils.handler.BenefitJsonHandler;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -41,7 +42,7 @@ public class TierEntity implements Serializable {
 
     private String currency ="CNY"; //  币种
 
-    @TableField(typeHandler = FastjsonTypeHandler.class)
+    @TableField(typeHandler = BenefitJsonHandler.class)
     private List<BenefitEntity> benefitList;//权益列表： json String
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")

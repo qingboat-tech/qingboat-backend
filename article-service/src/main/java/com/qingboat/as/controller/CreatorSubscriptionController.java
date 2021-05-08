@@ -1,5 +1,6 @@
 package com.qingboat.as.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -194,11 +195,12 @@ public class CreatorSubscriptionController extends BaseController {
         if (list!=null && !list.isEmpty()){
             //添加当前订阅的人数
             for (TierEntity tier:list){
-                QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
-                queryWrapper.lambda().eq(UserSubscriptionEntity::getCreatorId, getUId())
-                                     .eq(UserSubscriptionEntity::getMemberTierId,tier.getId());
-                int count = userSubscriptionService.count(queryWrapper);
-                tier.setSubscribeCount(count);
+
+//                QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+//                queryWrapper.lambda().eq(UserSubscriptionEntity::getCreatorId, getUId())
+//                                     .eq(UserSubscriptionEntity::getMemberTierId,tier.getId());
+//                int count = userSubscriptionService.count(queryWrapper);
+//                tier.setSubscribeCount(count);
 
                 if (tier.getMonthPrice() ==0 && !hasFreeTier){
                     hasFreeTier = true;
@@ -226,6 +228,7 @@ public class CreatorSubscriptionController extends BaseController {
             List<BenefitEntity> bList = new ArrayList<>();
             BenefitEntity benefitEntity = new BenefitEntity();
             benefitEntity.setId(1l);
+            benefitEntity.setCreatorId(0l);
             benefitEntity.setKey("FREE");
             benefitEntity.setTitle("每月推送优质免费文章");
             bList.add(benefitEntity);
@@ -249,18 +252,21 @@ public class CreatorSubscriptionController extends BaseController {
             List<BenefitEntity> bList = new ArrayList<>();
             BenefitEntity benefitEntity = new BenefitEntity();
             benefitEntity.setId(2l);
+            benefitEntity.setCreatorId(0l);
             benefitEntity.setKey("READ");
             benefitEntity.setTitle("订阅期无限制阅读");
             bList.add(benefitEntity);
 
             benefitEntity = new BenefitEntity();
             benefitEntity.setId(3l);
+            benefitEntity.setCreatorId(0l);
             benefitEntity.setKey("COMMENT");
             benefitEntity.setTitle("评论区互动");
             bList.add(benefitEntity);
 
             benefitEntity = new BenefitEntity();
             benefitEntity.setId(4l);
+            benefitEntity.setCreatorId(0l);
             benefitEntity.setKey("WX_GROUP");
             benefitEntity.setTitle("加入创作者微信群");
             bList.add(benefitEntity);
@@ -312,6 +318,9 @@ public class CreatorSubscriptionController extends BaseController {
             throw new BaseException(500,"操作失败：会员等级订阅里的权益不能为空");
         }
         for (BenefitEntity benefitEntity:benefitEntityList){
+            if (benefitEntity.getId() == null ){
+                throw new BaseException(500,"操作失败：创建会员等级订阅里的权益Id为空");
+            }
             if (StringUtils.isEmpty(benefitEntity.getKey())){
                 throw new BaseException(500,"操作失败：创建会员等级订阅里的权益Key为空");
             }
