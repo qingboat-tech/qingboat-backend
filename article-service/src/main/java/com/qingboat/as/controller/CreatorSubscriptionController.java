@@ -118,7 +118,7 @@ public class CreatorSubscriptionController extends BaseController {
         List<BenefitEntity> benefitEntityList = benefitService.list(queryWrapper);
 
         QueryWrapper<TierEntity> wrapper = new QueryWrapper<>();
-        wrapper.eq("creatorId",creatorId);
+        wrapper.eq("creator_id",creatorId);
 
         List<TierEntity> tierEntityList = tierService.list(wrapper);
 
