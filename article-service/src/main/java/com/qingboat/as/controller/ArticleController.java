@@ -168,13 +168,6 @@ public class ArticleController extends BaseController {
         String uid = getUIdStr();
         Boolean rst =articleService.submitReviewByArticleId(articlePublishVo.getArticleId(),uid,articlePublishVo.getTierIds());
 
-        //TODO 发送消息给氢舟客服，通知其审核。
-        FeishuService.TextBody textBody = new FeishuService.TextBody(
-                new StringBuilder().append("创作这提交文章审核").append("\n")
-                .append("创作者Id：").append(uid).append("\n")
-                .append("文章Id：").append(articlePublishVo.getArticleId()).append("\n").toString());
-        feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
-
         articleService.asyncReviewByArticleId(articlePublishVo.getArticleId());
         return rst;
     }

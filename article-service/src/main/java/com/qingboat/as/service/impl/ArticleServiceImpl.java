@@ -10,6 +10,7 @@ import com.qingboat.as.service.TierService;
 import com.qingboat.as.service.UserService;
 import com.qingboat.as.utils.RedisUtil;
 import com.qingboat.as.utils.sensi.SensitiveFilter;
+import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -43,6 +44,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     private TierService tierService;
+
+    @Autowired
+    private FeishuService feishuService;
 
     private static final String USER_STAR_PRE ="USER_STAR_";
 
@@ -385,8 +389,13 @@ public class ArticleServiceImpl implements ArticleService {
                 update.set("suggestion","文章标题有敏感词");
 
                 UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
+                //发飞书通知给客服
+                FeishuService.TextBody textBody = new FeishuService.TextBody(
+                        new StringBuilder().append("文章审核驳回").append("\n")
+                                .append("文章《").append(title).append("》\n")
+                                .append("标题包含敏感词\n").toString());
+                feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
 
-                //发送消息
                 return;
             }
             filter = sensitiveFilter.filter(desc,'*');
@@ -399,6 +408,13 @@ public class ArticleServiceImpl implements ArticleService {
                 update.set("suggestion","文章描述有敏感词");
 
                 UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
+
+                //发飞书通知给客服
+                FeishuService.TextBody textBody = new FeishuService.TextBody(
+                        new StringBuilder().append("文章审核驳回").append("\n")
+                                .append("文章《").append(title).append("》\n")
+                                .append("文章描述包含敏感词\n").toString());
+                feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
 
                 //发送消息
                 return;
@@ -414,6 +430,13 @@ public class ArticleServiceImpl implements ArticleService {
 
                 UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
 
+                //发飞书通知给客服
+                FeishuService.TextBody textBody = new FeishuService.TextBody(
+                        new StringBuilder().append("文章审核驳回").append("\n")
+                                .append("文章《").append(title).append("》\n")
+                                .append("文章内容包含敏感词\n").toString());
+                feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
+
                 //发送消息
                 return;
             }
@@ -422,11 +445,16 @@ public class ArticleServiceImpl implements ArticleService {
 
             Update update = new Update();
             update.set("status",4);
-            update.set("suggestion","文章内容有敏感词");
 
             UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
 
+            FeishuService.TextBody textBody = new FeishuService.TextBody(
+                    new StringBuilder().append("文章审核通过").append("\n")
+                            .append("创作者：").append(articleEntity.getAuthorNickName()).append("\n")
+                            .append("文章《").append(title).append("》\n").toString());
+            feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
             //发送消息
+
 
         }
 
