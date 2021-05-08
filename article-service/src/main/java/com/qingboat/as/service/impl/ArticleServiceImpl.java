@@ -319,12 +319,18 @@ public class ArticleServiceImpl implements ArticleService {
             throw new BaseException(500,"操作失败：发布的文章没有选择套餐范围");
         }
         Set<String> benefitKeySet = new HashSet<>();
+        Long creatorId = Long.valueOf(operatorId);
 
         List<TierEntity> tierList = tierService.listByIds(tierIdSet);
         for (TierEntity tier:tierList) {
-            for (BenefitEntity benefit:tier.getBenefitList() ) {
-                benefitKeySet.add(benefit.getKey());
+            if (tier.getCreatorId().equals(creatorId)){
+                for (BenefitEntity benefit:tier.getBenefitList() ) {
+                    benefitKeySet.add(benefit.getKey());
+                }
             }
+        }
+        if (benefitKeySet.isEmpty()){
+            throw new BaseException(500,"操作失败：发布的文章没有选择套餐范围");
         }
 
         Query query = new Query();
