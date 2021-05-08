@@ -183,6 +183,7 @@ public class CreatorSubscriptionController extends BaseController {
 
         if (creatorId == null){
             creatorId = getUId();
+            needMock = null;
         }
 
         QueryWrapper<TierEntity> wrapper = new QueryWrapper<>();
