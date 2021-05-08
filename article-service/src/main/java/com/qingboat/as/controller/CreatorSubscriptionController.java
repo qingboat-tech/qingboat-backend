@@ -294,6 +294,7 @@ public class CreatorSubscriptionController extends BaseController {
         Long uid = getUId();
         tierEntity.setCreatorId(uid);
         tierEntity.setStatus(1);
+        tierEntity.setUpdatedAt(new Date());
         tierService.saveOrUpdate(tierEntity);
         return tierEntity;
     }
