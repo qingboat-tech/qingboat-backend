@@ -179,11 +179,16 @@ public class CreatorSubscriptionController extends BaseController {
      */
     @GetMapping(value = "/getTierList")
     @ResponseBody
-    public List<TierEntity> getTierList(@RequestParam(value = "needMock",required = false) Integer needMock) {
+    public List<TierEntity> getTierList(@RequestParam(value = "creatorId",required = false) Long creatorId,@RequestParam(value = "needMock",required = false) Integer needMock) {
+
+        if (creatorId == null){
+            creatorId = getUId();
+        }
+
         QueryWrapper<TierEntity> wrapper = new QueryWrapper<>();
         TierEntity tierEntity = new TierEntity();
         tierEntity.setStatus(1);
-        tierEntity.setCreatorId(getUId());
+        tierEntity.setCreatorId(creatorId);
         wrapper.setEntity(tierEntity);
         wrapper.orderByAsc("month_price");
 
