@@ -1,4 +1,4 @@
-package com.qingboat.us.entity;
+package com.qingboat.ts.entity;
 
 
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -14,7 +14,7 @@ import java.util.Map;
 @Data
 @TableName("apps_purchaseorderuser")// 映射数据库表名
 
-public class PurchaseOrderUser {
+public class PurchaseOrder {
 
     private Long id;
 
