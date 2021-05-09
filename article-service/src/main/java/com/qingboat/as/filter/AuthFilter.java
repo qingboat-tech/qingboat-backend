@@ -9,7 +9,12 @@ import java.io.IOException;
 
 public class AuthFilter implements Filter {
 
-    private final String SEC_KEY = "UJU2@#9kDJIVVWJ";
+    private static final String SEC_KEY = "UJU2@#9kDJIVVWJ";
+
+    public static String getSecret(String userId){
+        String md5 = DigestUtils.md5DigestAsHex((SEC_KEY + userId ).getBytes());
+        return md5;
+    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
