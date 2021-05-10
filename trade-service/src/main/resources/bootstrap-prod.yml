@@ -106,3 +106,8 @@ mybatis-plus:
     jdbc-type-for-null: 'null'
 
 
+article-service:
+  url: http://localhost:8082/as
+
+user-service:
+  url: http://localhost:8083/us

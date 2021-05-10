@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -23,11 +24,11 @@ public class PurchaseOrderEntity {
 
     private String orderNo;                  // 订单号
 
-    private String orderStatus;              // 订单状态
+    private Integer orderStatus;              // 订单状态  0:创建   1:已支付  2:已发货  3:已收货 4:已完成  8:已取消(用户取消)  9:已关闭(超时关闭)
 
-    private Integer paymentStatus;           // 支付状态
+    private Integer paymentStatus;           // 支付状态  0:已创建,未支付   1:已支付  2:已退款
 
-    private Integer paymentMethod;           // 支付方式
+    private Integer paymentMethod;           // 支付方式  1:(CNY)微信支付(国内)  2:(CNY)支付宝支付(国内)
 
     @TableField(typeHandler = FastjsonTypeHandler.class)
     private Map<String,Object> wxNotificationRawData;
@@ -47,7 +48,7 @@ public class PurchaseOrderEntity {
     private String couponDesc;               // coupon描述
 
     @TableField(typeHandler = FastjsonTypeHandler.class)
-    private Map[] subscribeData;
+    private Map subscribeData;
 
     private Long couponId;                 // coupon表的id
     private Long creatorId;                   // 创造者的id
