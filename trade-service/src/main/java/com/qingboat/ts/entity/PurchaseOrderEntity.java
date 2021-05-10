@@ -65,13 +65,4 @@ public class PurchaseOrderEntity {
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedAt;
 
-
-    @Transient
-    public String setOrderNo(Long uid, String seqKey) {
-        //    (2021012)(95)(2867)(1638)
-        //    当前时间 + 用户ID + 时间戳后四位 + 自增id
-        return "20210129528671638";
-    }
-
-
 }
