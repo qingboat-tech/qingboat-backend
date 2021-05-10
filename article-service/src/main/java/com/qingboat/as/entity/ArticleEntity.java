@@ -3,6 +3,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -24,7 +25,7 @@ public class ArticleEntity {
 
     private Integer top = 0 ; //是否置顶，1：表示置顶
 
-    private Integer status ; // 0:草稿；1：审核中；2：审核驳回；3：审核通过；4：已发布；5：只读不可编辑；6：禁用 ,7: 试读
+    private Integer status ; // 0:草稿；1：审核中；2：审核驳回；3：审核通过；4：已发布；5：只读不可编辑；6：禁用 ,7: 试读未订阅
 
     private Integer type ; // 0:newsLetter；1：learnPathway
 
@@ -60,11 +61,5 @@ public class ArticleEntity {
     private Long starCount ; //点赞数
     private Long commentCount ; //评论数
     private Long readCount ; //阅读数
-
-
-
-
-
-
 
 }

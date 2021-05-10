@@ -2,12 +2,15 @@ package com.qingboat.as.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mongodb.client.result.UpdateResult;
 import com.qingboat.as.dao.ArticleMongoDao;
 import com.qingboat.as.entity.*;
 import com.qingboat.as.service.ArticleService;
 import com.qingboat.as.service.TierService;
 import com.qingboat.as.service.UserService;
+import com.qingboat.as.service.UserSubscriptionService;
 import com.qingboat.as.utils.RedisUtil;
 import com.qingboat.as.utils.sensi.SensitiveFilter;
 import com.qingboat.base.api.FeishuService;
@@ -23,6 +26,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -47,6 +51,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     private FeishuService feishuService;
+
+    @Autowired
+    private UserSubscriptionService userSubscriptionService;
 
     private static final String USER_STAR_PRE ="USER_STAR_";
 
@@ -203,7 +210,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Page<ArticleEntity> findPublishListByAuthorId(String authorId, Integer pageIndex,Integer pageSize,Boolean orderByHot) {
+    public Page<ArticleEntity> findPublishListByAuthorId(String authorId, Integer pageIndex,Integer pageSize,Boolean orderByHot,Long userId) {
 
         if (pageIndex ==null || pageIndex<0){
             pageIndex = 0;
@@ -220,6 +227,49 @@ public class ArticleServiceImpl implements ArticleService {
 
         Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
         Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,4,pageable);
+
+        // 处理返回文章读权限
+        if (page.getContent()!=null && !page.getContent().isEmpty() ){
+            QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+            LocalDate today = LocalDate.now();
+            LambdaQueryWrapper<UserSubscriptionEntity> lambdaQueryWrapper = queryWrapper.lambda();
+
+            lambdaQueryWrapper.eq(UserSubscriptionEntity::getSubscriberId,userId);
+            lambdaQueryWrapper.gt(UserSubscriptionEntity::getExpireDate,today);
+            lambdaQueryWrapper.eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(authorId));
+
+            List<UserSubscriptionEntity> subscriptionEntityList = userSubscriptionService.list(queryWrapper);
+            if (subscriptionEntityList!=null && !subscriptionEntityList.isEmpty()){
+                for(ArticleEntity articleEntity : page.getContent()){
+                    Set<String> benefitSet = articleEntity.getBenefit();
+                    if (benefitSet!=null && benefitSet.contains("FREE")){
+                        continue;
+                    }else {
+                        boolean canRead = false;
+                        for (UserSubscriptionEntity subscriptionEntity:subscriptionEntityList){
+                            if (canRead){
+                                break;
+                            }
+                            List<BenefitEntity> list = subscriptionEntity.getBenefitList();
+                            for (BenefitEntity benefitEntity:list){
+                                if ("READ".equals(benefitEntity.getKey())){
+                                    canRead = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!canRead){
+                            articleEntity.setStatus(7);
+                        }
+                    }
+                }
+            }else {
+                for(ArticleEntity articleEntity : page.getContent()){
+                    articleEntity.setStatus(7);
+                }
+            }
+        }
+
         return page;
     }
 
@@ -464,7 +514,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Page<ArticleEntity> findByAuthorIdsAndScope(List<UserSubscriptionEntity> subscriptionEntityList, Integer pageIndex, Integer pageSize){
+    public Page<ArticleEntity> findArticleListByUserSubscription(List<UserSubscriptionEntity> subscriptionEntityList, Integer pageIndex, Integer pageSize){
         Query query = new Query();
         if (subscriptionEntityList == null || subscriptionEntityList.isEmpty()){
             return null;
@@ -485,6 +535,10 @@ public class ArticleServiceImpl implements ArticleService {
                 if (benefitEntity.getKey()!=null && !benefitEntity.getKey().isEmpty())
                 benefitSet.add(benefitEntity.getKey());
             }
+            if (benefitSet.contains("READ") && !benefitSet.contains("FREE")){
+                benefitSet.add("FREE");
+            }
+
             Criteria criteria = new Criteria().andOperator(
                     Criteria.where("authorId").is(String.valueOf(entity.getCreatorId())),
                     Criteria.where("benefit").in(benefitSet)

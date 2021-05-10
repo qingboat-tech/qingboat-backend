@@ -51,7 +51,7 @@ public interface ArticleService {
     /**
      * 查询已发布列表
      */
-    Page<ArticleEntity> findPublishListByAuthorId(String authorId,Integer pageIndex,Integer pageSize ,Boolean orderByHot);
+    Page<ArticleEntity> findPublishListByAuthorId(String authorId,Integer pageIndex,Integer pageSize ,Boolean orderByHot,Long userId);
 
     /**
      * 查询最热列表 ，size =10
@@ -109,7 +109,7 @@ public interface ArticleService {
 //    @Deprecated
 //    Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds,Integer pageIndex,Integer pageSize,Integer  scope);
 
-    Page<ArticleEntity> findByAuthorIdsAndScope(List<UserSubscriptionEntity> subscriptionEntityList,Integer pageIndex,Integer pageSize);
+    Page<ArticleEntity> findArticleListByUserSubscription(List<UserSubscriptionEntity> subscriptionEntityList, Integer pageIndex, Integer pageSize);
 
 
     ArticleEntity findBaseInfoById(String articleId);

@@ -92,7 +92,7 @@ public class ArticleController extends BaseController {
                                                       @RequestParam(value = "pageSize",required = false) Integer pageSize,
                                                       @RequestParam(value = "hot",required = false) Boolean orderByHot ) {
         String uid = getUIdStr();
-        return articleService.findPublishListByAuthorId(uid,pageIndex,pageSize,orderByHot);
+        return articleService.findPublishListByAuthorId(uid,pageIndex,pageSize,orderByHot,null);
     }
 
     /**
@@ -187,6 +187,18 @@ public class ArticleController extends BaseController {
     //=======================针对 reader 接口=============================
 
     /**
+     * 根据作者分页查询已发布文章列表
+     */
+    @GetMapping(value = "/findArticleListWithStatus")
+    @ResponseBody
+    public Page<ArticleEntity> findArticleListWithStatus(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,
+                                                      @RequestParam(value = "pageSize",required = false) Integer pageSize,
+                                                      @RequestParam(value = "creatorId") String creatorId ) {
+        Long userId = getUId();
+        return articleService.findPublishListByAuthorId(creatorId,pageIndex,pageSize,Boolean.TRUE,userId);
+    }
+
+    /**
      *
      * @param pageIndex
      * @param creatorId  null：表示全部
@@ -202,7 +214,7 @@ public class ArticleController extends BaseController {
         LambdaQueryWrapper<UserSubscriptionEntity> lambdaQueryWrapper = queryWrapper.lambda();
 
         lambdaQueryWrapper.eq(UserSubscriptionEntity::getSubscriberId,subscriberId);
-        lambdaQueryWrapper.lt(UserSubscriptionEntity::getExpireDate,today);
+        lambdaQueryWrapper.gt(UserSubscriptionEntity::getExpireDate,today);
         if (creatorId!=null){
             lambdaQueryWrapper.eq(UserSubscriptionEntity::getCreatorId,creatorId);
         }
@@ -212,7 +224,7 @@ public class ArticleController extends BaseController {
             return null;
         }
 
-        return  articleService.findByAuthorIdsAndScope(subscriptionEntityList,pageIndex,pageSize);
+        return  articleService.findArticleListByUserSubscription(subscriptionEntityList,pageIndex,pageSize);
     }
 
     @GetMapping(value = "/getInviteKey")
@@ -304,11 +316,11 @@ public class ArticleController extends BaseController {
                     .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(articleEntity.getAuthorId()))
                     .le(UserSubscriptionEntity::getExpireDate,new Date());
             UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
-            if (userSubscriptionEntity !=null ){
-                if (Integer.valueOf(0).equals(articleEntity.getScope()) ){ //免费文章
+            if (userSubscriptionEntity !=null && userSubscriptionEntity.getBenefitList()!=null){
+                if (articleEntity.getBenefit()!=null && articleEntity.getBenefit().contains("FREE")){//免费文章
                     articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
                     return articleEntity;
-                }else{//付费文章
+                }else {
                     for (BenefitEntity benefitEntity :  userSubscriptionEntity.getBenefitList()) {
                         if ("READ".equals(benefitEntity.getKey())){
                             articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
