@@ -60,6 +60,20 @@ public class ReaderSubscriptionController extends BaseController {
     }
 
     /**
+     * 根据tierId获取单条信息
+     */
+    @GetMapping(value = "/tier")
+    @ResponseBody
+    public TierEntity getTierEntity(@Valid @RequestParam("tierId") Long tierId) {
+        QueryWrapper<TierEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id",tierId);
+
+        log.info("tierId:"+tierId);
+
+        return tierService.getOne(queryWrapper);
+    }
+
+    /**
      * 读者获取订阅的creator用户列表
      */
     @GetMapping(value = "/creators")
