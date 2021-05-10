@@ -3,6 +3,8 @@ package com.qingboat.ts.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.qingboat.ts.api.TierService;
 import com.qingboat.ts.api.TierServiceResponse;
+import com.qingboat.ts.api.UserService;
+import com.qingboat.ts.api.UserServiceResponse;
 import com.qingboat.ts.dao.PurchaseOrderDao;
 import com.qingboat.ts.entity.PurchaseOrderEntity;
 import com.qingboat.ts.service.PurchaseOrderService;
@@ -18,6 +20,8 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderDao, Purc
     @Autowired
     TierService tierService;
 
+    @Autowired
+    UserService userService;
 
     @Override
     public PurchaseOrderEntity createPurchaseOrder(Long tierId, Long periodKey, Long uid) {
@@ -26,6 +30,10 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderDao, Purc
         if ( tierServiceResponse == null || tierServiceResponse.getStatus()==0) {
             return null;
         }
+
+        // 获取creator和reader的信息
+        UserServiceResponse readerUserServiceResponse = userService.getUserProfile(uid);
+        UserServiceResponse creatorUserServiceResponse = userService.getUserProfile(tierServiceResponse.getCreatorId());
 
         PurchaseOrderEntity entity = new PurchaseOrderEntity();
 
@@ -56,13 +64,12 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderDao, Purc
 
         // 买卖人的信息
         entity.setCreatorId(tierServiceResponse.getCreatorId());
-        entity.setCreatorNickname("todo");
+        entity.setCreatorNickname(creatorUserServiceResponse.getNickname());
         entity.setPurchaseUserId(uid);
-        entity.setPurchaseUserNickname("todo");
+        entity.setPurchaseUserNickname(readerUserServiceResponse.getNickname());
 
         // tier信息
         entity.setSubscribeData(TierServiceResponse.ConvertToJson(tierServiceResponse));
-
         this.save(entity);
 
         return entity;

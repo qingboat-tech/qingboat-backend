@@ -1,5 +1,6 @@
 package com.qingboat.ts.controller;
 
+import com.qingboat.ts.api.TierService;
 import com.qingboat.ts.entity.PurchaseOrderEntity;
 import com.qingboat.ts.service.PurchaseOrderService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,9 @@ public class PurchaseOrderController extends BaseController {
 
     @Autowired
     private PurchaseOrderService purchaseOrderService;
+
+    @Autowired
+    private TierService tierService;
 
     @PostMapping("/create")
     @ResponseBody
