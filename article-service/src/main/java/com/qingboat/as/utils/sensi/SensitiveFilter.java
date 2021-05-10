@@ -16,7 +16,8 @@ public class SensitiveFilter implements Serializable {
      */
     public static final SensitiveFilter DEFAULT = new SensitiveFilter(
             new BufferedReader(new InputStreamReader(
-                    ClassLoader.getSystemResourceAsStream("sensi_words.txt")
+                    SensitiveFilter.class.getClass().getResourceAsStream("sensi_words.txt")
+                    //ClassLoader.getSystemResourceAsStream("sensi_words.txt")
                     , StandardCharsets.UTF_8)));
 
     /**
