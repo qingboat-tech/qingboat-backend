@@ -1,7 +1,9 @@
 package com.qingboat.ts.entity;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -17,7 +19,7 @@ import java.util.Map;
 @TableName(value = "apps_purchase_order" ,autoResultMap = true)// 映射数据库表名
 public class PurchaseOrderEntity {
 
-    @Id
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     private String orderNo;                  // 订单号
