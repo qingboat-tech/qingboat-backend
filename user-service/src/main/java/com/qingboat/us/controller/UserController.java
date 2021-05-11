@@ -9,6 +9,7 @@ import com.qingboat.us.entity.UserProfileEntity;
 import com.qingboat.us.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -47,9 +48,16 @@ public class UserController {
 
     @GetMapping("/getUserProfile")
     @ResponseBody
-    public UserProfileEntity getUserProfile(@RequestParam("userId") Long userId){
+    public UserProfileEntity getUserProfile(@RequestParam(value = "userId",required = false) Long userId,
+                                            @RequestParam(value = "profileKey",required = false) String profileKey){
+        if (userId!=null && userId>0){
+            return userService.getUserProfile(userId);
+        }
+        if (!StringUtils.isEmpty(profileKey)){
+            return userService.getUserProfile(userId);
+        }
 
-        return userService.getUserProfile(userId);
+        return null;
     }
 
 

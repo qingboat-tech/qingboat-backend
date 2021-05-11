@@ -52,6 +52,14 @@ public class UserServiceImpl implements UserService {
         UserProfileEntity userProfileEntity = userProfileDao.selectOne(queryWrapper);
         return userProfileEntity;
     }
+    @Override
+    public UserProfileEntity getUserProfileByProfileKey(String profileKey){
+        QueryWrapper<UserProfileEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("profile_key",profileKey);
+        UserProfileEntity userProfileEntity = userProfileDao.selectOne(queryWrapper);
+        return userProfileEntity;
+    }
+
 
     @Override
     public Boolean confirmCreator(Long applyUserId, Boolean rst) {

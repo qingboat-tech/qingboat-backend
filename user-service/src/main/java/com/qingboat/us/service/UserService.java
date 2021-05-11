@@ -10,6 +10,9 @@ public interface UserService {
 
     UserProfileEntity getUserProfile(Long uid);
 
+    UserProfileEntity getUserProfileByProfileKey(String profileKey);
+
+
     Boolean confirmCreator(Long applyUserId,Boolean rst);
 
     UserProfileEntity saveUserProfile(UserProfileEntity userProfileEntity);
