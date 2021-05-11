@@ -25,6 +25,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -107,16 +108,16 @@ public class ArticleServiceImpl implements ArticleService {
         if (articleEntity.getData()!=null){
             update.set("data",articleEntity.getData());
         }
-        if (articleEntity.getDesc()!=null){
+        if (!StringUtils.isEmpty(articleEntity.getDesc())){
             update.set("desc",articleEntity.getDesc());
         }
-        if (articleEntity.getTitle()!=null){
+        if (!StringUtils.isEmpty(articleEntity.getTitle())){
             update.set("title",articleEntity.getTitle());
         }
-        if (articleEntity.getImgUrl()!=null){
+        if (!StringUtils.isEmpty(articleEntity.getImgUrl())){
             update.set("imgUrl",articleEntity.getImgUrl());
         }
-        if (articleEntity.getParentId()!=null){
+        if (!StringUtils.isEmpty(articleEntity.getParentId())){
             update.set("parentId",articleEntity.getParentId());
         }
         update.set("updatedTime",LocalDateTime.now());

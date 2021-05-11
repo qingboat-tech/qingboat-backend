@@ -88,6 +88,9 @@ public class ReaderSubscriptionController extends BaseController {
         if (pageSize == null || pageSize<1){
             pageSize =10;
         }
+        if (pageIndex == null || pageIndex<0){
+            pageIndex =0;
+        }
 
         IPage<UserSubscriptionEntity> page = new Page<>(pageIndex, pageSize);
         for (UserSubscriptionEntity user: page.getRecords()) {
