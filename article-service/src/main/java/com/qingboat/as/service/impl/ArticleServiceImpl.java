@@ -96,6 +96,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(articleEntity.getId()));
+        query.addCriteria(Criteria.where("status").is(0).orOperator(Criteria.where("status").is(2)));
         query.addCriteria(Criteria.where("authorId").is(operatorId));
 
         Update update = new Update();
