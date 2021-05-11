@@ -198,10 +198,11 @@ public class CreatorSubscriptionController extends BaseController {
         boolean hasFreeTier = false;
         boolean hasPaidTier = false;
 
+
+
         if (list!=null && !list.isEmpty()){
             //添加当前订阅的人数
             for (TierEntity tier:list){
-
 //                QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
 //                queryWrapper.lambda().eq(UserSubscriptionEntity::getCreatorId, getUId())
 //                                     .eq(UserSubscriptionEntity::getMemberTierId,tier.getId());
@@ -214,10 +215,11 @@ public class CreatorSubscriptionController extends BaseController {
                     hasPaidTier = true;
                 }
             }
-            if (needMock == null){
-                return list;
-            }
         }
+        if ( !Integer.valueOf(1).equals(needMock)){ //返回创作者真实的TierList
+            return list;
+        }
+
         if (list == null){
             list = new ArrayList<>();
         }
@@ -298,7 +300,7 @@ public class CreatorSubscriptionController extends BaseController {
         if (StringUtils.isEmpty(tierEntity.getTitle())){
             throw new BaseException(500,"操作失败：创建会员等级标题为空");
         }
-        if (!(  "free".equals(tierEntity.getSubscribeDuration())
+        if (!("free".equals(tierEntity.getSubscribeDuration())
                 || "month".equals(tierEntity.getSubscribeDuration())
                 || "year".equals(tierEntity.getSubscribeDuration())
                 || "monthAndYear".equals(tierEntity.getSubscribeDuration()))){
