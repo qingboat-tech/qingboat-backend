@@ -2,12 +2,14 @@ package com.qingboat.as.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Map;
 
 @Data
-@TableName("apps_userprofile")// 映射数据库表名
+@TableName(value = "apps_userprofile",autoResultMap = true)// 映射数据库表名
 public class UserEntity implements Serializable {
 
     private Long userId;
@@ -20,5 +22,8 @@ public class UserEntity implements Serializable {
 
     @TableField("`status`")
     private Integer status; // 0: 待审核；1：审核通过；-1：审核不通过
+
+    @TableField(typeHandler = FastjsonTypeHandler.class)
+    private Map[] expertiseArea;//创作者标签： json String, 格式：[{'key':'技术'}]
 
 }

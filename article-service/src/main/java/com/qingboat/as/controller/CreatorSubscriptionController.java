@@ -50,24 +50,36 @@ public class CreatorSubscriptionController extends BaseController {
 
     /**
      * 获取Creator的订阅者列表接口，包括当前订阅人数和昨日新增两个query parameter结果集
+     * (注意：当这张表很大的时候，效率会很慢)
      */
     @GetMapping(value = "/list")
     @ResponseBody
-    public IPage<UserSubscriptionEntity> findSubscriptionList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,@RequestParam(value = "pageSize",required = false) Integer pageSize) {
+    public IPage<UserSubscriptionEntity> findSubscriptionList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,
+                                                              @RequestParam(value = "pageSize",required = false) Integer pageSize,
+                                                              @RequestParam(value = "paid",required = false) Boolean paid) {
         Long uid = getUId();
-        UserSubscriptionEntity entity = new UserSubscriptionEntity();
-        entity.setCreatorId(uid);
-
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.setEntity(entity);
+        LambdaQueryWrapper<UserSubscriptionEntity> lambdaQueryWrapper =  queryWrapper.lambda();
+        lambdaQueryWrapper.eq(UserSubscriptionEntity::getCreatorId, uid);
+        if (paid!=null){
+            if (paid){
+                lambdaQueryWrapper.ne(UserSubscriptionEntity::getOrderId,0);
+            }else {
+                lambdaQueryWrapper.eq(UserSubscriptionEntity::getOrderId,0);
+            }
+        }
         if (pageSize == null || pageSize<1){
             pageSize =10;
         }
+        if (pageIndex == null || pageIndex<1){
+            pageIndex =1;
+        }
         IPage<UserSubscriptionEntity> page = new Page<>(pageIndex, pageSize);
-        for (UserSubscriptionEntity user: page.getRecords()) {
-            UserEntity u = userService.findByUserId(user.getSubscriberId());
-            user.setSubscriberNickname(u.getNickname());
-            user.setSubscriberHeadImgUrl(u.getHeadimgUrl());
+        for (UserSubscriptionEntity subscriptionEntity: page.getRecords()) {
+            UserEntity u = userService.findByUserId(subscriptionEntity.getSubscriberId());
+            subscriptionEntity.setSubscriberNickname(u.getNickname());
+            subscriptionEntity.setSubscriberHeadImgUrl(u.getHeadimgUrl());
+            subscriptionEntity.setExpertiseArea(u.getExpertiseArea());
         }
         return userSubscriptionService.page(page, queryWrapper);
     }

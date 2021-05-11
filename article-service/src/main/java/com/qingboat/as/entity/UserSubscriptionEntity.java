@@ -12,6 +12,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @TableName(value = "apps_usersubscription",autoResultMap = true)// 映射数据库表名
@@ -58,6 +59,9 @@ public class UserSubscriptionEntity implements Serializable {
 
     @TableField(exist = false)
     private String subscriberNickname;
+
+    @TableField(exist = false)
+    private Map[] expertiseArea;//创作者标签： json String, 格式：[{'key':'技术'}]
 
 
 }
