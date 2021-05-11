@@ -26,7 +26,7 @@ public class AuthFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String token  = request.getHeader("Authorization");
-        String innerSec = request.getHeader("INNER_SEC");
+        String innerSec = request.getHeader("INNER-SEC");
         String userId = request.getHeader("UID");
 
         if (userId !=null && innerSec != null){

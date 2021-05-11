@@ -106,9 +106,11 @@ public class ReaderSubscriptionController extends BaseController {
      */
     @PostMapping(value = "/subscribe")
     @ResponseBody
-    public UserSubscriptionEntity userSubscription(@RequestBody UserSubscriptionEntity userSubscriptionEntity) {
-
-        Long subscriberId = getUId();
+    public UserSubscriptionEntity userSubscription(@RequestBody UserSubscriptionEntity userSubscriptionEntity,
+                                                   @RequestHeader("INNER-SEC") String innerSec,
+                                                   @RequestHeader("UID") Long subscriberId) {
+        //判断header 里 是否有INNER-SEC和UID
+//        Long subscriberId = getUId();
         Long  creatorId = userSubscriptionEntity.getCreatorId();
         Long  memberTierId = userSubscriptionEntity.getMemberTierId();
         Long orderId = userSubscriptionEntity.getOrderId();
