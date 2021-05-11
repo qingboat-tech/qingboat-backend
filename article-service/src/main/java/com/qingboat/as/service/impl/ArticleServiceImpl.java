@@ -65,7 +65,6 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public ArticleEntity saveArticle(ArticleEntity articleEntity ,String operatorId) {
 
-
         if (articleEntity.getId() == null){
             articleEntity.setId(ObjectId.get().toString());
             articleEntity.setCreatedTime(LocalDateTime.now());
@@ -95,9 +94,11 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         Query query = new Query();
-        query.addCriteria(Criteria.where("id").is(articleEntity.getId()));
-        query.addCriteria(Criteria.where("status").is(0).orOperator(Criteria.where("status").is(2)));
-        query.addCriteria(Criteria.where("authorId").is(operatorId));
+        Criteria[] criteriaList = new Criteria[3];
+        criteriaList[0] =Criteria.where("id").is(articleEntity.getId());
+        criteriaList[1] = Criteria.where("authorId").is(operatorId);
+        criteriaList[1] = new Criteria().orOperator(Criteria.where("status").is(0),Criteria.where("status").is(2));
+        query.addCriteria(new Criteria().andOperator(criteriaList));
 
         Update update = new Update();
         update.set("status",0);

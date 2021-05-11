@@ -208,10 +208,9 @@ public class CreatorSubscriptionController extends BaseController {
 //                int count = userSubscriptionService.count(queryWrapper);
 //                tier.setSubscribeCount(count);
 
-                if (tier.getMonthPrice() ==0 && !hasFreeTier){
+                if ("free".equalsIgnoreCase(tier.getSubscribeDuration()) && !hasFreeTier){
                     hasFreeTier = true;
-                }
-                if (tier.getMonthPrice() >0 && !hasPaidTier){
+                }else if (!hasPaidTier){
                     hasPaidTier = true;
                 }
             }
@@ -229,7 +228,7 @@ public class CreatorSubscriptionController extends BaseController {
             tierEntity.setMonthPrice(0);
             tierEntity.setMonthDiscount(10.00);
             tierEntity.setDesc("示例方案一模板");
-            tierEntity.setSubscribeDuration("FREE");
+            tierEntity.setSubscribeDuration("free");
             tierEntity.setSubscribeCount(0);
 
             List<BenefitEntity> bList = new ArrayList<>();

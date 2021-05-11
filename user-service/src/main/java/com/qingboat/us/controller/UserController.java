@@ -48,14 +48,7 @@ public class UserController {
     @GetMapping("/getUserProfile")
     @ResponseBody
     public UserProfileEntity getUserProfile(@RequestParam("userId") Long userId){
-        MessageVo msg = new MessageVo();
-        msg.setTo(1l);
-        msg.setMsgTitle("hello");
-        msg.setExtData("name","david");
-        msg.setExtData("age",12);
-        msg.setExtData("price",12.54);
 
-        messageService.sendMessage(msg);
         return userService.getUserProfile(userId);
     }
 
