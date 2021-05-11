@@ -1,6 +1,7 @@
 package com.qingboat.as.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -73,38 +74,53 @@ public class CreatorSubscriptionController extends BaseController {
 
 
     /**
-     * 获取当前订阅人数数据
+     * 获取当前订阅人数数据 (全部、免费、付费)
      */
     @GetMapping(value = "/currentCount")
     @ResponseBody
-    public Integer getCurrentSubscriptionCount() {
+    public Integer getCurrentSubscriptionCount(@RequestParam(value = "paid",required = false) Boolean paid) {
         // TODO: redis缓存
         Long uid = getUId();
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(UserSubscriptionEntity::getCreatorId, uid);
+        LambdaQueryWrapper<UserSubscriptionEntity> lambdaQueryWrapper =  queryWrapper.lambda();
+        lambdaQueryWrapper.eq(UserSubscriptionEntity::getCreatorId, uid);
+        if (paid!=null){
+            if (paid){
+                lambdaQueryWrapper.ne(UserSubscriptionEntity::getOrderId,0);
+            }else {
+                lambdaQueryWrapper.eq(UserSubscriptionEntity::getOrderId,0);
+            }
+        }
         return userSubscriptionService.count(queryWrapper);
 
     }
 
     /**
-     * 获取当前昨日新增人数数据
+     * 获取当前昨日新增人数数据(全部、免费、付费)
      */
     @GetMapping(value = "/lastCount")
     @ResponseBody
-    public Integer getLastSubscriptionCount() {
+    public Integer getLastSubscriptionCount(@RequestParam(value = "paid",required = false) Boolean paid) {
         // TODO: redis缓存
         Long uid = getUId();
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
         LocalDate today = LocalDate.now();
         LocalDate yesterday = today.minusDays(1);
-        queryWrapper.lambda().
+        LambdaQueryWrapper<UserSubscriptionEntity> lambdaQueryWrapper =  queryWrapper.lambda();
+
+        lambdaQueryWrapper.
                 gt(UserSubscriptionEntity::getCreatedAt, yesterday).
                 lt(UserSubscriptionEntity::getCreatedAt, today).
                 eq(UserSubscriptionEntity::getCreatorId, uid);
+        if (paid!=null){
+            if (paid){
+                lambdaQueryWrapper.ne(UserSubscriptionEntity::getOrderId,0);
+            }else {
+                lambdaQueryWrapper.eq(UserSubscriptionEntity::getOrderId,0);
+            }
+        }
         return userSubscriptionService.count(queryWrapper);
-
     }
-
 
     /**
      * 获取系统的权益列表
