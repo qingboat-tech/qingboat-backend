@@ -1,6 +1,7 @@
 package com.qingboat.ts.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qingboat.base.exception.BaseException;
 import com.qingboat.base.utils.DateUtil;
 import com.qingboat.ts.api.TierService;
 import com.qingboat.ts.api.TierServiceResponse;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Objects;
 
 
 @Service
@@ -32,11 +34,11 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderDao, Purc
 
 
     @Override
-    public PurchaseOrderEntity createPurchaseOrder(Long tierId, Long periodKey, Long uid) {
+    public PurchaseOrderEntity createPurchaseOrder(Long tierId, String periodKey, Long uid) {
         TierServiceResponse tierServiceResponse = tierService.getTierById(tierId);
 
         if ( tierServiceResponse == null || tierServiceResponse.getStatus()==0) {
-            return null;
+            throw new BaseException(500,"无效的tier");
         }
 
         // 获取creator和reader的信息
@@ -52,7 +54,7 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderDao, Purc
         entity.setPaymentMethod(1);
 
         // 金额信息
-        if (periodKey == 1) {
+        if (Objects.equals("month",periodKey) ) {
             Double totalAmountDouble = (tierServiceResponse.getMonthPrice() * tierServiceResponse.getMonthDiscount()/10);
             Integer totalAmount = totalAmountDouble.intValue();
 
@@ -60,13 +62,16 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderDao, Purc
             entity.setCouponAmount(0);
             entity.setActualAmount(totalAmount);
         }
-        else if (periodKey == 2) {
+        else if (Objects.equals("year",periodKey)) {
             Double totalAmountDouble = (tierServiceResponse.getYearPrice() * tierServiceResponse.getYearDiscount()/10);
             Integer totalAmount = totalAmountDouble.intValue();
 
             entity.setTotalAmount(totalAmount);
             entity.setCouponAmount(0);
             entity.setActualAmount(totalAmount);
+        }
+        else {
+            throw new BaseException(500,"invalid periodkey");
         }
 
         // 买卖人的信息

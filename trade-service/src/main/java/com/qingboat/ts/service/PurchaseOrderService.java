@@ -4,5 +4,5 @@ import com.qingboat.ts.entity.PurchaseOrderEntity;
 
 public interface PurchaseOrderService {
 
-    PurchaseOrderEntity createPurchaseOrder(Long tierId, Long periodKey, Long uid);
+    PurchaseOrderEntity createPurchaseOrder(Long tierId, String periodKey, Long uid);
 }
