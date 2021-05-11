@@ -39,6 +39,15 @@ public class UserController {
     public UserProfileEntity saveUserProfile(@Valid @RequestBody UserProfileEntity userProfileEntity){
         Long uid = getUId();
         log.info(" RequestParam: uid=" +uid + ",RequestBody"+userProfileEntity);
+
+        // 检查 profileKey 是否存在
+        if (!StringUtils.isEmpty(userProfileEntity.getProfileKey())){
+            UserProfileEntity entity =userService.getUserProfileByProfileKey(userProfileEntity.getProfileKey());
+            if (entity !=null){
+                throw  new BaseException(500,"设置个性化网址关键字已被占用");
+            }
+        }
+
         userProfileEntity.setUserId(uid);
 //        userProfileEntity.setRole(1);
 //        userProfileEntity.setStatus(0);
