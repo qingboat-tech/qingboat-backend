@@ -97,7 +97,7 @@ public class ArticleServiceImpl implements ArticleService {
         Criteria[] criteriaList = new Criteria[3];
         criteriaList[0] =Criteria.where("id").is(articleEntity.getId());
         criteriaList[1] = Criteria.where("authorId").is(operatorId);
-        criteriaList[1] = new Criteria().orOperator(Criteria.where("status").is(0),Criteria.where("status").is(2));
+        criteriaList[2] = new Criteria().orOperator(Criteria.where("status").is(0),Criteria.where("status").is(2));
         query.addCriteria(new Criteria().andOperator(criteriaList));
 
         Update update = new Update();
