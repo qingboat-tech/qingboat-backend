@@ -112,12 +112,13 @@ public class ReaderSubscriptionController extends BaseController {
         //判断header 里 是否有INNER-SEC和UID
 //        Long subscriberId = getUId();
         Long  creatorId = userSubscriptionEntity.getCreatorId();
+        subscriberId = userSubscriptionEntity.getSubscriberId();
         Long  memberTierId = userSubscriptionEntity.getMemberTierId();
         Long orderId = userSubscriptionEntity.getOrderId();
         Integer orderPrice = userSubscriptionEntity.getOrderPrice();
         String subscribeDuration = userSubscriptionEntity.getSubscribeDuration();
 
-        if (creatorId == null || memberTierId == null || orderId ==null || orderPrice == null ||  subscribeDuration==null  ){
+        if (subscriberId==null || creatorId == null || memberTierId == null || orderId ==null || orderPrice == null ||  subscribeDuration==null  ){
             throw new BaseException(500,"操作失败：请求参数非法");
         }
 
