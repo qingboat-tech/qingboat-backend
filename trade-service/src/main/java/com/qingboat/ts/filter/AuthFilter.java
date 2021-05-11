@@ -1,8 +1,7 @@
 package com.qingboat.ts.filter;
 
-import com.qingboat.ts.dao.AuthTokenDao;
+import com.qingboat.base.exception.BaseException;
 import com.qingboat.ts.entity.AuthTokenEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.*;
@@ -11,8 +10,12 @@ import java.io.IOException;
 
 public class AuthFilter implements Filter {
 
-    private final String SEC_KEY = "UJU2@#9kDJIVVWJ";
+    private static final String SEC_KEY = "UJU2@#9kDJIVVWJ";
 
+    public static String getSecret(String userId){
+        String md5 = DigestUtils.md5DigestAsHex((SEC_KEY + userId ).getBytes());
+        return md5;
+    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -35,6 +38,8 @@ public class AuthFilter implements Filter {
                 request.setAttribute("USER_AUTHONTOKEN" , authTokenEntity);
                 request.setAttribute("UID" ,Long.parseLong(userId));
 
+            }else {
+                throw new BaseException(500,"内部调用加密错误");
             }
         }
         if (token !=null && token.indexOf(" ")>0 ){
@@ -45,7 +50,8 @@ public class AuthFilter implements Filter {
             if (authTokenEntity !=null && authTokenEntity.getUserId()!=null){
                 request.setAttribute("USER_AUTHONTOKEN" , authTokenEntity);
                 request.setAttribute("UID" , authTokenEntity.getUserId());
-
+            }else {
+                throw new BaseException(500,"请求Token错误");
             }
         }
         filterChain.doFilter(servletRequest,servletResponse);

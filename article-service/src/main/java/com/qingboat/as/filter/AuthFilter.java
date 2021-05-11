@@ -1,6 +1,7 @@
 package com.qingboat.as.filter;
 
 import com.qingboat.as.entity.AuthTokenEntity;
+import com.qingboat.base.exception.BaseException;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.*;
@@ -37,6 +38,8 @@ public class AuthFilter implements Filter {
                 request.setAttribute("USER_AUTHONTOKEN" , authTokenEntity);
                 request.setAttribute("UID" ,Long.parseLong(userId));
 
+            }else {
+                throw new BaseException(500,"内部调用加密错误");
             }
         }
         if (token !=null && token.indexOf(" ")>0 ){
@@ -47,7 +50,8 @@ public class AuthFilter implements Filter {
             if (authTokenEntity !=null && authTokenEntity.getUserId()!=null){
                 request.setAttribute("USER_AUTHONTOKEN" , authTokenEntity);
                 request.setAttribute("UID" , authTokenEntity.getUserId());
-
+            }else {
+                throw new BaseException(500,"请求Token错误");
             }
         }
         filterChain.doFilter(servletRequest,servletResponse);
