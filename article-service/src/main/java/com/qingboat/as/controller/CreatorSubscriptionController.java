@@ -229,7 +229,7 @@ public class CreatorSubscriptionController extends BaseController {
             tierEntity.setMonthPrice(0);
             tierEntity.setMonthDiscount(10.00);
             tierEntity.setDesc("示例方案一模板");
-            tierEntity.setSubscribeDuration("free");
+            tierEntity.setSubscribeDuration("FREE");
             tierEntity.setSubscribeCount(0);
 
             List<BenefitEntity> bList = new ArrayList<>();
@@ -299,12 +299,20 @@ public class CreatorSubscriptionController extends BaseController {
         if (StringUtils.isEmpty(tierEntity.getTitle())){
             throw new BaseException(500,"操作失败：创建会员等级标题为空");
         }
-        if (!("month".equals(tierEntity.getSubscribeDuration())
+        if (!(  "free".equals(tierEntity.getSubscribeDuration())
+                || "month".equals(tierEntity.getSubscribeDuration())
                 || "year".equals(tierEntity.getSubscribeDuration())
                 || "monthAndYear".equals(tierEntity.getSubscribeDuration()))){
             throw new BaseException(500,"操作失败：创建会员等级订阅周期参数错误");
         }
         tierEntity.setCurrency("CNY");
+        if ("free".equals(tierEntity.getSubscribeDuration())){
+            tierEntity.setYearPrice(0);
+            tierEntity.setYearDiscount(0.0);
+            tierEntity.setMonthPrice(0);
+            tierEntity.setMonthDiscount(0.0);
+        }
+
         if ("month".equals(tierEntity.getSubscribeDuration()) || "monthAndYear".equals(tierEntity.getSubscribeDuration()) ){
             if (tierEntity.getMonthPrice() == null || tierEntity.getMonthPrice()<0){
                 tierEntity.setMonthPrice(0);
