@@ -49,6 +49,7 @@ public class PurchaseOrderEntity {
 
     @TableField(typeHandler = FastjsonTypeHandler.class)
     private Map subscribeData;
+    private String subscribeDuration;       // free, month, year
 
     private Long couponId;                 // coupon表的id
     private Long creatorId;                   // 创造者的id

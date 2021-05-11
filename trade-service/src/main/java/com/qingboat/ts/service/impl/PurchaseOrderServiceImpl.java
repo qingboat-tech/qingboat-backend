@@ -61,6 +61,7 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderDao, Purc
             entity.setTotalAmount(totalAmount);
             entity.setCouponAmount(0);
             entity.setActualAmount(totalAmount);
+            entity.setSubscribeDuration("month");
         }
         else if (Objects.equals("year",periodKey)) {
             Double totalAmountDouble = (tierServiceResponse.getYearPrice() * tierServiceResponse.getYearDiscount()/10);
@@ -69,6 +70,7 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderDao, Purc
             entity.setTotalAmount(totalAmount);
             entity.setCouponAmount(0);
             entity.setActualAmount(totalAmount);
+            entity.setSubscribeDuration("year");
         }
         else {
             throw new BaseException(500,"invalid periodkey");
