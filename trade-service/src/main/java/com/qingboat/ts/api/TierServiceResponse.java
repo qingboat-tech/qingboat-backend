@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Transient;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -29,6 +30,8 @@ public class TierServiceResponse {
 
     private Integer status;  // 0:表示删除，1：表示有效
     private Integer subscribeCount; //订阅人数
+
+    private  List<Object> benefitList;
 
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
