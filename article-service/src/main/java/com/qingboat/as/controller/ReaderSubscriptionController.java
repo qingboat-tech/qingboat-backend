@@ -92,13 +92,15 @@ public class ReaderSubscriptionController extends BaseController {
             pageIndex =0;
         }
 
+
         IPage<UserSubscriptionEntity> page = new Page<>(pageIndex, pageSize);
+        IPage<UserSubscriptionEntity> iPage = userSubscriptionService.page(page,queryWrapper);
         for (UserSubscriptionEntity user: page.getRecords()) {
             UserEntity u = userService.findByUserId(user.getCreatorId());
             user.setCreatorNickname(u.getNickname());
             user.setCreatorHeadImgUrl(u.getHeadimgUrl());
         }
-        return userSubscriptionService.page(page,queryWrapper);
+        return iPage;
     }
 
     /**
