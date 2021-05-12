@@ -57,4 +57,7 @@ public class TierEntity implements Serializable {
     @TableField(exist = false)
     private Integer subscribeCount; //订阅人数
 
+    @TableField(exist = false)
+    private Boolean subscribed; //是否订阅
+
 }

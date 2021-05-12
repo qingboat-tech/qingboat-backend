@@ -55,8 +55,27 @@ public class ReaderSubscriptionController extends BaseController {
 
         QueryWrapper<TierEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntity(tierEntity);
+        Long userId = (Long) getAttribute("UID");
 
-        return tierService.list(queryWrapper);
+        List<TierEntity> tierEntityList = tierService.list(queryWrapper);
+        if (userId != null && !userId.equals(creatorId)){
+            QueryWrapper<UserSubscriptionEntity> userSubscriptionEntityQueryWrapper = new QueryWrapper<>();
+            userSubscriptionEntityQueryWrapper.lambda().eq(UserSubscriptionEntity::getSubscriberId,userId)
+                    .eq(UserSubscriptionEntity::getCreatorId,creatorId)
+                    .ge(UserSubscriptionEntity::getExpireDate,new Date());
+
+            UserSubscriptionEntity subscriptionEntity =userSubscriptionService.getOne(userSubscriptionEntityQueryWrapper);
+            if (subscriptionEntity!= null){
+                for (TierEntity e:tierEntityList) {
+                    if (e.getId().equals(subscriptionEntity.getMemberTierId())){
+                        e.setSubscribed(Boolean.TRUE);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return tierEntityList;
     }
 
     /**
