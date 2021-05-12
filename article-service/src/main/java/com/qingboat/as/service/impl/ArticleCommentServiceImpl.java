@@ -69,8 +69,11 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
 
     @Override
     public IPage<ArticleCommentEntity> findArticleComment(String articleId, Integer pageIndex,Integer pageSize) {
+        if (pageIndex == null || pageIndex<0){
+            pageIndex = 1;
+        }
         if (pageSize == null || pageSize<1){
-            pageSize =10;
+            pageSize = 10;
         }
         IPage<ArticleCommentEntity> page = new Page<>(pageIndex, pageSize);
         QueryWrapper<ArticleCommentEntity> queryWrapper = new QueryWrapper<>();
@@ -140,8 +143,11 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
 
     @Override
     public IPage<ReplyCommentEntity> findReplyComment(String articleId, Long commentId, Integer pageIndex,Integer pageSize) {
+        if (pageIndex == null || pageIndex<0){
+            pageIndex = 1;
+        }
         if (pageSize == null || pageSize<1){
-            pageSize =10;
+            pageSize = 10;
         }
         IPage<ReplyCommentEntity> page = new Page<>(pageIndex, pageSize);
         QueryWrapper<ReplyCommentEntity> queryWrapper = new QueryWrapper<>();

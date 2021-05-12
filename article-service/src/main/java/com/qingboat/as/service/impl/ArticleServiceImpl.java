@@ -522,10 +522,10 @@ public class ArticleServiceImpl implements ArticleService {
         if (subscriptionEntityList == null || subscriptionEntityList.isEmpty()){
             return null;
         }
-        if (pageIndex<0){
+        if (pageIndex == null || pageIndex<0){
             pageIndex = 0;
         }
-        if (pageSize<1){
+        if (pageSize == null || pageSize<1){
             pageSize = 10;
         }
 

@@ -187,8 +187,11 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         queryWrapper.setEntity(entity);
         queryWrapper.orderByDesc("created_at");
 
+        if (pageIndex == null || pageIndex<0){
+            pageIndex = 1;
+        }
         if (pageSize == null || pageSize<1){
-            pageSize =10;
+            pageSize = 10;
         }
 
         IPage<MessageEntity> page = new Page<>(pageIndex, pageSize);
