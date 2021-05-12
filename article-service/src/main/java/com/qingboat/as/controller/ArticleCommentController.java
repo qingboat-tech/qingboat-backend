@@ -82,7 +82,7 @@ public class ArticleCommentController extends BaseController {
 
 
     private boolean checkCommentBenefit(String articleId){
-        ArticleEntity articleEntity = articleService.findArticleById(articleId);
+        ArticleEntity articleEntity = articleService.findBaseInfoById(articleId);
         if (articleEntity == null){
             throw  new BaseException(500,"评论的文章不存在");
         }
@@ -94,7 +94,7 @@ public class ArticleCommentController extends BaseController {
             queryWrapper.lambda()
                     .eq(UserSubscriptionEntity::getCreatorId ,Long.parseLong(articleEntity.getAuthorId()))
                     .eq(UserSubscriptionEntity::getSubscriberId,getUId())
-                    .le(UserSubscriptionEntity::getExpireDate,new Date());
+                    .ge(UserSubscriptionEntity::getExpireDate,new Date());
             UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
             if (userSubscriptionEntity!=null){
                 for (BenefitEntity benefitEntity :userSubscriptionEntity.getBenefitList()) {

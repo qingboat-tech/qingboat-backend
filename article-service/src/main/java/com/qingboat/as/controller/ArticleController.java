@@ -217,7 +217,7 @@ public class ArticleController extends BaseController {
         LambdaQueryWrapper<UserSubscriptionEntity> lambdaQueryWrapper = queryWrapper.lambda();
 
         lambdaQueryWrapper.eq(UserSubscriptionEntity::getSubscriberId,subscriberId);
-        lambdaQueryWrapper.gt(UserSubscriptionEntity::getExpireDate,today);
+        lambdaQueryWrapper.ge(UserSubscriptionEntity::getExpireDate,today);
         if (creatorId!=null){
             lambdaQueryWrapper.eq(UserSubscriptionEntity::getCreatorId,creatorId);
         }
@@ -251,7 +251,7 @@ public class ArticleController extends BaseController {
         queryWrapper.lambda()
                 .eq(UserSubscriptionEntity::getSubscriberId,getUId())
                 .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(articleEntity.getAuthorId()))
-                .le(UserSubscriptionEntity::getExpireDate,new Date());
+                .ge(UserSubscriptionEntity::getExpireDate,new Date());
         UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
 
         if (userSubscriptionEntity == null){
@@ -294,7 +294,7 @@ public class ArticleController extends BaseController {
                         queryWrapper.lambda()
                                 .eq(UserSubscriptionEntity::getSubscriberId,Long.parseLong(refContent[1]))
                                 .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(articleEntity.getAuthorId()))
-                                .le(UserSubscriptionEntity::getExpireDate,new Date());
+                                .ge(UserSubscriptionEntity::getExpireDate,new Date());
                         UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
                         if (userSubscriptionEntity==null){
                             throw new BaseException(500,"本次分享已失效");
@@ -324,7 +324,7 @@ public class ArticleController extends BaseController {
             queryWrapper.lambda()
                     .eq(UserSubscriptionEntity::getSubscriberId,getUId())
                     .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(articleEntity.getAuthorId()))
-                    .le(UserSubscriptionEntity::getExpireDate,new Date());
+                    .ge(UserSubscriptionEntity::getExpireDate,new Date());
             UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
             if (userSubscriptionEntity !=null && userSubscriptionEntity.getBenefitList()!=null){
                 if (articleEntity.getBenefit()!=null && articleEntity.getBenefit().contains("FREE")){//免费文章
