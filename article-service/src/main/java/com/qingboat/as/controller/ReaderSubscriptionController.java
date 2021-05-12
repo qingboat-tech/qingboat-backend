@@ -104,7 +104,60 @@ public class ReaderSubscriptionController extends BaseController {
     }
 
     /**
-     * 读者订阅 Creator Tier
+     * 读者免费订阅
+     */
+    @PostMapping(value = "/freeSubscribe")
+    @ResponseBody
+    public UserSubscriptionEntity userFreeSubscription(@RequestBody Map<String,Object> param) {
+
+        Long creatorId = (Long) param.get("creatorId");
+        Long  tierId = (Long) param.get("tierId");
+        Long subscriberId = getUId();
+        if (creatorId == null || tierId == null){
+            throw new BaseException(500,"操作失败：请求参数非法");
+        }
+        if (subscriberId.equals(creatorId)){
+            throw new BaseException(500,"操作失败：不能订阅自己");
+        }
+        //1、检查以前是否有订阅
+        UserSubscriptionEntity queryEntity = new UserSubscriptionEntity();
+        queryEntity.setSubscriberId(subscriberId);
+        queryEntity.setCreatorId(creatorId);
+        QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.setEntity(queryEntity);
+        UserSubscriptionEntity beforeUserSubscription = userSubscriptionService.getOne(queryWrapper);
+        if (beforeUserSubscription!=null){
+            throw new BaseException(500,"操作失败：您已经订阅该创作者");
+        }
+        //2、检查以前是否有订阅
+        TierEntity entity = tierService.getById(tierId);
+        if (entity == null || !"free".equals(entity.getSubscribeDuration())){
+            throw new BaseException(500,"操作失败：您已经订阅信息不存在或需要付费");
+        }
+        Date startTime = new Date() ;
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(startTime);
+        cal.add(Calendar.YEAR,30);
+
+        UserSubscriptionEntity userSubscriptionEntity = new UserSubscriptionEntity();
+        userSubscriptionEntity.setCreatorId(creatorId);
+        userSubscriptionEntity.setSubscriberId(getUId());
+        userSubscriptionEntity.setStartDate(startTime);
+        userSubscriptionEntity.setExpireDate(cal.getTime());
+        userSubscriptionEntity.setBenefitList(entity.getBenefitList());
+        userSubscriptionEntity.setOrderId(0l);
+        userSubscriptionEntity.setMemberTierId(tierId);
+        userSubscriptionEntity.setSubscribeDuration("free");
+        userSubscriptionEntity.setOrderPrice(0);
+
+        userSubscriptionService.save(userSubscriptionEntity);
+        //发送订阅消息
+        messageService.asyncSendSubscriptionMessage(userSubscriptionEntity);
+        return userSubscriptionEntity;
+    }
+
+    /**
+     * 读者付费订阅的回调，支付完成的回调，共内部调用
      */
     @PostMapping(value = "/subscribe")
     @ResponseBody
@@ -135,7 +188,6 @@ public class ReaderSubscriptionController extends BaseController {
             UserSubscriptionEntity queryEntity = new UserSubscriptionEntity();
             queryEntity.setSubscriberId(subscriberId);
             queryEntity.setCreatorId(creatorId);
-            queryEntity.setSubscriberId(subscriberId);
 
             QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
             queryWrapper.setEntity(queryEntity);
@@ -147,7 +199,7 @@ public class ReaderSubscriptionController extends BaseController {
                     if (beforeUserSubscription.getOrderId() ==0 ){ // 上次和这次都是免费订阅
                         log.info("上次和这次都是免费订阅 ");
                         //发送订阅消息
-                        messageService.asyncSendSubscriptionMessage(userSubscriptionEntity);
+                       // messageService.asyncSendSubscriptionMessage(userSubscriptionEntity);
                         return userSubscriptionEntity;
                     }
                     // 会员续费
@@ -216,7 +268,7 @@ public class ReaderSubscriptionController extends BaseController {
                 cal.add(Calendar.MONTH,1);
             }else if ("year".equals(subscribeDuration)){
                 cal.add(Calendar.YEAR,1);
-            }else if (Long.valueOf(0l).equals(entity.getMonthPrice())){
+            }else if ("free".equals(subscribeDuration) || Long.valueOf(0l).equals(entity.getMonthPrice())){
                 cal.add(Calendar.YEAR,30);
             }
 
