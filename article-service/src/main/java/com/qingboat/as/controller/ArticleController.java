@@ -391,12 +391,16 @@ public class ArticleController extends BaseController {
 
     @PostMapping(value = "/addAttachment")
     @ResponseBody
-    public List<ArticleEntity.Attachment> addAttachment(String articleId, String fileName, String fileUrl){
+    public List<ArticleEntity.Attachment> addAttachment(@RequestParam(value = "file") MultipartFile file ,@RequestParam("articleId")String articleId){
+        Map<String,String> rst = this.UploadFile(file);
+        String fileName = rst.get("fileName");
+        String fileUrl = rst.get("fileUrl");
+
         return articleService.addAttachment(articleId,fileName,fileUrl);
     }
     @DeleteMapping(value = "/delAttachment")
     @ResponseBody
-    public List<ArticleEntity.Attachment> delAttachment(String articleId, String fileName){
+    public List<ArticleEntity.Attachment> delAttachment(@RequestParam("articleId")String articleId, @RequestParam("fileName")String fileName){
         return articleService.delAttachment(articleId,fileName);
     }
 

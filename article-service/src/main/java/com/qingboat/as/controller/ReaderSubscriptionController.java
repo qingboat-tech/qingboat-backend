@@ -110,8 +110,8 @@ public class ReaderSubscriptionController extends BaseController {
     @ResponseBody
     public UserSubscriptionEntity userFreeSubscription(@RequestBody Map<String,Object> param) {
 
-        Long creatorId = (Long) param.get("creatorId");
-        Long  tierId = (Long) param.get("tierId");
+        Long creatorId = Long.valueOf(param.get("creatorId").toString());
+        Long  tierId = Long.valueOf(param.get("tierId").toString()) ;
         Long subscriberId = getUId();
         if (creatorId == null || tierId == null){
             throw new BaseException(500,"操作失败：请求参数非法");
