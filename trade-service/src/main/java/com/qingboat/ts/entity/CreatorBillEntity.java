@@ -11,8 +11,8 @@ import java.util.Date;
 
 
 @Data
-@TableName("apps_bill")// 映射数据库表名
-public class BillEntity implements Serializable {
+@TableName("apps_creator_bill")// 映射数据库表名
+public class CreatorBillEntity implements Serializable {
 
     @TableId(type = IdType.AUTO)
     private Long id;

@@ -13,6 +13,7 @@ import org.springframework.data.annotation.Transient;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -31,7 +32,7 @@ public class PurchaseOrderEntity {
     private Integer paymentMethod;           // 支付方式  1:(CNY)微信支付(国内)  2:(CNY)支付宝支付(国内)
 
     @TableField(typeHandler = FastjsonTypeHandler.class)
-    private Map<String,Object> wxNotificationRawData;
+    private Map<String,Object> wxNotificationRawData = new HashMap<>();
 
     private String wxTransactionTd;         // 微信支付交易号
 
