@@ -548,7 +548,7 @@ public class ArticleServiceImpl implements ArticleService {
                     Criteria.where("authorId").is(String.valueOf(entity.getCreatorId())),
                     Criteria.where("benefit").in(benefitSet)
             );
-            criteriaList[i]= criteria;
+            criteriaList[i]= criteria
         }
         query.addCriteria(new Criteria().orOperator(criteriaList));
 
@@ -561,6 +561,10 @@ public class ArticleServiceImpl implements ArticleService {
 
         long total = mongoTemplate.count(query, ArticleEntity.class);
         List articleEntityList = mongoTemplate.find(query,ArticleEntity.class);
+
+        log.info(" ======findArticleListByUserSubscription======");
+        log.info(" ======total======" +total);
+        log.info(" ======articleEntityList======" +articleEntityList);
 
         Page studentPage = new PageImpl(articleEntityList, pageable, total);
 
