@@ -548,7 +548,7 @@ public class ArticleServiceImpl implements ArticleService {
                     Criteria.where("authorId").is(String.valueOf(entity.getCreatorId())),
                     Criteria.where("benefit").in(benefitSet)
             );
-            criteriaList[i]= criteria
+            criteriaList[i]= criteria;
         }
         query.addCriteria(new Criteria().orOperator(criteriaList));
 
