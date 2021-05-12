@@ -68,6 +68,9 @@ public class ArticleEntity {
     private Long commentCount ; //评论数
     private Long readCount ; //阅读数
 
+    @Transient
+    private TierEntity tierEntity;
+
 
     @Data
     @AllArgsConstructor

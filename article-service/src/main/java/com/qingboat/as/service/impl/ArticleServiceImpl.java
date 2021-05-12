@@ -232,11 +232,32 @@ public class ArticleServiceImpl implements ArticleService {
         Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,4,pageable);
 
         // 处理返回文章读权限
-        if (page.getContent()!=null && !page.getContent().isEmpty() ){
+        if (page.getContent()!=null && !page.getContent().isEmpty() && userId!= null){
+
+            QueryWrapper<TierEntity> tierEntityQueryWrapper = new QueryWrapper<>();
+            tierEntityQueryWrapper.lambda().eq(TierEntity::getCreatorId,authorId)
+                    .eq(TierEntity::getStatus,1);
+            List<TierEntity> tierList = tierService.list(tierEntityQueryWrapper);
+            if (tierList == null){
+                throw  new BaseException(500,"该创作者没有设置订阅");
+            }
+            Map<String,TierEntity> tierMap = new HashMap<>();
+            for(TierEntity tier:tierList){
+                for(BenefitEntity b:tier.getBenefitList()){
+                    if ("FREE".equals(b.getKey()) && !tierMap.containsKey("FREE")){
+                       tierMap.put("FREE",tier);
+                       break;
+                    }
+                    if ("READ".equals(b.getKey()) && !tierMap.containsKey("READ")){
+                        tierMap.put("READ",tier);
+                        break;
+                    }
+                }
+            }
+
             QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
             LocalDate today = LocalDate.now();
             LambdaQueryWrapper<UserSubscriptionEntity> lambdaQueryWrapper = queryWrapper.lambda();
-
             lambdaQueryWrapper.eq(UserSubscriptionEntity::getSubscriberId,userId);
             lambdaQueryWrapper.gt(UserSubscriptionEntity::getExpireDate,today);
             lambdaQueryWrapper.eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(authorId));
@@ -263,12 +284,18 @@ public class ArticleServiceImpl implements ArticleService {
                         }
                         if (!canRead){
                             articleEntity.setStatus(7);
+                            articleEntity.setTierEntity(tierMap.get("READ"));
                         }
                     }
                 }
             }else {
                 for(ArticleEntity articleEntity : page.getContent()){
                     articleEntity.setStatus(7);
+                    if (articleEntity.getBenefit().contains("FREE")){
+                        articleEntity.setTierEntity(tierMap.get("FREE"));
+                    }else {
+                        articleEntity.setTierEntity(tierMap.get("READ"));
+                    }
                 }
             }
         }
