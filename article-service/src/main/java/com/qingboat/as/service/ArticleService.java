@@ -109,7 +109,7 @@ public interface ArticleService {
 //    @Deprecated
 //    Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds,Integer pageIndex,Integer pageSize,Integer  scope);
 
-    Page<ArticleEntity> findArticleListByUserSubscription(List<UserSubscriptionEntity> subscriptionEntityList, Integer pageIndex, Integer pageSize);
+    Page<ArticleEntity> findArticleListByUserSubscription(List<UserSubscriptionEntity> subscriptionEntityList,Boolean paid, Integer pageIndex, Integer pageSize);
 
 
     ArticleEntity findBaseInfoById(String articleId);

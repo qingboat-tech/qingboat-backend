@@ -206,7 +206,10 @@ public class ArticleController extends BaseController {
      */
     @RequestMapping(value = "/subscriptionArticleList", method = RequestMethod.GET)
     @ResponseBody
-    public Page<ArticleEntity> subscriptionArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,@RequestParam(value = "pageSize",required = false) Integer pageSize, @RequestParam(value = "creatorId",required = false) Long creatorId) {
+    public Page<ArticleEntity> subscriptionArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,
+                                                       @RequestParam(value = "pageSize",required = false) Integer pageSize,
+                                                       @RequestParam(value = "creatorId",required = false) Long creatorId,
+                                                       @RequestParam(value = "creatorId",required = false) Boolean paid) {
         Long subscriberId = getUId();
 
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
@@ -218,13 +221,16 @@ public class ArticleController extends BaseController {
         if (creatorId!=null){
             lambdaQueryWrapper.eq(UserSubscriptionEntity::getCreatorId,creatorId);
         }
+        if (paid!=null && paid){
+            lambdaQueryWrapper.ne(UserSubscriptionEntity::getOrderId,0);
+        }
 
         List<UserSubscriptionEntity> subscriptionEntityList = userSubscriptionService.list(queryWrapper);
         if (subscriptionEntityList == null || subscriptionEntityList.isEmpty()){
             return null;
         }
 
-        return  articleService.findArticleListByUserSubscription(subscriptionEntityList,pageIndex,pageSize);
+        return  articleService.findArticleListByUserSubscription(subscriptionEntityList,paid,pageIndex,pageSize);
     }
 
     @GetMapping(value = "/getInviteKey")

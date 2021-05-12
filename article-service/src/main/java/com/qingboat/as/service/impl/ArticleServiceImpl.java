@@ -517,7 +517,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Page<ArticleEntity> findArticleListByUserSubscription(List<UserSubscriptionEntity> subscriptionEntityList, Integer pageIndex, Integer pageSize){
+    public Page<ArticleEntity> findArticleListByUserSubscription(List<UserSubscriptionEntity> subscriptionEntityList,Boolean paid, Integer pageIndex, Integer pageSize){
         Query query = new Query();
         if (subscriptionEntityList == null || subscriptionEntityList.isEmpty()){
             return null;
@@ -538,8 +538,10 @@ public class ArticleServiceImpl implements ArticleService {
                 if (benefitEntity.getKey()!=null && !benefitEntity.getKey().isEmpty())
                 benefitSet.add(benefitEntity.getKey());
             }
-            if (benefitSet.contains("READ") && !benefitSet.contains("FREE")){
-                benefitSet.add("FREE");
+            if (paid == null || !paid){
+                if (benefitSet.contains("READ") && !benefitSet.contains("FREE")){
+                    benefitSet.add("FREE");
+                }
             }
 
             Criteria criteria = new Criteria().andOperator(
