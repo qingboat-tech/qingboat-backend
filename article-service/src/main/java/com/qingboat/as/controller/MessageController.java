@@ -24,7 +24,9 @@ public class MessageController extends BaseController {
         messageService.asyncSendMessage(msg);
     }
 
-    // reply列表
+    /**
+     * 根据消息类型，分页返回消息列表
+     */
     @GetMapping(value = "/list")
     @ResponseBody
     public IPage<MessageEntity> list(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,
@@ -33,14 +35,18 @@ public class MessageController extends BaseController {
         return messageService.list(getUId(),msgType,pageIndex,pageSize);
     }
 
-    // reply列表
+    /**
+     * 根据消息类型，返回1条最新未读消息
+     */
     @GetMapping(value = "/getLastUnReadMessage")
     @ResponseBody
     public MessageEntity getLastUnReadMessage( @RequestParam(value = "msgType",required = false) Integer msgType) {
         return messageService.getLastUnReadMessage(getUId(),msgType);
     }
 
-    // reply列表
+    /**
+     * 根据消息类型，返回未读消息数
+     */
     @GetMapping(value = "/unReadCount")
     @ResponseBody
     public Integer unReadCount( @RequestParam(value = "msgType",required = false) Integer msgType) {
