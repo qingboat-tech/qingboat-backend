@@ -554,17 +554,19 @@ public class ArticleServiceImpl implements ArticleService {
 
         Sort sort = Sort.by(Sort.Direction.DESC, "top","updatedTime");
         Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
+
+        long total = mongoTemplate.count(query, ArticleEntity.class);
+
         int skip = pageable.getPageNumber()  * pageable.getPageSize();
         query.with(sort);
         query.skip(skip);
         query.limit(pageable.getPageSize());
 
-        long total = mongoTemplate.count(query, ArticleEntity.class);
         List articleEntityList = mongoTemplate.find(query,ArticleEntity.class);
 
         log.info(" ======findArticleListByUserSubscription======");
         log.info(" ======total======" +total);
-        log.info(" ======articleEntityList======" +articleEntityList);
+
 
         Page studentPage = new PageImpl(articleEntityList, pageable, total);
 
