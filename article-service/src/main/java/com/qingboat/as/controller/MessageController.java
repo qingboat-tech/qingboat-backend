@@ -27,7 +27,9 @@ public class MessageController extends BaseController {
     // reply列表
     @GetMapping(value = "/list")
     @ResponseBody
-    public IPage<MessageEntity> list(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,@RequestParam(value = "pageSize",required = false) Integer pageSize, @RequestParam(value = "msgType",required = false) Integer msgType) {
+    public IPage<MessageEntity> list(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,
+                                     @RequestParam(value = "pageSize",required = false) Integer pageSize,
+                                     @RequestParam(value = "msgType",required = false) Integer msgType) {
         return messageService.list(getUId(),msgType,pageIndex,pageSize);
     }
 

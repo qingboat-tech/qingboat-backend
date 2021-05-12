@@ -35,7 +35,7 @@ public interface ArticleMongoDao extends MongoRepository<ArticleEntity, String> 
 
     ArticleEntity findArticleEntityById(String articleId);
 
-    @Query(value = "{'id':?0 }" ,fields = "{title:1 ,desc:1 ,imgUrl:1, top:1,authorId:1, createdTime:1,starCount:1,commentCount:1,readCount:1 }")
+    @Query(value = "{'id':?0 }" ,fields = "{title:1 ,desc:1 ,imgUrl:1, top:1,authorId:1,status:1, createdTime:1,starCount:1,commentCount:1,readCount:1 }")
     ArticleEntity findBaseInfoById(String articleId);
 
 }
