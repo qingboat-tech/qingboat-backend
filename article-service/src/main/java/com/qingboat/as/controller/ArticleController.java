@@ -221,8 +221,12 @@ public class ArticleController extends BaseController {
         if (creatorId!=null){
             lambdaQueryWrapper.eq(UserSubscriptionEntity::getCreatorId,creatorId);
         }
-        if (paid!=null && paid){
-            lambdaQueryWrapper.ne(UserSubscriptionEntity::getOrderId,0);
+        if (paid!=null ) {
+            if(paid){
+                lambdaQueryWrapper.ne(UserSubscriptionEntity::getOrderId,0);
+            }else {
+                lambdaQueryWrapper.eq(UserSubscriptionEntity::getOrderId,0);
+            }
         }
 
         List<UserSubscriptionEntity> subscriptionEntityList = userSubscriptionService.list(queryWrapper);
