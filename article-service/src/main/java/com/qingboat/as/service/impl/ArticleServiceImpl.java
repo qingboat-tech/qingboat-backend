@@ -519,6 +519,19 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public Page<ArticleEntity> findArticleListByUserSubscription(List<UserSubscriptionEntity> subscriptionEntityList,Boolean paid, Integer pageIndex, Integer pageSize){
         Query query = new Query();
+        query.fields().include("title")
+                .include("desc")
+                .include("imgUrl")
+                .include("top")
+                .include("authorId")
+                .include("createdTime")
+                .include("updatedTime")
+                .include("starCount")
+                .include("commentCount")
+                .include("type")
+                .include("status")
+                .include("benefit");
+
         if (subscriptionEntityList == null || subscriptionEntityList.isEmpty()){
             return null;
         }
@@ -563,10 +576,6 @@ public class ArticleServiceImpl implements ArticleService {
         query.limit(pageable.getPageSize());
 
         List articleEntityList = mongoTemplate.find(query,ArticleEntity.class);
-
-        log.info(" ======findArticleListByUserSubscription======");
-        log.info(" ======total======" +total);
-
 
         Page studentPage = new PageImpl(articleEntityList, pageable, total);
 
