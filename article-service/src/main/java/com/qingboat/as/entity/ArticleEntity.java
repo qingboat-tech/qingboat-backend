@@ -1,14 +1,18 @@
 package com.qingboat.as.entity;
 import com.alibaba.fastjson.JSONArray;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -50,6 +54,8 @@ public class ArticleEntity {
 
     private Set<String> benefit = new HashSet<>();
 
+    private List<Attachment> attachmentList = new ArrayList();
+
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdTime;
@@ -61,5 +67,13 @@ public class ArticleEntity {
     private Long starCount ; //点赞数
     private Long commentCount ; //评论数
     private Long readCount ; //阅读数
+
+
+    @Data
+    @AllArgsConstructor
+    public static class Attachment implements Serializable{
+        private String fileName;
+        private String fileUrl;
+    }
 
 }

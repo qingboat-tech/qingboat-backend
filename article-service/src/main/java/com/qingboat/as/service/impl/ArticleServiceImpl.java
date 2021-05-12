@@ -637,6 +637,68 @@ public class ArticleServiceImpl implements ArticleService {
         return true;
     }
 
+    @Override
+    public List<ArticleEntity.Attachment> addAttachment(String articleId, String fileName, String fileUrl) {
+        Query query = new Query();
+        query.fields().include("attachmentList");
+        query.addCriteria(Criteria.where("id").is(articleId));
+
+        ArticleEntity articleEntity = mongoTemplate.findOne(query,ArticleEntity.class);
+        if (articleEntity == null){
+            throw new BaseException(500,"文章不存在");
+        }
+        List<ArticleEntity.Attachment>  attachmentList = articleEntity.getAttachmentList();
+        boolean flag = false;
+        for (ArticleEntity.Attachment a:attachmentList) {
+            if (a.getFileName().equals(fileName)){
+                a.setFileUrl(fileUrl);
+                flag = true;
+                break;
+            }
+        }
+        if (!flag){
+            attachmentList.add(new ArticleEntity.Attachment(fileName,fileUrl));
+        }
+
+        Update update = new Update();
+        update.set("attachmentList",attachmentList);
+        UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
+        if (result.getModifiedCount()>0){
+            return attachmentList;
+        }
+        throw new BaseException(500,"文章不存在");
+    }
+
+    @Override
+    public List<ArticleEntity.Attachment> delAttachment(String articleId, String fileName) {
+        Query query = new Query();
+        query.fields().include("attachmentList");
+        query.addCriteria(Criteria.where("id").is(articleId));
+
+        ArticleEntity articleEntity = mongoTemplate.findOne(query,ArticleEntity.class);
+        if (articleEntity == null){
+            throw new BaseException(500,"文章不存在");
+        }
+        List<ArticleEntity.Attachment>  attachmentList = articleEntity.getAttachmentList();
+        boolean flag = false;
+        for (ArticleEntity.Attachment a:attachmentList) {
+            if (a.getFileName().equals(fileName)){
+                attachmentList.remove(a);
+                flag = true;
+                break;
+            }
+        }
+        if (flag){
+            Update update = new Update();
+            update.set("attachmentList",attachmentList);
+            UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
+            if (result.getModifiedCount()>0){
+                return attachmentList;
+            }
+        }
+        throw new BaseException(500,"即将删除的附件不存在");
+    }
+
 
     private void initArticle(String authorId){
         log.info(" ======initArticle====== authorId:"+authorId);

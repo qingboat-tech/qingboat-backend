@@ -120,4 +120,9 @@ public interface ArticleService {
     boolean topArticle(String articleId ,Long userId);
 
 
+    List<ArticleEntity.Attachment> addAttachment(String articleId,String fileName,String fileUrl);
+
+    List<ArticleEntity.Attachment> delAttachment(String articleId,String fileName);
+
+
 }

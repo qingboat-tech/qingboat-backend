@@ -389,6 +389,16 @@ public class ArticleController extends BaseController {
        return rstMap;
     }
 
+    @PostMapping(value = "/addAttachment")
+    @ResponseBody
+    public List<ArticleEntity.Attachment> addAttachment(String articleId, String fileName, String fileUrl){
+        return articleService.addAttachment(articleId,fileName,fileUrl);
+    }
+    @DeleteMapping(value = "/delAttachment")
+    @ResponseBody
+    public List<ArticleEntity.Attachment> delAttachment(String articleId, String fileName){
+        return articleService.delAttachment(articleId,fileName);
+    }
 
 
     //======================= 文章互动 =============================
