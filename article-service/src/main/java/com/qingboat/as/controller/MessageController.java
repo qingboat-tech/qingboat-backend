@@ -54,17 +54,4 @@ public class MessageController extends BaseController {
     }
 
 
-    @Autowired
-    WxService wxService;
-
-    @GetMapping(value = "/getToken")
-    @ResponseBody
-    public Object getToken( ) {
-        String userId = getUIdStr();
-        String sec = AuthFilter.getSecret(userId);
-        Object token =   wxService.getWxUserToken(sec,userId);
-        System.err.println(" token :" +token);
-        return token== null?null: token.toString();
-    }
-
 }
