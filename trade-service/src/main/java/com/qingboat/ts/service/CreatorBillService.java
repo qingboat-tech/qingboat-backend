@@ -14,13 +14,13 @@ public interface CreatorBillService {
      * @param creatorId
      * @return
      */
-     Long currentMonthIncome(Long creatorId);
+     Long getCurrentMonthIncome(Long creatorId);
 
     /**
      * 查询创作者账单信息
-     * @param creaatorId
+     * @param creatorId
      * @return
      */
-    IPage<CreatorBillEntity> getCreatorBillList(Long creaatorId);
+    IPage<CreatorBillEntity> getCreatorBillList(Long creatorId ,Integer pageIndex,Integer pageSize);
 }
 

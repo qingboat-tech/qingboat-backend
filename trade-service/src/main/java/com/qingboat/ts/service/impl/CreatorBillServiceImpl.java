@@ -2,6 +2,7 @@ package com.qingboat.ts.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.qingboat.ts.dao.CreatorBillDao;
 import com.qingboat.ts.entity.CreatorBillEntity;
@@ -20,7 +21,7 @@ import java.util.Map;
 public class CreatorBillServiceImpl extends ServiceImpl <CreatorBillDao, CreatorBillEntity> implements CreatorBillService {
 
     @Override
-    public Long currentMonthIncome(Long creatorId) {
+    public Long getCurrentMonthIncome(Long creatorId) {
         // 获取当月的第一天和最后一天
         Date begining, end;
         {
@@ -44,13 +45,28 @@ public class CreatorBillServiceImpl extends ServiceImpl <CreatorBillDao, Creator
         queryWrapper.eq("CreatorId",creatorId)
                 .ge("billTime",begining)
                 .le("billTime",end);
+        queryWrapper.select(" sum(amount) as amount");
 
-        return null;
+        CreatorBillEntity creatorBillEntity = this.getOne(queryWrapper);
+
+        return creatorBillEntity.getAmount();
     }
 
     @Override
-    public IPage<CreatorBillEntity> getCreatorBillList(Long creaatorId) {
-        return null;
+    public IPage<CreatorBillEntity> getCreatorBillList(Long creatorId ,Integer pageIndex,Integer pageSize) {
+        if (pageSize == null || pageSize<1){
+            pageSize =10;
+        }
+        if (pageIndex == null || pageIndex<1){
+            pageIndex =1;
+        }
+        IPage<CreatorBillEntity> page = new Page<>(pageIndex, pageSize);
+
+        QueryWrapper<CreatorBillEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("creator_id",creatorId);
+        queryWrapper.orderByDesc("bill_time");
+
+        return this.page(page,queryWrapper);
     }
 
     private static Calendar getCalendarForNow() {

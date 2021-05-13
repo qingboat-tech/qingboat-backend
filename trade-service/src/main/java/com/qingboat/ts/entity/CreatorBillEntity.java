@@ -31,7 +31,7 @@ public class CreatorBillEntity implements Serializable {
     private Date billTime;
 
     // 交易金额
-    private Integer amount;
+    private Long amount;
 
     // 交易币种
     private String currency = "CNY";

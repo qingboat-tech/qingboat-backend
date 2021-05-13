@@ -25,7 +25,7 @@ public class CreatorBillController extends BaseController{
     @ResponseBody
     public Map<Object, Long> getCurrentMonthIncome(){
         // 本月收入
-        Long currentMonthIncome = creatorBillService.currentMonthIncome(getUId());
+        Long currentMonthIncome = creatorBillService.getCurrentMonthIncome(getUId());
         Map<Object, Long> data = new HashMap<>();
         data.put("currentMonthIncome",currentMonthIncome);
 
