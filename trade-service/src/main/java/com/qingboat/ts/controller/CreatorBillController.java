@@ -20,6 +20,20 @@ public class CreatorBillController extends BaseController{
     @Autowired
     private CreatorBillService creatorBillService;
 
+    /**
+     * 内部调用
+     * 添加bill记录,修改钱包金额
+     */
+    @PostMapping(value = "/createBillAndUpdateWallet")
+    @ResponseBody
+    public CreatorBillEntity userSubscription(@RequestBody CreatorBillEntity creatorBillEntity,
+                                                   @RequestHeader("INNER-SEC") String innerSec,
+                                                   @RequestHeader("UID") Long creatorId) {
+
+        return null;
+
+    }
+
     @GetMapping("/getCurrentMonthIncome")
     @ResponseBody
     public Map<Object, Long> getCurrentMonthIncome(){
