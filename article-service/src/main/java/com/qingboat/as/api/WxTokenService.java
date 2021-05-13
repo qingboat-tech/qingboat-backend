@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Map;
 
-@FeignClient(name = "wx-service",url = "${python.host}",configuration = {FeignDecoder.class})
-public interface WxService {
+@FeignClient(name = "token-service",url = "${python.host}",configuration = {FeignDecoder.class})
+public interface WxTokenService {
 
     @RequestMapping(value = "/api/global_access_token/" , method = RequestMethod.GET)
-    Object getWxUserToken(@RequestHeader("INNER-SEC") String innerSec, @RequestHeader("userId") String userId);
+    String getWxUserToken(@RequestHeader("INNER-SEC") String innerSec, @RequestHeader("userId") String userId);
 
 }
