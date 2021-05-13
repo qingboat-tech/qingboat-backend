@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.Map;
 
 @Data
-@TableName("apps_userprofile")// 映射数据库表名
+@TableName("apps_userprofile", autoResultMap = true)// 映射数据库表名
 public class UserProfileEntity {
 
     private Long id;
