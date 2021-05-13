@@ -3,6 +3,8 @@ package com.qingboat.ts.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.qingboat.ts.entity.CreatorWalletEntity;
 import com.qingboat.ts.entity.OrderEntity;
+import com.qingboat.ts.service.CreatorBillService;
+import com.qingboat.ts.service.CreatorWalletService;
 import com.qingboat.ts.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,29 +19,45 @@ import java.util.Map;
 @RequestMapping(value = "/wallet")
 public class CreatorWalletController extends BaseController {
 
-    @GetMapping("/currentMonthIncome")
+    @Autowired
+    private CreatorBillService creatorBillService;
+
+    @Autowired
+    private CreatorWalletService creatorWalletService;
+
+    @GetMapping("/getCurrentMonthIncome")
     @ResponseBody
-    public Map<Object, Long> currentMonthIncome(){
+    public Map<Object, Long> getCurrentMonthIncome(){
         // 本月收入
+        Long currentMonthIncome = creatorBillService.currentMonthIncome(getUId());
         Map<Object, Long> data = new HashMap<>();
-        data.put("currentMonthIncome",12000l);
+        data.put("currentMonthIncome",currentMonthIncome);
 
         return data;
     }
 
-    @GetMapping("/creatorBalance")
+    @GetMapping("/getCreatorBalance")
     @ResponseBody
-    public CreatorWalletEntity creatorBalance(){
+    public CreatorWalletEntity getCreatorBalance(){
         // 返回余额
-        CreatorWalletEntity entity = new CreatorWalletEntity();
-        entity.setBalance(10000l);
-        entity.setIncome(1000l);
+        CreatorWalletEntity entity = creatorWalletService.getCreatorWalletByCreatorId(getUId());
+        CreatorWalletEntity resultEntity = new CreatorWalletEntity();
+        if (entity!=null){
+            resultEntity.setBalance(0l);
+            resultEntity.setIncome(0l);
+            resultEntity.setCreatorId(getUId());
+        }else {
+            resultEntity.setBalance(entity.getBalance());
+            resultEntity.setIncome(entity.getIncome());
+            resultEntity.setCreatorId(entity.getCreatorId());
+        }
+
         return entity;
     }
 
-    @GetMapping("/creatorBillList")
+    @GetMapping("/getCreatorBillList")
     @ResponseBody
-    public IPage<CreatorWalletEntity> creatorBillList(){
+    public IPage<CreatorWalletEntity> getCreatorBillList(){
         return null;
     }
 
