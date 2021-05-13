@@ -19,22 +19,10 @@ import java.util.Map;
 @RequestMapping(value = "/wallet")
 public class CreatorWalletController extends BaseController {
 
-    @Autowired
-    private CreatorBillService creatorBillService;
 
     @Autowired
     private CreatorWalletService creatorWalletService;
 
-    @GetMapping("/getCurrentMonthIncome")
-    @ResponseBody
-    public Map<Object, Long> getCurrentMonthIncome(){
-        // 本月收入
-        Long currentMonthIncome = creatorBillService.currentMonthIncome(getUId());
-        Map<Object, Long> data = new HashMap<>();
-        data.put("currentMonthIncome",currentMonthIncome);
-
-        return data;
-    }
 
     @GetMapping("/getCreatorBalance")
     @ResponseBody
@@ -53,12 +41,6 @@ public class CreatorWalletController extends BaseController {
         }
 
         return entity;
-    }
-
-    @GetMapping("/getCreatorBillList")
-    @ResponseBody
-    public IPage<CreatorWalletEntity> getCreatorBillList(){
-        return null;
     }
 
 
