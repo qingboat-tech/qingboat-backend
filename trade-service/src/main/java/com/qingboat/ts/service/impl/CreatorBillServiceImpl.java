@@ -47,8 +47,14 @@ public class CreatorBillServiceImpl extends ServiceImpl <CreatorBillDao, Creator
                 .between("bill_time",begining,end);
         queryWrapper.select(" sum(amount) as amount");
 
-        CreatorBillEntity creatorBillEntity = this.getOne(queryWrapper);
+        log.info("creator_id = " +creatorId);
+        log.info("bill_time-start = " +begining);
+        log.info("bill_time-end = " +end);
 
+        CreatorBillEntity creatorBillEntity = this.getOne(queryWrapper);
+        if (creatorBillEntity == null){
+            return  0l;
+        }
         return creatorBillEntity.getAmount();
     }
 
