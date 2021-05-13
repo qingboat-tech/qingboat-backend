@@ -75,6 +75,7 @@ public class CreatorSubscriptionController extends BaseController {
             pageIndex =1;
         }
         IPage<UserSubscriptionEntity> page = new Page<>(pageIndex, pageSize);
+        page = userSubscriptionService.page(page, queryWrapper);
         for (UserSubscriptionEntity subscriptionEntity: page.getRecords()) {
             UserEntity u = userService.findByUserId(subscriptionEntity.getSubscriberId());
             subscriptionEntity.setSubscriberNickname(u.getNickname());
@@ -82,7 +83,7 @@ public class CreatorSubscriptionController extends BaseController {
             subscriptionEntity.setExpertiseArea(u.getExpertiseArea());
             subscriptionEntity.setSubscriberDesc(u.getDescription());
         }
-        return userSubscriptionService.page(page, queryWrapper);
+        return page;
     }
 
 
