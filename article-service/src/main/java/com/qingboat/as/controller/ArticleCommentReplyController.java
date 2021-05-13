@@ -43,6 +43,7 @@ public class ArticleCommentReplyController extends BaseController {
         replyCommentEntity.setArticleId(articleCommentReplyVo.getArticleId());
         replyCommentEntity.setContent(articleCommentReplyVo.getContent());
         replyCommentEntity.setCommentId(articleCommentReplyVo.getCommentId());
+        replyCommentEntity.setReplyCount(0l);
 
         replyCommentEntity.setUserId(uid);
 
