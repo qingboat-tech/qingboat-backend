@@ -67,6 +67,13 @@ public class ArticleServiceImpl implements ArticleService {
     public ArticleEntity saveArticle(ArticleEntity articleEntity ,String operatorId) {
 
         if (articleEntity.getId() == null){
+
+            if (StringUtils.isEmpty(articleEntity.getTitle())
+                    && StringUtils.isEmpty(articleEntity.getDesc())
+                    && (articleEntity.getData() == null || articleEntity.getData().size() ==0) ){
+                return articleEntity;
+            }
+
             articleEntity.setId(ObjectId.get().toString());
             articleEntity.setCreatedTime(LocalDateTime.now());
             articleEntity.setUpdatedTime(LocalDateTime.now());
@@ -116,6 +123,9 @@ public class ArticleServiceImpl implements ArticleService {
         }
         if (!StringUtils.isEmpty(articleEntity.getImgUrl())){
             update.set("imgUrl",articleEntity.getImgUrl());
+        }
+        if (!StringUtils.isEmpty(articleEntity.getParentId())){
+            update.set("parentId",articleEntity.getParentId());
         }
         if (!StringUtils.isEmpty(articleEntity.getParentId())){
             update.set("parentId",articleEntity.getParentId());
@@ -398,7 +408,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public boolean submitReviewByArticleId(String articleId,String operatorId, Set<Long> tierIdSet) {
+    public boolean submitReviewByArticleId(String articleId,String operatorId, Set<Long> tierIdSet,Set<String> articleTags) {
         if (tierIdSet == null || tierIdSet.isEmpty()){
             throw new BaseException(500,"操作失败：发布的文章没有选择套餐范围");
         }
@@ -427,6 +437,9 @@ public class ArticleServiceImpl implements ArticleService {
         Update update = new Update();
         update.set("status",1);
         update.set("benefit",benefitKeySet);
+        if (articleTags!=null){
+            update.set("tags",articleTags);
+        }
         UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
         if (result.getModifiedCount() <=0){
             throw new BaseException(500,"ArticleEntity_is_not_exist");

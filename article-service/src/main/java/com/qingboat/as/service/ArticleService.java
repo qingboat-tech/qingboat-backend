@@ -94,7 +94,7 @@ public interface ArticleService {
     /**
      * 提交文章审核
      */
-    boolean submitReviewByArticleId(String articleId,String operatorId, Set<Long> tierIdSet);
+    boolean submitReviewByArticleId(String articleId,String operatorId, Set<Long> tierIdSet,Set<String> articleTags);
 
     /**
      * 文章审核

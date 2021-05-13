@@ -9,4 +9,5 @@ import java.util.Set;
 public class ArticlePublishVo implements Serializable {
     private String articleId;
     private Set<Long> tierIds;
+    private Set<String> tags;
 }

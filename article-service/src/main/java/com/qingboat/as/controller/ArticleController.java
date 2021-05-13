@@ -166,7 +166,8 @@ public class ArticleController extends BaseController {
     @ResponseBody
     public Boolean submitReview(@Valid @RequestBody ArticlePublishVo articlePublishVo) {  //TODO 需要修改
         String uid = getUIdStr();
-        Boolean rst =articleService.submitReviewByArticleId(articlePublishVo.getArticleId(),uid,articlePublishVo.getTierIds());
+        //TODO  david
+        Boolean rst =articleService.submitReviewByArticleId(articlePublishVo.getArticleId(),uid,articlePublishVo.getTierIds(),articlePublishVo.getTags());
 
         articleService.asyncReviewByArticleId(articlePublishVo.getArticleId());
         return rst;

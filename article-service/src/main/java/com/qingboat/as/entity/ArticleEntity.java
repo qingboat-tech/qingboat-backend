@@ -56,6 +56,8 @@ public class ArticleEntity {
 
     private List<Attachment> attachmentList = new ArrayList();
 
+    private Set<String> tags = new HashSet<>();  //文章标签
+
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdTime;
