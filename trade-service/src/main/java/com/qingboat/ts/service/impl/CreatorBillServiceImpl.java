@@ -8,6 +8,7 @@ import com.qingboat.ts.dao.CreatorBillDao;
 import com.qingboat.ts.entity.CreatorBillEntity;
 import com.qingboat.ts.entity.CreatorWalletEntity;
 import com.qingboat.ts.service.CreatorBillService;
+import com.qingboat.ts.utils.CalendarUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -25,18 +26,18 @@ public class CreatorBillServiceImpl extends ServiceImpl <CreatorBillDao, Creator
         // 获取当月的第一天和最后一天
         Date begining, end;
         {
-            Calendar calendar = getCalendarForNow();
+            Calendar calendar = CalendarUtil.getCalendarForNow();
             calendar.set(Calendar.DAY_OF_MONTH,
                     calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
-            setTimeToBeginningOfDay(calendar);
+            CalendarUtil.setTimeToBeginningOfDay(calendar);
             begining = calendar.getTime();
         }
 
         {
-            Calendar calendar = getCalendarForNow();
+            Calendar calendar = CalendarUtil.getCalendarForNow();
             calendar.set(Calendar.DAY_OF_MONTH,
                     calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-            setTimeToEndofDay(calendar);
+            CalendarUtil.setTimeToEndofDay(calendar);
             end = calendar.getTime();
         }
 
@@ -67,26 +68,6 @@ public class CreatorBillServiceImpl extends ServiceImpl <CreatorBillDao, Creator
         queryWrapper.orderByDesc("bill_time");
 
         return this.page(page,queryWrapper);
-    }
-
-    private static Calendar getCalendarForNow() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        return calendar;
-    }
-
-    private static void setTimeToBeginningOfDay(Calendar calendar) {
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-    }
-
-    private static void setTimeToEndofDay(Calendar calendar) {
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 999);
     }
 
 }
