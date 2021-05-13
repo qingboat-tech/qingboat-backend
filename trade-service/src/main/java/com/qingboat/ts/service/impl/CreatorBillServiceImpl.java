@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qingboat.base.utils.DateUtil;
 import com.qingboat.ts.dao.CreatorBillDao;
 import com.qingboat.ts.entity.CreatorBillEntity;
 import com.qingboat.ts.entity.CreatorWalletEntity;
@@ -55,7 +56,7 @@ public class CreatorBillServiceImpl extends ServiceImpl <CreatorBillDao, Creator
     }
 
     @Override
-    public IPage<CreatorBillEntity> getCreatorBillList(Long creatorId ,Integer pageIndex,Integer pageSize) {
+    public IPage<CreatorBillEntity> getCreatorBillList(Long creatorId ,Integer pageIndex,Integer pageSize,Date startTime, Date endTime) {
         if (pageSize == null || pageSize<1){
             pageSize =10;
         }
@@ -66,6 +67,12 @@ public class CreatorBillServiceImpl extends ServiceImpl <CreatorBillDao, Creator
 
         QueryWrapper<CreatorBillEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("creator_id",creatorId);
+        if (startTime!=null && endTime!=null){
+            startTime = DateUtil.getDayBeginTime(startTime);
+            endTime = DateUtil.getDayEndTime(endTime);
+            queryWrapper.between("bill_time",startTime,endTime);
+        }
+
         queryWrapper.orderByDesc("bill_time");
 
         return this.page(page,queryWrapper);

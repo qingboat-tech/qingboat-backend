@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.qingboat.ts.entity.CreatorBillEntity;
 import com.qingboat.ts.entity.CreatorWalletEntity;
 
+import java.util.Date;
 import java.util.Map;
 
 public interface CreatorBillService {
@@ -21,6 +22,6 @@ public interface CreatorBillService {
      * @param creatorId
      * @return
      */
-    IPage<CreatorBillEntity> getCreatorBillList(Long creatorId ,Integer pageIndex,Integer pageSize);
+    IPage<CreatorBillEntity> getCreatorBillList(Long creatorId , Integer pageIndex, Integer pageSize, Date startTime, Date endTime);
 }
 

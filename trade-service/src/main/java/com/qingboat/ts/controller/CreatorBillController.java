@@ -1,6 +1,7 @@
 package com.qingboat.ts.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.qingboat.base.utils.DateUtil;
 import com.qingboat.ts.entity.CreatorBillEntity;
 import com.qingboat.ts.entity.CreatorWalletEntity;
 import com.qingboat.ts.service.CreatorBillService;
@@ -33,8 +34,12 @@ public class CreatorBillController extends BaseController{
     @GetMapping("/getCreatorBillList")
     @ResponseBody
     public IPage<CreatorBillEntity> getCreatorBillList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,
-                                                       @RequestParam(value = "pageSize",required = false) Integer pageSize){
+                                                       @RequestParam(value = "pageSize",required = false) Integer pageSize,
+                                                       @RequestParam(value = "startTime",required = false) String startTime,
+                                                       @RequestParam(value = "endTime",required = false) String endTime ){
 
-        return creatorBillService.getCreatorBillList(getUId(),pageIndex,pageSize);
+        return creatorBillService.getCreatorBillList(getUId(),pageIndex,pageSize,
+                DateUtil.parseStrToDate(startTime,DateUtil.DATE_FORMAT_YYYY_MM_DD),
+                DateUtil.parseStrToDate(endTime,DateUtil.DATE_FORMAT_YYYY_MM_DD));
     }
 }
