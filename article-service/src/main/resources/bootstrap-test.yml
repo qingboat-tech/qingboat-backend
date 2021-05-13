@@ -118,3 +118,6 @@ mybatis-plus:
 
 python:
   host: https://m.qingboat.com
+
+trade:
+  host: http://localhost:8080
