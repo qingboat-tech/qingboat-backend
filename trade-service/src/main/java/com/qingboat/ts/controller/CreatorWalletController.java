@@ -30,7 +30,7 @@ public class CreatorWalletController extends BaseController {
         // 返回余额
         CreatorWalletEntity entity = creatorWalletService.getCreatorWalletByCreatorId(getUId());
         CreatorWalletEntity resultEntity = new CreatorWalletEntity();
-        if (entity!=null){
+        if (entity==null){
             resultEntity.setBalance(0l);
             resultEntity.setIncome(0l);
             resultEntity.setCreatorId(getUId());
