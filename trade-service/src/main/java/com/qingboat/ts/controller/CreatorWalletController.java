@@ -40,7 +40,7 @@ public class CreatorWalletController extends BaseController {
             resultEntity.setCreatorId(entity.getCreatorId());
         }
 
-        return entity;
+        return resultEntity;
     }
 
 
