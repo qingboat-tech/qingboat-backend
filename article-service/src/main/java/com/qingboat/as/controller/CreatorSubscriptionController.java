@@ -76,8 +76,9 @@ public class CreatorSubscriptionController extends BaseController {
         }
         IPage<UserSubscriptionEntity> page = new Page<>(pageIndex, pageSize);
         page = userSubscriptionService.page(page, queryWrapper);
-        for (UserSubscriptionEntity subscriptionEntity: p.getRecords()) {
+        for (UserSubscriptionEntity subscriptionEntity: page.getRecords()) {
             UserEntity u = userService.findByUserId(subscriptionEntity.getSubscriberId());
+            log.info("====="+u.getNickname()+"++++++");
             subscriptionEntity.setSubscriberNickname(u.getNickname());
             subscriptionEntity.setSubscriberHeadImgUrl(u.getHeadimgUrl());
             subscriptionEntity.setExpertiseArea(u.getExpertiseArea());
