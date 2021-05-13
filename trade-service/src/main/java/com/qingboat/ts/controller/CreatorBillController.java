@@ -1,14 +1,12 @@
 package com.qingboat.ts.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.qingboat.ts.entity.CreatorBillEntity;
 import com.qingboat.ts.entity.CreatorWalletEntity;
 import com.qingboat.ts.service.CreatorBillService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,11 +32,9 @@ public class CreatorBillController extends BaseController{
 
     @GetMapping("/getCreatorBillList")
     @ResponseBody
-    public IPage<CreatorWalletEntity> getCreatorBillList(){
+    public IPage<CreatorBillEntity> getCreatorBillList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,
+                                                       @RequestParam(value = "pageSize",required = false) Integer pageSize){
 
-
-
-
-        return null;
+        return creatorBillService.getCreatorBillList(getUId(),pageIndex,pageSize);
     }
 }
