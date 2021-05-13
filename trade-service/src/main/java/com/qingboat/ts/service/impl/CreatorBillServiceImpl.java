@@ -43,9 +43,8 @@ public class CreatorBillServiceImpl extends ServiceImpl <CreatorBillDao, Creator
 
         // query 数据表
         QueryWrapper<CreatorBillEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("CreatorId",creatorId)
-                .ge("billTime",begining)
-                .le("billTime",end);
+        queryWrapper.eq("creator_id",creatorId)
+                .between("bill_time",begining,end);
         queryWrapper.select(" sum(amount) as amount");
 
         CreatorBillEntity creatorBillEntity = this.getOne(queryWrapper);
