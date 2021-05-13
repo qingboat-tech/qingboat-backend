@@ -390,21 +390,6 @@ public class ArticleController extends BaseController {
        return rstMap;
     }
 
-    @PostMapping(value = "/addAttachment")
-    @ResponseBody
-    public List<ArticleEntity.Attachment> addAttachment(@RequestParam(value = "file") MultipartFile file ,@RequestParam("articleId")String articleId){
-        Map<String,String> rst = this.UploadFile(file);
-        String fileName = rst.get("fileName");
-        String fileUrl = rst.get("fileUrl");
-
-        return articleService.addAttachment(articleId,fileName,fileUrl);
-    }
-    @DeleteMapping(value = "/delAttachment")
-    @ResponseBody
-    public List<ArticleEntity.Attachment> delAttachment(@RequestParam("articleId")String articleId, @RequestParam("fileName")String fileName){
-        return articleService.delAttachment(articleId,fileName);
-    }
-
 
     //======================= 文章互动 =============================
     // 点赞

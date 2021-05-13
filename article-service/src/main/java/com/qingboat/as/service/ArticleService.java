@@ -106,8 +106,6 @@ public interface ArticleService {
      */
     void asyncReviewByArticleId(String articleId);
 
-//    @Deprecated
-//    Page<ArticleEntity> findByAuthorIdsAndScope(List<String> authorIds,Integer pageIndex,Integer pageSize,Integer  scope);
 
     Page<ArticleEntity> findArticleListByUserSubscription(List<UserSubscriptionEntity> subscriptionEntityList,Boolean paid, Integer pageIndex, Integer pageSize);
 
@@ -118,11 +116,6 @@ public interface ArticleService {
      * 文章置顶
      */
     boolean topArticle(String articleId ,Long userId);
-
-
-    List<ArticleEntity.Attachment> addAttachment(String articleId,String fileName,String fileUrl);
-
-    List<ArticleEntity.Attachment> delAttachment(String articleId,String fileName);
 
 
 }

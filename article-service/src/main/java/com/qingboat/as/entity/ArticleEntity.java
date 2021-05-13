@@ -54,8 +54,6 @@ public class ArticleEntity {
 
     private Set<String> benefit = new HashSet<>();
 
-    private List<Attachment> attachmentList = new ArrayList();
-
     private Set<String> tags = new HashSet<>();  //文章标签
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
