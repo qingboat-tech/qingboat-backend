@@ -116,4 +116,4 @@ mybatis-plus:
     jdbc-type-for-null: 'null'
 
 python:
-  host: http://mobile.qingboat.com
+  host: https://mobile.qingboat.com
