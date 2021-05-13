@@ -33,6 +33,8 @@ public class UserSubscriptionEntity implements Serializable {
 
     private Long  memberTierId;
 
+    private String memberTierName;
+
     private String subscribeDuration = "month";  // month or year
 
     private Long  orderId;    // 当是免费订阅的，则 orderId 为0 表示
@@ -59,6 +61,10 @@ public class UserSubscriptionEntity implements Serializable {
 
     @TableField(exist = false)
     private String subscriberNickname;
+
+    @TableField(exist = false)
+    private String subscriberDesc;
+
 
     @TableField(exist = false)
     private Map[] expertiseArea;//创作者标签： json String, 格式：[{'key':'技术'}]

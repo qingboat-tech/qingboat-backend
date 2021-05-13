@@ -80,6 +80,7 @@ public class CreatorSubscriptionController extends BaseController {
             subscriptionEntity.setSubscriberNickname(u.getNickname());
             subscriptionEntity.setSubscriberHeadImgUrl(u.getHeadimgUrl());
             subscriptionEntity.setExpertiseArea(u.getExpertiseArea());
+            subscriptionEntity.setSubscriberDesc(u.getDescription());
         }
         return userSubscriptionService.page(page, queryWrapper);
     }

@@ -18,6 +18,8 @@ public class UserEntity implements Serializable {
 
     private String nickname;
 
+    private String description;
+
     private Integer role;  // 1:创作者；2：阅读者
 
     @TableField("`status`")

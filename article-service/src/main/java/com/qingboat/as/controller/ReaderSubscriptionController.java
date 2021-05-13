@@ -148,7 +148,7 @@ public class ReaderSubscriptionController extends BaseController {
         if (beforeUserSubscription!=null){
             throw new BaseException(500,"操作失败：您已经订阅该创作者");
         }
-        //2、检查以前是否有订阅
+        //2、处理新的免费订阅
         TierEntity entity = tierService.getById(tierId);
         if (entity == null || !"free".equals(entity.getSubscribeDuration())){
             throw new BaseException(500,"操作失败：您已经订阅信息不存在或需要付费");
@@ -166,6 +166,7 @@ public class ReaderSubscriptionController extends BaseController {
         userSubscriptionEntity.setBenefitList(entity.getBenefitList());
         userSubscriptionEntity.setOrderId(0l);
         userSubscriptionEntity.setMemberTierId(tierId);
+        userSubscriptionEntity.setMemberTierName(entity.getTitle());
         userSubscriptionEntity.setSubscribeDuration("free");
         userSubscriptionEntity.setOrderPrice(0);
 
@@ -199,6 +200,7 @@ public class ReaderSubscriptionController extends BaseController {
         TierEntity entity = tierService.getById(memberTierId);
 
         if (entity !=null){
+            userSubscriptionEntity.setMemberTierName(entity.getTitle());
             Integer subscriptionLimit = entity.getSubscribeLimit();
             if (subscriptionLimit !=null && subscriptionLimit>0){
                 //TODO 检查订阅限额
@@ -262,6 +264,8 @@ public class ReaderSubscriptionController extends BaseController {
                             throw  new BaseException(500," subscribeDuration= "+subscribeDuration +" 参数错误");
                         }
 
+                        beforeUserSubscription.setMemberTierId(entity.getId());
+                        beforeUserSubscription.setMemberTierName(entity.getTitle());
                         beforeUserSubscription.setOrderId(orderId);
                         beforeUserSubscription.setOrderPrice(orderPrice);
                         beforeUserSubscription.setSubscribeDuration(subscribeDuration);
