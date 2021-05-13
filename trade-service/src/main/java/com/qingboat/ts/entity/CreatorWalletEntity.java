@@ -23,6 +23,9 @@ public class CreatorWalletEntity implements Serializable {
     // 余额
     private Long balance;
 
+    //总收益
+    private Long income;
+
     // 冻结金额
     private Long freeze;
 
