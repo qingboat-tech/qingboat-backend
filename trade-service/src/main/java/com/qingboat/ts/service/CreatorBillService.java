@@ -11,6 +11,13 @@ import java.util.Map;
 public interface CreatorBillService {
 
     /**
+     * 创建账单和更新钱包余额
+     * @param creatorBillEntity
+     * @return
+     */
+    CreatorBillEntity createBillAndUpdateWallet(CreatorBillEntity creatorBillEntity);
+
+    /**
      * 查询创作者收益
      * @param creatorId
      * @return

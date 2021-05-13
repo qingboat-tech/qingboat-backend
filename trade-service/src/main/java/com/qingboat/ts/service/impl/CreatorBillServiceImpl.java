@@ -4,14 +4,19 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qingboat.base.exception.BaseException;
 import com.qingboat.base.utils.DateUtil;
 import com.qingboat.ts.dao.CreatorBillDao;
 import com.qingboat.ts.entity.CreatorBillEntity;
 import com.qingboat.ts.entity.CreatorWalletEntity;
 import com.qingboat.ts.service.CreatorBillService;
+import com.qingboat.ts.service.CreatorWalletService;
 import com.qingboat.ts.utils.CalendarUtil;
+import com.qingboat.ts.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -21,6 +26,28 @@ import java.util.Map;
 @Service
 @Slf4j
 public class CreatorBillServiceImpl extends ServiceImpl <CreatorBillDao, CreatorBillEntity> implements CreatorBillService {
+
+    @Autowired
+    private CreatorWalletService creatorWalletService;
+
+    @Override
+    @Transactional
+    public CreatorBillEntity createBillAndUpdateWallet(CreatorBillEntity creatorBillEntity) {
+
+        if (creatorBillEntity.getCreatorId() == null ||
+                creatorBillEntity.getBillTitle() == null ||
+                creatorBillEntity.getBillType() == null ||
+                creatorBillEntity.getAmount() == null ||
+                creatorBillEntity.getOrderNo() == null){
+            throw new BaseException(500,"创建账单参数错误");
+        }
+        creatorBillEntity.setBillTime(new Date());
+        boolean rst = this.save(creatorBillEntity);
+        if (rst){
+            creatorWalletService.updateBalanceByCreatorId(creatorBillEntity.getCreatorId(),creatorBillEntity.getAmount());
+        }
+        return creatorBillEntity;
+    }
 
     @Override
     public Long getCurrentMonthIncome(Long creatorId) {

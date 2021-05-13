@@ -14,4 +14,11 @@ public interface CreatorWalletService {
      */
     CreatorWalletEntity getCreatorWalletByCreatorId(Long creatorId);
 
+    /**
+     * 更新总余额和收益
+     * @param creatorId
+     * @return
+     */
+    CreatorWalletEntity updateBalanceByCreatorId(Long creatorId,Long amount);
+
 }
