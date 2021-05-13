@@ -25,6 +25,8 @@ public class UserProfileEntity {
     @TableField(typeHandler = FastjsonTypeHandler.class)
     private Map[] expertiseArea;//创作者标签： json String, 格式：[{'key':'技术'}]
 
+    private String position;
+
     private Integer role;  // 1:创作者；2：阅读者
 
     private String profileName; // 创作者profile名称
