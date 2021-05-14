@@ -1,13 +1,18 @@
 package com.qingboat.as.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qingboat.as.api.WxMessageService;
+import com.qingboat.as.api.WxTokenService;
 import com.qingboat.as.dao.MessageDao;
 import com.qingboat.as.entity.*;
+import com.qingboat.as.filter.AuthFilter;
 import com.qingboat.as.service.*;
+import com.qingboat.base.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -32,6 +37,15 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
     @Autowired
     private ArticleCommentService articleCommentService;
+
+    @Autowired
+    WxTokenService wxTokenService;
+
+    @Autowired
+    WxMessageService wxMessageService;
+
+    @Autowired
+    UserWechatService userWechatService;
 
     @Override
     @Async
@@ -76,6 +90,35 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         msg.setExtData("subscriberNickName",subscribeUser.getNickname());
         msg.setExtData("subscriberHeadImgUrl",subscribeUser.getHeadimgUrl());
         this.save(msg);
+
+        // 发订阅者微信消息
+        String subscribeIdStr = String.valueOf(subscribeUser.getUserId());
+        String sec = AuthFilter.getSecret(subscribeIdStr);
+        String token =  wxTokenService.getWxUserToken(sec, subscribeIdStr);
+        JSONObject body = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        // 找到发送者的微信openId
+        QueryWrapper<UserWechatEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(UserWechatEntity::getUserId,subscribeUser.getUserId());
+        UserWechatEntity userWechatEntity = userWechatService.getOne(queryWrapper);
+        if (userWechatEntity == null){
+            throw new BaseException(500,"订阅者没有微信openId,没法发消息");
+        }
+
+        body.put("touser",userWechatEntity.getOpenId());                    // 发给谁
+        body.put("template_id","${wx-msg-template.update}");                // 那个模板
+        body.put("url","${business-domain}"+"/mysubscription");             // 打开地址
+        body.put("data",data);
+
+        data.put("first", JSON.parse("{'value': '订阅成功啦！'}"));
+        data.put("keyword1", JSON.parse("{'value': '订阅者'}"));
+        data.put("keyword2", JSON.parse("{'value': '2021-10-10'}"));
+        data.put("remark", JSON.parse("{'value': '感谢您订阅，快来开启学习成长之旅吧！'}"));
+
+        log.info( " request: " +body);
+        Object obj = wxMessageService.sendMessage(token,body);
+
 
         //2、发给创作者
         msg = new MessageEntity();
