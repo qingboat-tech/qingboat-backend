@@ -4,12 +4,45 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qingboat.as.api.TradeService;
 import com.qingboat.as.dao.UserSubscriptionDao;
+import com.qingboat.as.entity.CreatorBillEntity;
 import com.qingboat.as.entity.UserSubscriptionEntity;
+import com.qingboat.as.filter.AuthFilter;
 import com.qingboat.as.service.UserSubscriptionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class UserSubscriptionServiceImpl extends ServiceImpl<UserSubscriptionDao, UserSubscriptionEntity> implements UserSubscriptionService {
 
+
+    @Autowired
+    private TradeService tradeService;
+
+    @Override
+    public Object createBillAndUpdateWallet(UserSubscriptionEntity userSubscriptionEntity) {
+        // 给creator添加收益记录
+        CreatorBillEntity creatorBillEntity = new CreatorBillEntity();
+        creatorBillEntity.setCreatorId(userSubscriptionEntity.getCreatorId());
+        creatorBillEntity.setBillType(1);
+        String typeChinese = null;
+        if ("year".equals(userSubscriptionEntity.getSubscribeDuration())){
+            typeChinese = "年";
+        }
+        if ("month".equals(userSubscriptionEntity.getSubscribeDuration())){
+            typeChinese = "月";
+        }
+        creatorBillEntity.setAmount(1L*userSubscriptionEntity.getOrderPrice());
+        creatorBillEntity.setOrderNo(userSubscriptionEntity.getOrderNo());
+        creatorBillEntity.setBillTitle("新增订阅"+typeChinese+"订阅会员");
+
+        String getCreatorIdStr = String.valueOf(userSubscriptionEntity.getCreatorId());
+        String sec = AuthFilter.getSecret(getCreatorIdStr);
+
+        tradeService.createBillAndUpdateWallet(creatorBillEntity, sec, getCreatorIdStr);
+        return null;
+
+    }
 }

@@ -13,6 +13,7 @@ public interface TradeService {
 
     @RequestMapping(value = "/bill/createBillAndUpdateWallet/" , method = RequestMethod.POST)
     Object createBillAndUpdateWallet(@RequestBody CreatorBillEntity creatorBillEntity,
-                          @RequestHeader("INNER-SEC") String innerSec, @RequestHeader("userId") String userId);
+                          @RequestHeader("INNER-SEC") String innerSec,
+                                     @RequestHeader("UID") String creatorId);
 
 }
