@@ -56,9 +56,6 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
     @Value("${wx-msg-template.data-update}")
     private String dataUpdateTemplate;
 
-    @Value("${wx-msg-template.data-push}")
-    private String dataUPushTemplate;
-
 
     @Override
     @Async
