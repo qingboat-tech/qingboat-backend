@@ -13,12 +13,15 @@ import com.qingboat.as.entity.*;
 import com.qingboat.as.filter.AuthFilter;
 import com.qingboat.as.service.*;
 import com.qingboat.base.exception.BaseException;
+import com.qingboat.base.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -46,6 +49,16 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
     @Autowired
     UserWechatService userWechatService;
+
+    @Value("${business-domain}")
+    private String businessDomain;
+
+    @Value("${wx-msg-template.data-update}")
+    private String dataUpdateTemplate;
+
+    @Value("${wx-msg-template.data-push}")
+    private String dataUPushTemplate;
+
 
     @Override
     @Async
@@ -107,18 +120,18 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         }
 
         body.put("touser",userWechatEntity.getOpenId());                    // 发给谁
-        body.put("template_id","${wx-msg-template.update}");                // 那个模板
-        body.put("url","${business-domain}"+"/mysubscription");             // 打开地址
+        body.put("template_id",this.dataUpdateTemplate);                // 那个模板
+        body.put("url",this.businessDomain+"/mysubscription");             // 打开地址
         body.put("data",data);
 
         data.put("first", JSON.parse("{'value': '订阅成功啦！'}"));
-        data.put("keyword1", JSON.parse("{'value': '订阅者'}"));
-        data.put("keyword2", JSON.parse("{'value': '2021-10-10'}"));
-        data.put("remark", JSON.parse("{'value': '感谢您订阅，快来开启学习成长之旅吧！'}"));
+        data.put("keyword1", JSON.parse("{'value': '"+createUser.getNickname()+"'}"));
+        data.put("keyword2", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
+        data.put("remark", JSON.parse("{'value': '感谢您订阅，"+ data +"快来开启学习成长之旅吧！'}"));
 
         log.info( " request: " +body);
         Object obj = wxMessageService.sendMessage(token,body);
-
+        log.info( " response: " +obj);
 
         //2、发给创作者
         msg = new MessageEntity();

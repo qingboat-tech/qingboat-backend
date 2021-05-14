@@ -128,8 +128,10 @@ user-service:
 trade-service:
   host: http://localhost:8084/ts
 
-business-domain: "https://design.qingboat.com"
+business-domain: https://design.qingboat.com
 
 wx-msg-template:
   #  数据更新模板
-  data-update: "Yb6vx1hu0iXh7KcvUueOco4d2l4jOey5rnb6LoIIFQo"
+  data-update: Yb6vx1hu0iXh7KcvUueOco4d2l4jOey5rnb6LoIIFQo
+  data-push: aaaaa
+
