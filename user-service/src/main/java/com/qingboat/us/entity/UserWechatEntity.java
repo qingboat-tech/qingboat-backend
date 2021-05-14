@@ -7,5 +7,7 @@ import lombok.Data;
 @TableName(value="apps_userwechat")
 public class UserWechatEntity {
 
+    private String openId;
 
+    private Long userId;
 }
