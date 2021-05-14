@@ -34,6 +34,7 @@ public class UserServiceResponse {
     private String profileImgUrl; // 创作者profile图片
 
     private String profileKey; // 创作者profile页面Key
+    private String position;  // 岗位
 
     private String profileDesc; // 创作者profile介绍
 
