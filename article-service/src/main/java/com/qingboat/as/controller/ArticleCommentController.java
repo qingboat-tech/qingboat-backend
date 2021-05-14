@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/comment")
@@ -76,8 +77,19 @@ public class ArticleCommentController extends BaseController {
     // reply列表
     @GetMapping(value = "/list")
     @ResponseBody
-    public IPage<ArticleCommentEntity> list(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,@RequestParam(value = "pageSize",required = false) Integer pageSize, @RequestParam("articleId") String articleId) {
-        return articleCommentService.findArticleComment(articleId,pageIndex,pageSize);
+    public IPage<ArticleCommentEntity> list(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,
+                                            @RequestParam(value = "pageSize",required = false) Integer pageSize,
+                                            @RequestParam("articleId") String articleId) {
+        IPage<ArticleCommentEntity> commentEntityPage =  articleCommentService.findArticleComment(articleId,pageIndex,pageSize);
+        if (commentEntityPage!=null && commentEntityPage.getRecords()!=null){
+            for (ArticleCommentEntity commentEntity :commentEntityPage.getRecords()){
+                if (commentEntity.getReplyCount()>0){
+                    List<ReplyCommentEntity> replyList = articleCommentService.findLastReplyCommentList(articleId,commentEntity.getId(),3);
+                    commentEntity.setReplyCommentEntityList(replyList);
+                }
+            }
+        }
+        return commentEntityPage;
     }
 
 

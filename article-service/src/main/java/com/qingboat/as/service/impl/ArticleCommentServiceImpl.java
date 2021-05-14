@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -155,7 +156,22 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
         entity.setArticleId(articleId);
         entity.setCommentId(commentId);
         queryWrapper.setEntity(entity);
+        queryWrapper.orderByDesc("created_at");
         page =replyCommentDao.selectPage(page,queryWrapper);
         return page;
+    }
+
+    @Override
+    public List<ReplyCommentEntity> findLastReplyCommentList(String articleId, Long commentId, int replyCommentSize) {
+        QueryWrapper<ReplyCommentEntity> queryWrapper = new QueryWrapper<>();
+        ReplyCommentEntity entity = new ReplyCommentEntity();
+        entity.setArticleId(articleId);
+        entity.setCommentId(commentId);
+        queryWrapper.setEntity(entity);
+        queryWrapper.orderByDesc("created_at");
+        if (replyCommentSize>0){
+            queryWrapper.last("LIMIT 0,"+replyCommentSize);
+        }
+        return replyCommentDao.selectList(queryWrapper);
     }
 }

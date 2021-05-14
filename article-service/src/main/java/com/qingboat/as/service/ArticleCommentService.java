@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.qingboat.as.entity.ArticleCommentEntity;
 import com.qingboat.as.entity.ReplyCommentEntity;
 
+import java.util.List;
+
 public interface ArticleCommentService {
 
     ArticleCommentEntity addArticleComment(ArticleCommentEntity articleCommentEntity);
@@ -21,5 +23,8 @@ public interface ArticleCommentService {
     boolean removeReplyComment(String articleId,Long replyId,Long userId);
 
     IPage<ReplyCommentEntity> findReplyComment(String articleId,Long commentId, Integer pageIndex,Integer pageSize);
+
+    List<ReplyCommentEntity> findLastReplyCommentList(String articleId, Long commentId, int replyCommentSize);
+
 
 }

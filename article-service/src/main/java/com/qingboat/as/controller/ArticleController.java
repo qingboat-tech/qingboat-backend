@@ -240,12 +240,12 @@ public class ArticleController extends BaseController {
 
     @GetMapping(value = "/getInviteKey")
     @ResponseBody
-    public Map<String,Object> getInviteKey(@RequestParam("articleId") String articleId) throws  Exception{
+    public Map<String,Object> getInviteKey(@RequestParam("articleId") String articleId) {
         Map<String,Object> rstMap = new HashMap<>();
 
         ArticleEntity articleEntity = articleService.findBaseInfoById(articleId);
         if (articleEntity  == null){
-            throw  new BaseException(500,"推荐的文章不存在");
+            throw  new BaseException(500,"推荐试读的文章不存在");
         }
         //检查该用户是否已订阅
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
@@ -256,10 +256,10 @@ public class ArticleController extends BaseController {
         UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
 
         if (userSubscriptionEntity == null){
-            throw new BaseException(500,"未订阅用户，禁止推荐分享");
+            throw new BaseException(500,"未订阅用户，禁止推荐试读分享");
         }
 
-        String refKey = articleId+"#"+  getUIdStr();
+        String refKey = articleId+"#"+ getUIdStr();
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_MONTH,10);
 
@@ -267,6 +267,21 @@ public class ArticleController extends BaseController {
         rstMap.put("expire",cal.getTime());
 
         return rstMap;
+    }
+
+    @GetMapping(value = "/getInviteUserListByInviteKey")
+    @ResponseBody
+    public List<UserEntity> getInviteUserListByInviteKey(@RequestParam("inviteKey") String inviteKey) {
+        Set<Object> inviteUserIdSet = redisUtil.members("AIK_"+inviteKey);
+        Set<Long> inviteUserIdLongSet = new HashSet<>();
+        if (inviteUserIdSet!=null && !inviteUserIdSet.isEmpty()){
+            Iterator<Object> ite =  inviteUserIdSet.iterator();
+            while (ite.hasNext()){
+                inviteUserIdLongSet.add(Long.parseLong(ite.next().toString()));
+            }
+            return userService.findListByUserIds(inviteUserIdLongSet);
+        }
+       return null;
     }
 
     /**
@@ -289,22 +304,25 @@ public class ArticleController extends BaseController {
             if (inviteKey!= null){
                 try {
                     String[] refContent = inviteKey.split("#"); //验证其合法性
-                    //refContent[0] = articleId; refContent[1] = subscriberId;
-                    if (refContent!=null && refContent.length ==2 &&  articleId.equals(refContent[0])){
+                    //refContent[0] = articleId; refContent[1] = creatorId;
+                    if (refContent!=null && refContent.length ==2 &&  articleId.equals(refContent[0]) ){
+
+                        // 获取订阅信息
                         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
                         queryWrapper.lambda()
-                                .eq(UserSubscriptionEntity::getSubscriberId,Long.parseLong(refContent[1]))
-                                .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(articleEntity.getAuthorId()))
+                                .eq(UserSubscriptionEntity::getSubscriberId,getUId())
+                                .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(authorId))
                                 .ge(UserSubscriptionEntity::getExpireDate,new Date());
                         UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
-                        if (userSubscriptionEntity==null){
-                            throw new BaseException(500,"本次分享已失效");
+                        if (userSubscriptionEntity == null){
+                            throw new BaseException(500,"订阅者没有续费，试读邀请码已过期");
                         }
 
                         if (redisUtil.isMember("AIK_"+inviteKey,readerId)){
                             articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
                             return articleEntity;
                         }
+
                         long size = redisUtil.size("AIK_"+inviteKey);
                         if (size> 5){
                             throw new BaseException(500,"本次分享超出限量阅读，下次要手快哦");
@@ -324,7 +342,7 @@ public class ArticleController extends BaseController {
             QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
             queryWrapper.lambda()
                     .eq(UserSubscriptionEntity::getSubscriberId,getUId())
-                    .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(articleEntity.getAuthorId()))
+                    .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(authorId))
                     .ge(UserSubscriptionEntity::getExpireDate,new Date());
             UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
             if (userSubscriptionEntity !=null && userSubscriptionEntity.getBenefitList()!=null){
@@ -338,10 +356,6 @@ public class ArticleController extends BaseController {
                             return articleEntity;
                         }
                     }
-                    //免费订阅后，查看付费文章（处理试读）
-                    articleEntity.setData(subList(articleEntity.getData()));
-                    articleEntity.setStatus(7);
-                    return articleEntity;
                 }
             }
             //没有订阅，查看付费文章（处理试读）

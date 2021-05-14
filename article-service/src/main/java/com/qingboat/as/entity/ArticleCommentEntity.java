@@ -10,6 +10,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 @Data
@@ -33,5 +34,8 @@ public class ArticleCommentEntity implements Serializable {
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdAt;
+
+    @TableField(exist = false)
+    private List<ReplyCommentEntity> replyCommentEntityList;
 
 }
