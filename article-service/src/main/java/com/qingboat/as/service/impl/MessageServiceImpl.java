@@ -230,7 +230,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
 
         // 给creator发微信消息（提问结果通知）
-        String creatorIdStr = String.valueOf(Long.parseLong(articleEntity.getAuthorId());
+        String creatorIdStr = String.valueOf(Long.parseLong(articleEntity.getAuthorId()));
         String sec = AuthFilter.getSecret(creatorIdStr);
         String token =  wxTokenService.getWxUserToken(sec, creatorIdStr);
         JSONObject body = new JSONObject();
@@ -238,7 +238,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
         // 找到发送者的微信openId
         QueryWrapper<UserWechatEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(UserWechatEntity::getUserId,Long.parseLong(articleEntity.getAuthorId());
+        queryWrapper.lambda().eq(UserWechatEntity::getUserId,Long.parseLong(articleEntity.getAuthorId()));
         UserWechatEntity userWechatEntity = userWechatService.getOne(queryWrapper);
         if (userWechatEntity == null){
             throw new BaseException(500,"订阅者没有微信openId,没法发消息");
