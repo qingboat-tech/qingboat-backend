@@ -257,7 +257,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         // 回复内容
         data.put("keyword3", JSON.parse("{'value': '"+articleCommentEntity.getContent()+"'}"));
         // remark
-        data.put("remark", JSON.parse("{'value': '感谢您订阅,快来开启学习成长之旅吧！'}"));
+        // data.put("remark", JSON.parse("{'value': '感谢您订阅,快来开启学习成长之旅吧！'}"));
 
         log.info( " request: " +body);
         Object obj = wxMessageService.sendMessage(token,body);
@@ -289,6 +289,40 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         msg.setExtData("replyUserHeadImgUrl",replyCommentEntity.getHeadImgUrl());
 
         this.save(msg);
+
+        // 给creator发微信消息（提问结果通知）
+        String creatorIdStr = String.valueOf(Long.parseLong(articleEntity.getAuthorId()));
+        String sec = AuthFilter.getSecret(creatorIdStr);
+        String token =  wxTokenService.getWxUserToken(sec, creatorIdStr);
+        JSONObject body = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        // 找到发送者的微信openId
+        QueryWrapper<UserWechatEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(UserWechatEntity::getUserId,Long.parseLong(articleEntity.getAuthorId()));
+        UserWechatEntity userWechatEntity = userWechatService.getOne(queryWrapper);
+        if (userWechatEntity == null){
+            throw new BaseException(500,"订阅者没有微信openId,没法发消息");
+        }
+
+        body.put("touser",userWechatEntity.getOpenId());                    // 发给谁
+        body.put("template_id",this.answerResultTemplate);                   // 那个模板
+        body.put("url",this.businessDomain+"/");             // 打开地址
+        body.put("data",data);
+
+        data.put("first", JSON.parse("{'value': '有新回复啦！'}"));
+        // 回复者
+        data.put("keyword1", JSON.parse("{'value': '"+replyCommentEntity.getNickName()+"'}"));
+        // 回复时间
+        data.put("keyword2", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
+        // 回复内容
+        data.put("keyword3", JSON.parse("{'value': '"+replyCommentEntity.getContent()+"'}"));
+        // remark
+        // data.put("remark", JSON.parse("{'value': '感谢您订阅,快来开启学习成长之旅吧！'}"));
+
+        log.info( " request: " +body);
+        Object obj = wxMessageService.sendMessage(token,body);
+        log.info( " response: " +obj);
 
     }
 
