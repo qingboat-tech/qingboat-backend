@@ -349,6 +349,39 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
         this.save(msg);
 
+        // 给creator发点赞
+        String creatorIdStr = String.valueOf(Long.parseLong(articleEntity.getAuthorId()));
+        String sec = AuthFilter.getSecret(creatorIdStr);
+        String token =  wxTokenService.getWxUserToken(sec, creatorIdStr);
+        JSONObject body = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        // 找到发送者的微信openId
+        QueryWrapper<UserWechatEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(UserWechatEntity::getUserId,Long.parseLong(articleEntity.getAuthorId()));
+        UserWechatEntity userWechatEntity = userWechatService.getOne(queryWrapper);
+        if (userWechatEntity == null){
+            throw new BaseException(500,"订阅者没有微信openId,没法发消息");
+        }
+
+        body.put("touser",userWechatEntity.getOpenId());                    // 发给谁
+        body.put("template_id",this.dataUpdateTemplate);                   // 那个模板
+        body.put("url",this.businessDomain+"/");             // 打开地址
+        body.put("data",data);
+
+        data.put("first", JSON.parse("{'value': '有新点赞啦！'}"));
+        // 回复者
+        // TODO: 把小鲸改成真是用户
+        data.put("keyword1", JSON.parse("{'value': '小鲸'}"));
+        // 回复时间
+        data.put("keyword2", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
+        // remark
+         data.put("remark", JSON.parse("{'value': '快来和你的粉丝互动吧！'}"));
+
+        log.info( " request: " +body);
+        Object obj = wxMessageService.sendMessage(token,body);
+        log.info( " response: " +obj);
+
     }
 
     @Override
