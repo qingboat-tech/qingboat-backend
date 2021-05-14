@@ -2,22 +2,25 @@ package com.qingboat.as.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.mongodb.client.result.UpdateResult;
+import com.qingboat.as.api.WxMessageService;
+import com.qingboat.as.api.WxTokenService;
 import com.qingboat.as.dao.ArticleMongoDao;
 import com.qingboat.as.entity.*;
-import com.qingboat.as.service.ArticleService;
-import com.qingboat.as.service.TierService;
-import com.qingboat.as.service.UserService;
-import com.qingboat.as.service.UserSubscriptionService;
+import com.qingboat.as.filter.AuthFilter;
+import com.qingboat.as.service.*;
 import com.qingboat.as.utils.RedisUtil;
 import com.qingboat.as.utils.sensi.SensitiveFilter;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
+import com.qingboat.base.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -55,6 +58,21 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     private UserSubscriptionService userSubscriptionService;
+
+    @Autowired
+    WxTokenService wxTokenService;
+
+    @Autowired
+    WxMessageService wxMessageService;
+
+    @Autowired
+    UserWechatService userWechatService;
+
+    @Value("${business-domain}")
+    private String businessDomain;
+
+    @Value("${wx-msg-template.review2}")
+    private String reviewTemplate2;
 
     private static final String USER_STAR_PRE ="USER_STAR_";
 
@@ -577,7 +595,53 @@ public class ArticleServiceImpl implements ArticleService {
                             .append("创作者：").append(articleEntity.getAuthorNickName()).append("\n")
                             .append("文章《").append(title).append("》\n").toString());
             feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
-            //发送消息
+
+
+
+            //发送微信消息，告知审核结果
+            String creatorIdStr = String.valueOf(articleEntity.getAuthorId());
+            String sec = AuthFilter.getSecret(creatorIdStr);
+            String token =  wxTokenService.getWxUserToken(sec, creatorIdStr);
+
+
+            JSONObject body2 = new JSONObject();
+            JSONObject data2 = new JSONObject();
+            //
+            data2.put("first", JSON.parse("{'value':  '您的文章已经审核通过'}"));
+
+            // 审核人
+            data2.put("keyword1", JSON.parse("{'value':  '氢舟管理员'}"));
+
+            // 审核内容
+            data2.put("keyword2", JSON.parse("{'value': '"+title +"'}"));
+
+            // 审核日期
+            data2.put("keyword3", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
+
+            // 备注
+            data2.put("remark", JSON.parse("{'value': '加油来创作下一篇爆款文章吧！'}"));
+
+
+            // 找到发送者的微信openId
+            QueryWrapper<UserWechatEntity> queryWrapper2 = new QueryWrapper<>();
+            queryWrapper2.lambda().eq(UserWechatEntity::getUserId,articleEntity.getAuthorId());
+            UserWechatEntity userWechatEntity2 = userWechatService.getOne(queryWrapper2);
+            if (userWechatEntity2 == null){
+                throw new BaseException(500,"creator没有微信openId,没法发消息");
+            }
+
+            body2.put("touser",userWechatEntity2.getOpenId());                   // 发给谁
+            body2.put("template_id",this.reviewTemplate2);                      // 那个模板
+            body2.put("url", this.businessDomain+"/creatorcenter/subscribe");             // 打开地址
+            body2.put("data",data2);
+
+
+
+            log.info( " request: " +body2);
+            Object obj2 = wxMessageService.sendMessage(token,body2);
+            log.info( " response: " +obj2);
+
+
 
 
         }
