@@ -54,6 +54,8 @@ public class ArticleEntity {
 
     private Set<String> benefit = new HashSet<>();
 
+    private List<Long> tierIdList = new ArrayList<>(); //按照价格滴到高排序存放 先free、再比价
+
     private Set<String> tags = new HashSet<>();  //文章标签
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
@@ -71,12 +73,5 @@ public class ArticleEntity {
     @Transient
     private TierEntity tierEntity;
 
-
-    @Data
-    @AllArgsConstructor
-    public static class Attachment implements Serializable{
-        private String fileName;
-        private String fileUrl;
-    }
 
 }
