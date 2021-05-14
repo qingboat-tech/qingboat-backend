@@ -127,7 +127,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         data.put("first", JSON.parse("{'value': '订阅成功啦！'}"));
         data.put("keyword1", JSON.parse("{'value': '"+createUser.getNickname()+"'}"));
         data.put("keyword2", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
-        data.put("remark", JSON.parse("{'value': '感谢您订阅，"+ data +"快来开启学习成长之旅吧！'}"));
+        data.put("remark", JSON.parse("{'value': '感谢您订阅,快来开启学习成长之旅吧！'}"));
 
         log.info( " request: " +body);
         Object obj = wxMessageService.sendMessage(token,body);
