@@ -73,5 +73,10 @@ public class ArticleEntity {
     @Transient
     private TierEntity tierEntity;
 
+    @Transient
+    private Boolean hasStar ; //判断自己是否点赞
+
+
+
 
 }

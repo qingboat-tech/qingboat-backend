@@ -297,6 +297,7 @@ public class ArticleController extends BaseController {
         if (articleEntity!=null){
             String readerId = getUIdStr();
             String authorId = articleEntity.getAuthorId();
+            articleEntity.setHasStar( articleService.hasStar(articleId,getUId()));
             if (readerId.equals(authorId)){  //创作者自己看自己的文章
                 return articleEntity;
             }
