@@ -56,6 +56,9 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
     @Value("${wx-msg-template.data-update}")
     private String dataUpdateTemplate;
 
+    @Value("${wx-msg-template.new-order}")
+    private String newOrderTemplate;
+
 
     @Override
     @Async
@@ -151,6 +154,52 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         msg.setExtData("subscriberNickName",subscribeUser.getNickname());
         msg.setExtData("subscriberHeadImgUrl",subscribeUser.getHeadimgUrl());
         this.save(msg);
+
+        // 给创作者发微信消息
+        String creatorIdStr = String.valueOf(createUser.getUserId());
+        JSONObject body2 = new JSONObject();
+        JSONObject data2 = new JSONObject();
+        // 商品
+        data2.put("keyword1", JSON.parse("{'value': '"+tierEntity.getTitle()+"'}"));
+
+        // 金额
+        data2.put("keyword2", JSON.parse("{'value': '"+userSubscriptionEntity.getOrderPrice()/100+"'}"));
+
+        // 购买人昵称
+        data2.put("keyword3", JSON.parse("{'value': '"+subscribeUser.getNickname() +"'}"));
+
+        // 交易时间
+        data2.put("keyword4", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
+
+        // 交易流水号
+        data2.put("keyword5", JSON.parse("{'value': '"+userSubscriptionEntity.getOrderNo() +"'}"));
+
+        // 备注
+        data2.put("remark", JSON.parse("{'value': '加油来创作下一篇爆款吧！'}"));
+
+
+        // 找到发送者的微信openId
+        QueryWrapper<UserWechatEntity> queryWrapper2 = new QueryWrapper<>();
+        queryWrapper2.lambda().eq(UserWechatEntity::getUserId,createUser.getUserId());
+        UserWechatEntity userWechatEntity2 = userWechatService.getOne(queryWrapper2);
+        if (userWechatEntity2 == null){
+            throw new BaseException(500,"creator没有微信openId,没法发消息");
+        }
+
+        body2.put("touser",userWechatEntity2.getOpenId());                   // 发给谁
+        body2.put("template_id",this.newOrderTemplate);                      // 那个模板
+        body2.put("url", this.businessDomain+"/creatorcenter/subscribe");             // 打开地址
+        body2.put("data",data2);
+
+
+
+        log.info( " request: " +body2);
+        Object obj2 = wxMessageService.sendMessage(token,body2);
+        log.info( " response: " +obj2);
+
+
+
+
     }
 
     @Override
