@@ -29,9 +29,7 @@ public class CreatorBillController extends BaseController{
     public CreatorBillEntity userSubscription(@RequestBody CreatorBillEntity creatorBillEntity,
                                                    @RequestHeader("INNER-SEC") String innerSec,
                                                    @RequestHeader("UID") Long creatorId) {
-
-
-        return null;
+        return creatorBillService.createBillAndUpdateWallet(creatorBillEntity);
 
     }
 

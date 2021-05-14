@@ -3,8 +3,10 @@ package com.qingboat.as.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.qingboat.as.api.TradeService;
 import com.qingboat.as.entity.*;
 
+import com.qingboat.as.filter.AuthFilter;
 import com.qingboat.as.service.MessageService;
 import com.qingboat.as.service.TierService;
 import com.qingboat.as.service.UserService;
@@ -39,6 +41,9 @@ public class ReaderSubscriptionController extends BaseController {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private TradeService tradeService;
 
 
     //=======================针对 reader 接口=============================
@@ -302,6 +307,27 @@ public class ReaderSubscriptionController extends BaseController {
             userSubscriptionEntity.setOrderId(orderId);
 
             userSubscriptionService.save(userSubscriptionEntity);
+
+            // 给creator添加收益记录
+            CreatorBillEntity creatorBillEntity = new CreatorBillEntity();
+            creatorBillEntity.setCreatorId(creatorId);
+            creatorBillEntity.setBillType(1);
+            String typeChinese = null;
+            if ("year".equals(subscribeDuration)){
+                typeChinese = "年";
+            }
+            if ("month".equals(subscribeDuration)){
+                typeChinese = "月";
+            }
+            creatorBillEntity.setAmount(1L*userSubscriptionEntity.getOrderPrice());
+            creatorBillEntity.setOrderNo(userSubscriptionEntity.getOrderNo());
+            creatorBillEntity.setOrderNo("占位订单no");
+            creatorBillEntity.setBillTitle("新增订阅"+typeChinese+"订阅会员");
+
+            String subscriberIdStr = String.valueOf(subscriberId);
+            String sec = AuthFilter.getSecret(subscriberIdStr);
+            tradeService.createBillAndUpdateWallet(creatorBillEntity, sec, subscriberIdStr);
+
             //发送订阅消息
             messageService.asyncSendSubscriptionMessage(userSubscriptionEntity);
             return userSubscriptionEntity;
