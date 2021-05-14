@@ -319,8 +319,8 @@ public class ReaderSubscriptionController extends BaseController {
             if ("month".equals(subscribeDuration)){
                 typeChinese = "月";
             }
-            creatorBillEntity.setAmount(1L*orderPrice);
-            // TODO: apps_usersubscription新增一个订单号
+            creatorBillEntity.setAmount(1L*userSubscriptionEntity.getOrderPrice());
+            creatorBillEntity.setOrderNo(userSubscriptionEntity.getOrderNo());
             creatorBillEntity.setOrderNo("占位订单no");
             creatorBillEntity.setBillTitle("新增订阅"+typeChinese+"订阅会员");
 
