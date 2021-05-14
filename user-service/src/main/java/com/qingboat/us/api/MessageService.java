@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 
-@FeignClient(name = "message-service",url = "${messageService.url}",configuration = {FeignDecoder.class})
+@FeignClient(name = "message-service",url = "${article-service.host}",configuration = {FeignDecoder.class})
 public interface MessageService {
 
     @RequestMapping(value = "/msg/sendMessage" , method = RequestMethod.POST)

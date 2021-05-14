@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8084
   servlet:
     context-path: /ts
 
@@ -107,7 +107,7 @@ mybatis-plus:
 
 
 article-service:
-  url: http://localhost:8082/as
+  host: http://localhost:8082/as
 
 user-service:
-  url: http://localhost:8083/us
+  host: http://localhost:8083/us

@@ -118,3 +118,12 @@ mybatis-plus:
 
 python:
   host: https://m.qingboat.com
+
+wx:
+  host: https://api.weixin.qq.com
+
+user-service:
+  host: http://localhost:8083/us
+
+trade-service:
+  host: http://localhost:8084/ts

@@ -39,6 +39,8 @@ public class UserSubscriptionEntity implements Serializable {
 
     private Long  orderId;    // 当是免费订阅的，则 orderId 为0 表示
 
+    private String orderNo;   // 订单号
+
     private Integer orderPrice ;  // 实际支付的订单金额（分）
 
     @TableField(typeHandler = BenefitJsonHandler.class)

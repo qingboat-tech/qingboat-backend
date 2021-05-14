@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-@FeignClient(name = "user-service",url = "${user-service.url}", configuration = {FeignDecoder.class})
+@FeignClient(name = "user-service",url = "${user-service.host}", configuration = {FeignDecoder.class})
 public interface UserService {
 
     @RequestMapping(value = "/getUserProfile/" , method = RequestMethod.GET)
