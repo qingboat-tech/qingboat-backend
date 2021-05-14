@@ -42,9 +42,6 @@ public class ReaderSubscriptionController extends BaseController {
     @Autowired
     private MessageService messageService;
 
-    @Autowired
-    private TradeService tradeService;
-
 
     //=======================针对 reader 接口=============================
     /**
@@ -195,6 +192,7 @@ public class ReaderSubscriptionController extends BaseController {
         subscriberId = userSubscriptionEntity.getSubscriberId();
         Long  memberTierId = userSubscriptionEntity.getMemberTierId();
         Long orderId = userSubscriptionEntity.getOrderId();
+        String orderNo = userSubscriptionEntity.getOrderNo();
         Integer orderPrice = userSubscriptionEntity.getOrderPrice();
         String subscribeDuration = userSubscriptionEntity.getSubscribeDuration();
 
@@ -242,6 +240,7 @@ public class ReaderSubscriptionController extends BaseController {
                     }
 
                     beforeUserSubscription.setOrderId(orderId);
+                    beforeUserSubscription.setOrderNo(orderNo);
                     beforeUserSubscription.setOrderPrice(orderPrice);
                     beforeUserSubscription.setSubscribeDuration(subscribeDuration);
                     beforeUserSubscription.setStartDate(startTime);
@@ -250,6 +249,10 @@ public class ReaderSubscriptionController extends BaseController {
                     beforeUserSubscription.setCreatedAt(null);
                     beforeUserSubscription.setUpdatedAt(null);
                     userSubscriptionService.updateById(beforeUserSubscription);
+
+                    // 给creator添加收益记录
+                    userSubscriptionService.createBillAndUpdateWallet(beforeUserSubscription);
+
                     //发送订阅消息
                     messageService.asyncSendSubscriptionMessage(userSubscriptionEntity);
                     return beforeUserSubscription;
@@ -272,6 +275,7 @@ public class ReaderSubscriptionController extends BaseController {
                         beforeUserSubscription.setMemberTierId(entity.getId());
                         beforeUserSubscription.setMemberTierName(entity.getTitle());
                         beforeUserSubscription.setOrderId(orderId);
+                        beforeUserSubscription.setOrderNo(orderNo);
                         beforeUserSubscription.setOrderPrice(orderPrice);
                         beforeUserSubscription.setSubscribeDuration(subscribeDuration);
                         beforeUserSubscription.setStartDate(startTime);
@@ -282,6 +286,9 @@ public class ReaderSubscriptionController extends BaseController {
                         userSubscriptionService.updateById(beforeUserSubscription);
                         //发送订阅消息
                         messageService.asyncSendSubscriptionMessage(userSubscriptionEntity);
+
+                        // 给creator添加收益记录
+                        userSubscriptionService.createBillAndUpdateWallet(beforeUserSubscription);
                         return beforeUserSubscription;
                     }else {
                         throw  new BaseException(500 , "暂时不支持会员升级");
@@ -305,28 +312,12 @@ public class ReaderSubscriptionController extends BaseController {
             userSubscriptionEntity.setExpireDate(cal.getTime());
             userSubscriptionEntity.setBenefitList(entity.getBenefitList());
             userSubscriptionEntity.setOrderId(orderId);
+            userSubscriptionEntity.setOrderNo(orderNo);
 
             userSubscriptionService.save(userSubscriptionEntity);
 
             // 给creator添加收益记录
-            CreatorBillEntity creatorBillEntity = new CreatorBillEntity();
-            creatorBillEntity.setCreatorId(creatorId);
-            creatorBillEntity.setBillType(1);
-            String typeChinese = null;
-            if ("year".equals(subscribeDuration)){
-                typeChinese = "年";
-            }
-            if ("month".equals(subscribeDuration)){
-                typeChinese = "月";
-            }
-            creatorBillEntity.setAmount(1L*userSubscriptionEntity.getOrderPrice());
-            creatorBillEntity.setOrderNo(userSubscriptionEntity.getOrderNo());
-            creatorBillEntity.setOrderNo("占位订单no");
-            creatorBillEntity.setBillTitle("新增订阅"+typeChinese+"订阅会员");
-
-            String subscriberIdStr = String.valueOf(subscriberId);
-            String sec = AuthFilter.getSecret(subscriberIdStr);
-            tradeService.createBillAndUpdateWallet(creatorBillEntity, sec, subscriberIdStr);
+            userSubscriptionService.createBillAndUpdateWallet(userSubscriptionEntity);
 
             //发送订阅消息
             messageService.asyncSendSubscriptionMessage(userSubscriptionEntity);
