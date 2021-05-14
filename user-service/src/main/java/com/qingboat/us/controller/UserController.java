@@ -63,7 +63,7 @@ public class UserController {
             return userService.getUserProfile(userId);
         }
         if (!StringUtils.isEmpty(profileKey)){
-            return userService.getUserProfile(userId);
+            return userService.getUserProfileByProfileKey(profileKey);
         }
 
         return null;
