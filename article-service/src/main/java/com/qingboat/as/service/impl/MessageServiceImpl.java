@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -164,8 +165,10 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         // 商品
         data2.put("keyword1", JSON.parse("{'value': '"+tierEntity.getTitle()+"'}"));
 
+        DecimalFormat df = new DecimalFormat("0.00");
+        String price =df.format((double)userSubscriptionEntity.getOrderPrice()/100);
         // 金额
-        data2.put("keyword2", JSON.parse("{'value': '"+userSubscriptionEntity.getOrderPrice()/100+"'}"));
+        data2.put("keyword2", JSON.parse("{'value': '"+price+" 元'}"));
 
         // 购买人昵称
         data2.put("keyword3", JSON.parse("{'value': '"+subscribeUser.getNickname() +"'}"));
