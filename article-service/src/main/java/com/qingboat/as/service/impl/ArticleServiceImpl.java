@@ -453,7 +453,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         QueryWrapper<TierEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("id",tierIdSet);
-        queryWrapper.eq("creatorId",creatorId);
+        queryWrapper.eq("creator_id",creatorId);
         queryWrapper.orderByAsc("month_price","year_price","subscribe_duration");
 
         List<TierEntity> tierList = tierService.list(queryWrapper);
@@ -500,6 +500,9 @@ public class ArticleServiceImpl implements ArticleService {
                     }
                 }
             }
+        }
+        if (benefitKeySet.isEmpty() || tierIdList.isEmpty()){
+            throw new BaseException(500,"操作失败：发布的套餐里没有添加会员权益或者套餐为空");
         }
 
         Query query = new Query();
