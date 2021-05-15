@@ -473,7 +473,7 @@ public class ArticleServiceImpl implements ArticleService {
             }
         }
         if (benefitKeySet.isEmpty()){
-            throw new BaseException(500,"操作失败：发布的文章没有选择套餐范围");
+            throw new BaseException(500,"操作失败：被选的套餐权益为空");
         }
 
         Query query = new Query();
