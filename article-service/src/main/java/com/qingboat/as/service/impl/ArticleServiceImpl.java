@@ -485,7 +485,6 @@ public class ArticleServiceImpl implements ArticleService {
                     benefitKeySet.add("FREE");
                     break;
                 }else {  //收费权益处理
-                    tierIdList.add(tier.getId());
                     if (tier.getBenefitList() == null){
                         throw new BaseException(500,"操作失败：发布的套餐里没有添加会员权益");
                     }

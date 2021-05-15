@@ -350,20 +350,25 @@ public class ArticleController extends BaseController {
                     .ge(UserSubscriptionEntity::getExpireDate,new Date());
             UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
             if (userSubscriptionEntity !=null && userSubscriptionEntity.getBenefitList()!=null){
-                if (articleEntity.getTierIdList().contains(userSubscriptionEntity.getMemberTierId())){
-                    articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
-                    return articleEntity;
-                }
-                if (articleEntity.getBenefit()!=null && articleEntity.getBenefit().contains("FREE")){//免费文章
-                    articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
-                    return articleEntity;
-                }else {
-                    for (BenefitEntity benefitEntity :  userSubscriptionEntity.getBenefitList()) {
-                        if ("READ".equals(benefitEntity.getKey()) && articleEntity.getBenefit().contains("READ_"+userSubscriptionEntity.getMemberTierId())){
-                            articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
-                            return articleEntity;
+                if (articleEntity.getTierIdList().contains(userSubscriptionEntity.getMemberTierId())   //订阅了该套餐的文章 或者 免费文章
+                    || articleEntity.getBenefit()!=null && articleEntity.getBenefit().contains("FREE") ){
+                    if (userSubscriptionEntity.getBenefitList() !=null ){
+                        for (BenefitEntity benefitEntity :  userSubscriptionEntity.getBenefitList()) {
+                            if ("COMMENT".equals(benefitEntity.getKey())){
+                                articleEntity.setCanComment(true);
+                                break;
+                            }
                         }
                     }
+                    articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
+                    return articleEntity;
+                } else {
+//                    for (BenefitEntity benefitEntity :  userSubscriptionEntity.getBenefitList()) {
+//                        if ("READ".equals(benefitEntity.getKey()) && articleEntity.getBenefit().contains("READ_"+userSubscriptionEntity.getMemberTierId())){
+//                            articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
+//                            return articleEntity;
+//                        }
+//                    }
                 }
             }
             //没有订阅，查看付费文章（处理试读）

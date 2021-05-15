@@ -76,6 +76,9 @@ public class ArticleEntity {
     @Transient
     private Boolean hasStar ; //判断自己是否点赞
 
+    @Transient
+    private Boolean canComment ; //判断是否评论
+
 
 
 
