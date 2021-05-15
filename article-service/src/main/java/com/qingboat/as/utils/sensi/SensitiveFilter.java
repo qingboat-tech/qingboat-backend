@@ -14,9 +14,6 @@ import java.util.Set;
 @Slf4j
 public class SensitiveFilter implements Serializable {
 
-    static final ThreadLocal<Set<String>> sWordThreadLocal = new ThreadLocal<Set<String>>();
-
-
     private static final long serialVersionUID = 1L;
 
     /**
@@ -139,7 +136,8 @@ public class SensitiveFilter implements Serializable {
      * @author ZhangXiaoye
      * @date 2017年1月5日 下午4:16:31
      */
-    public String filter(String sentence, char replace) {
+    public FilterResult filter(String sentence, char replace) {
+        FilterResult filterResult = new FilterResult();
         // 先转换为StringPointer
         StringPointer sp = new StringPointer(sentence);
 
@@ -201,8 +199,7 @@ public class SensitiveFilter implements Serializable {
                                  */
                                 if (sp.nextStartsWith(i, word)) {
                                     // 匹配成功，将匹配的部分，用replace制定的内容替代
-
-                                    setSentenceWord(word.toString());
+                                    filterResult.setSensitiveWord(word.toString());
 
                                     sp.fill(i, i + word.length, replace);
                                     // 跳过已经替代的部分
@@ -225,35 +222,12 @@ public class SensitiveFilter implements Serializable {
 
         // 如果没有替换，直接返回入参（节约String的构造copy）
         if (replaced) {
-            return sp.toString();
+            filterResult.setRst(sp.toString());
+            return filterResult;
         } else {
-            return sentence;
+            filterResult.setRst(sentence);
+            return filterResult;
         }
     }
-
-    private static void setSentenceWord(String word) {
-        Set<String> set = sWordThreadLocal.get();
-        if (set == null) {
-            set = new HashSet<>();
-            sWordThreadLocal.set(set);
-        }
-        set.add(word);
-    }
-
-    public static Set<String> getSentenceWordAndClear() {
-        Set<String> strings =  sWordThreadLocal.get();
-        sWordThreadLocal.remove();
-        return strings;
-    }
-
-    public static Set<String> getSentenceWord() {
-        Set<String> strings =  sWordThreadLocal.get();
-        return strings;
-    }
-
-    public static void clearSentenceWord() {
-        sWordThreadLocal.remove();
-    }
-
 
 }

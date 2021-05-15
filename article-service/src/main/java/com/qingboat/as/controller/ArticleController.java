@@ -469,12 +469,13 @@ public class ArticleController extends BaseController {
 
     @RequestMapping(value = "/sensitive", method = RequestMethod.POST)
     @ResponseBody
-    public String sensitive( @RequestBody Map<String,String> param) {
+    public Object sensitive( @RequestBody Map<String,String> param) {
 
         SensitiveFilter filter = SensitiveFilter.DEFAULT;
         Iterator<String> ite = param.values().iterator();
         if (ite.hasNext()){
-            String rst = filter.filter(ite.next(), '*');
+            Object rst = filter.filter(ite.next(), '*');
+
             return rst;
         }
         return  null;
