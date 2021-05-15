@@ -147,6 +147,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         msg.setSenderImgUrl(subscribeUser.getHeadimgUrl());
         msg.setMsgLink(null); // TODO
         msg.setExtData("tierEntityId",userSubscriptionEntity.getMemberTierId());
+        msg.setExtData("tierEntityName",userSubscriptionEntity.getMemberTierName());
         msg.setExtData("orderId",userSubscriptionEntity.getOrderId());
         msg.setExtData("orderPrice",userSubscriptionEntity.getOrderPrice());
         msg.setExtData("subscribeDuration",userSubscriptionEntity.getSubscribeDuration());
