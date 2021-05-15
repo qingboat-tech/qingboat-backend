@@ -58,6 +58,9 @@ public class ArticleServiceImpl implements ArticleService {
     private FeishuService feishuService;
 
     @Autowired
+    private MessageService messageService;
+
+    @Autowired
     private UserSubscriptionService userSubscriptionService;
 
     @Autowired
@@ -542,6 +545,22 @@ public class ArticleServiceImpl implements ArticleService {
                                 .append("标题包含敏感词:"+filterResult.getSensitiveWords()+"\n").toString());
                 feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
 
+                //发送消息
+                MessageEntity msg = new MessageEntity();
+                msg.setMsgType(MessageEntity.SYSTEM_MSG);
+                msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核未通过" );
+                msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
+                msg.setSenderId(0l);
+                msg.setSenderName("管理员");
+                msg.setSenderImgUrl("https://m.qingboat.com/static/admin/img/gis/move_vertex_on.svg");
+                msg.setMsgLink(null); // TODO
+
+                msg.setExtData("refuseReason","标题包含敏感词:"+filterResult.getSensitiveWords());
+                msg.setExtData("articleTitle",articleEntity.getTitle());
+
+                messageService.save(msg);
+
+
                 return;
             }
             filterResult = sensitiveFilter.filter(desc,'*');
@@ -564,6 +583,21 @@ public class ArticleServiceImpl implements ArticleService {
                 feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
 
                 //发送消息
+                MessageEntity msg = new MessageEntity();
+                msg.setMsgType(MessageEntity.SYSTEM_MSG);
+                msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核未通过" );
+                msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
+                msg.setSenderId(0l);
+                msg.setSenderName("管理员");
+                msg.setSenderImgUrl("https://m.qingboat.com/static/admin/img/gis/move_vertex_on.svg");
+                msg.setMsgLink(null); // TODO
+
+                msg.setExtData("refuseReason","标题包含敏感词:"+filterResult.getSensitiveWords());
+                msg.setExtData("articleTitle",articleEntity.getTitle());
+
+                messageService.save(msg);
+
+
                 return;
             }
             filterResult = sensitiveFilter.filter(data,'*');
@@ -586,6 +620,21 @@ public class ArticleServiceImpl implements ArticleService {
                 feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
 
                 //发送消息
+                //发送消息
+                MessageEntity msg = new MessageEntity();
+                msg.setMsgType(MessageEntity.SYSTEM_MSG);
+                msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核未通过" );
+                msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
+                msg.setSenderId(0l);
+                msg.setSenderName("管理员");
+                msg.setSenderImgUrl("https://m.qingboat.com/static/admin/img/gis/move_vertex_on.svg");
+                msg.setMsgLink(null); // TODO
+
+                msg.setExtData("refuseReason","标题包含敏感词:"+filterResult.getSensitiveWords());
+                msg.setExtData("articleTitle",articleEntity.getTitle());
+
+                messageService.save(msg);
+
                 return;
             }
             Query query = new Query();
