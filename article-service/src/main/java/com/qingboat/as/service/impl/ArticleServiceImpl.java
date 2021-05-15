@@ -466,6 +466,8 @@ public class ArticleServiceImpl implements ArticleService {
                 for (BenefitEntity benefit:tier.getBenefitList() ) {
                     if ("READ".equals(benefit.getKey())){
                         benefitKeySet.add("READ_"+tier.getId());
+                    }else {
+                        benefitKeySet.add(benefit.getKey());
                     }
                 }
             }
