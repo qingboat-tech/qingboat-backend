@@ -531,7 +531,7 @@ public class ArticleServiceImpl implements ArticleService {
 
                 Update update = new Update();
                 update.set("status",2);
-                update.set("suggestion","文章标题有敏感词:"+filterResult.getSensitiveWords().isEmpty());
+                update.set("suggestion","文章标题有敏感词:"+filterResult.getSensitiveWords());
 
                 UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
                 //发飞书通知给客服
@@ -539,7 +539,7 @@ public class ArticleServiceImpl implements ArticleService {
                         new StringBuilder().append("文章审核驳回").append("\n")
                                 .append("创作者：").append(articleEntity.getAuthorNickName()).append("\n")
                                 .append("文章《").append(title).append("》\n")
-                                .append("标题包含敏感词:"+filterResult.getSensitiveWords().isEmpty()+"\n").toString());
+                                .append("标题包含敏感词:"+filterResult.getSensitiveWords()+"\n").toString());
                 feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
 
                 return;
@@ -551,7 +551,7 @@ public class ArticleServiceImpl implements ArticleService {
 
                 Update update = new Update();
                 update.set("status",2);
-                update.set("suggestion","文章描述有敏感词:"+filterResult.getSensitiveWords().isEmpty());
+                update.set("suggestion","文章描述有敏感词:"+filterResult.getSensitiveWords());
 
                 UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
 
@@ -560,7 +560,7 @@ public class ArticleServiceImpl implements ArticleService {
                         new StringBuilder().append("文章审核驳回").append("\n")
                                 .append("创作者：").append(articleEntity.getAuthorNickName()).append("\n")
                                 .append("文章《").append(title).append("》\n")
-                                .append("文章描述包含敏感词:"+filterResult.getSensitiveWords().isEmpty()+"\n").toString());
+                                .append("文章描述包含敏感词:"+filterResult.getSensitiveWords()+"\n").toString());
                 feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
 
                 //发送消息
@@ -573,7 +573,7 @@ public class ArticleServiceImpl implements ArticleService {
 
                 Update update = new Update();
                 update.set("status",2);
-                update.set("suggestion","文章内容有敏感词:"+filterResult.getSensitiveWords().isEmpty());
+                update.set("suggestion","文章内容有敏感词:"+filterResult.getSensitiveWords());
 
                 UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
 
@@ -582,7 +582,7 @@ public class ArticleServiceImpl implements ArticleService {
                         new StringBuilder().append("文章审核驳回").append("\n")
                                 .append("创作者：").append(articleEntity.getAuthorNickName()).append("\n")
                                 .append("文章《").append(title).append("》\n")
-                                .append("文章内容包含敏感词:"+filterResult.getSensitiveWords().isEmpty()+"\n").toString());
+                                .append("文章内容包含敏感词:"+filterResult.getSensitiveWords()+"\n").toString());
                 feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
 
                 //发送消息
