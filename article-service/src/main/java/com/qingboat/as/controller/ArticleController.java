@@ -247,16 +247,19 @@ public class ArticleController extends BaseController {
         if (articleEntity  == null){
             throw  new BaseException(500,"推荐试读的文章不存在");
         }
-        //检查该用户是否已订阅
-        QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda()
-                .eq(UserSubscriptionEntity::getSubscriberId,getUId())
-                .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(articleEntity.getAuthorId()))
-                .ge(UserSubscriptionEntity::getExpireDate,new Date());
-        UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
-
-        if (userSubscriptionEntity == null){
-            throw new BaseException(500,"未订阅用户，禁止推荐试读分享");
+        if (articleEntity.getAuthorId().equals(getUIdStr())){
+            //作者邀请试读
+        }else {
+            //检查该用户是否已订阅
+            QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+            queryWrapper.lambda()
+                    .eq(UserSubscriptionEntity::getSubscriberId,getUId())
+                    .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(articleEntity.getAuthorId()))
+                    .ge(UserSubscriptionEntity::getExpireDate,new Date());
+            int count = userSubscriptionService.count(queryWrapper);
+            if (count == 0){
+                throw new BaseException(500,"未订阅用户，禁止推荐试读分享");
+            }
         }
 
         String refKey = articleId+"#"+ getUIdStr();
