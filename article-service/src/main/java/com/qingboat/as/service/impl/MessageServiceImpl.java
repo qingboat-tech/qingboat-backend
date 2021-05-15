@@ -66,15 +66,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
     @Override
     @Async
     public void asyncSendMessage(MessageEntity msg) {
-
-        log.info("===sendMessage===" + JSON.toJSONString(msg));
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        log.info("===sendMessage=== end " );
-
+        this.save(msg);
     }
 
     @Override

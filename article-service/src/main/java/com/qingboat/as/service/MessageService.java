@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.qingboat.as.dao.MessageDao;
 import com.qingboat.as.entity.*;
 
-public interface MessageService extends IService<MessageEntity>{
+public interface MessageService {
 
     void asyncSendMessage(MessageEntity msg);
 

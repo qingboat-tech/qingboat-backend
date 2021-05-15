@@ -558,7 +558,7 @@ public class ArticleServiceImpl implements ArticleService {
                 msg.setExtData("refuseReason","标题包含敏感词:"+filterResult.getSensitiveWords());
                 msg.setExtData("articleTitle",articleEntity.getTitle());
 
-                messageService.save(msg);
+                messageService.asyncSendMessage(msg);
 
 
                 return;
@@ -595,7 +595,7 @@ public class ArticleServiceImpl implements ArticleService {
                 msg.setExtData("refuseReason","标题包含敏感词:"+filterResult.getSensitiveWords());
                 msg.setExtData("articleTitle",articleEntity.getTitle());
 
-                messageService.save(msg);
+                messageService.asyncSendMessage(msg);
 
 
                 return;
@@ -633,7 +633,7 @@ public class ArticleServiceImpl implements ArticleService {
                 msg.setExtData("refuseReason","标题包含敏感词:"+filterResult.getSensitiveWords());
                 msg.setExtData("articleTitle",articleEntity.getTitle());
 
-                messageService.save(msg);
+                messageService.asyncSendMessage(msg);
 
                 return;
             }
