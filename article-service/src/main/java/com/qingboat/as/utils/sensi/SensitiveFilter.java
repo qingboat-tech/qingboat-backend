@@ -1,5 +1,7 @@
 package com.qingboat.as.utils.sensi;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,6 +11,7 @@ import java.util.HashSet;
 import java.util.NavigableSet;
 import java.util.Set;
 
+@Slf4j
 public class SensitiveFilter implements Serializable {
 
     static final ThreadLocal<Set<String>> sWordThreadLocal = new ThreadLocal<Set<String>>();
@@ -199,8 +202,7 @@ public class SensitiveFilter implements Serializable {
                                 if (sp.nextStartsWith(i, word)) {
                                     // 匹配成功，将匹配的部分，用replace制定的内容替代
 
-                                    String words = sp.substring(i, i + word.length).toString();
-                                    setSentenceWord(words);
+                                    setSentenceWord(word.toString());
 
                                     sp.fill(i, i + word.length, replace);
                                     // 跳过已经替代的部分
@@ -252,7 +254,6 @@ public class SensitiveFilter implements Serializable {
     public static void clearSentenceWord() {
         sWordThreadLocal.remove();
     }
-
 
 
 }
