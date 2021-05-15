@@ -35,6 +35,7 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -296,41 +297,36 @@ public class ArticleServiceImpl implements ArticleService {
 
             List<UserSubscriptionEntity> subscriptionEntityList = userSubscriptionService.list(queryWrapper);
             if (subscriptionEntityList!=null && !subscriptionEntityList.isEmpty()){
-                Set<String> userBenefitSet = new HashSet<>();
                 Set<Long> userTierSet = new HashSet<>();
 
                 //处理订阅者的权利合集
                 for (UserSubscriptionEntity subscriptionEntity:subscriptionEntityList){
                     userTierSet.add(subscriptionEntity.getMemberTierId());
-
-                    List<BenefitEntity> list = subscriptionEntity.getBenefitList();
-                    if (list!=null){
-                        for (BenefitEntity benefitEntity:list){
-                            String benefitKey = benefitEntity.getKey();
-                            if ("READ".equals(benefitKey)){
-                                userBenefitSet.add(benefitKey+"_"+subscriptionEntity.getMemberTierId());
-                            }
-                        }
-                    }
                 }
                 //检查每篇文章可读权限
                 for(ArticleEntity articleEntity : articleEntityList){
                     Set<String> benefitSet = articleEntity.getBenefit();
-                    if (benefitSet == null || benefitSet.isEmpty()){
+                    List<Long> articleTierIdList = articleEntity.getTierIdList();
+                    if ( benefitSet.isEmpty() || articleTierIdList.isEmpty()){
                         // 不可订阅
                         articleEntity.setStatus(7);
-                    }else if (benefitSet.contains("FREE")
-                            || benefitSet.containsAll(userBenefitSet)
-                            || articleEntity.getTierIdList().containsAll(userTierSet)){
+                    }else if (benefitSet.contains("FREE")){
                         //文章可读
                         continue;
                     }else {
-                        //文章不可读
-                        articleEntity.setStatus(7);
-                        //提供订阅套餐
-                        if (!articleEntity.getTierIdList().isEmpty()){
-                            TierEntity suggestTier = tierMap.get(articleEntity.getTierIdList().get(0));
-                            articleEntity.setTierEntity(suggestTier);
+                        //取其交集，有则为可读
+                        Set<Long> intersectElements = articleTierIdList.stream().filter(userTierSet :: contains).collect(Collectors.toSet());
+                        if (intersectElements.isEmpty()){
+                            //文章不可读
+                            articleEntity.setStatus(7);
+                            //提供订阅套餐
+                            if (!articleTierIdList.isEmpty()){
+                                TierEntity suggestTier = tierMap.get(articleTierIdList.get(0));
+                                articleEntity.setTierEntity(suggestTier);
+                            }
+                        }else{
+                            //文章可读
+                            continue;
                         }
                     }
                 }
@@ -452,36 +448,58 @@ public class ArticleServiceImpl implements ArticleService {
             throw new BaseException(500,"操作失败：发布的文章没有选择套餐范围");
         }
         Set<String> benefitKeySet = new HashSet<>();
+        List<Long> tierIdList = new ArrayList<>();
         Long creatorId = Long.valueOf(operatorId);
 
         QueryWrapper<TierEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("id",tierIdSet);
-        queryWrapper.orderByAsc("month_price","subscribe_duration");
+        queryWrapper.eq("creatorId",creatorId);
+        queryWrapper.orderByAsc("month_price","year_price","subscribe_duration");
 
         List<TierEntity> tierList = tierService.list(queryWrapper);
         if (tierList == null){
             throw new BaseException(500,"操作失败：发布的文章没有选择套餐范围");
         }
 
-        List<Long> tierIdList = new ArrayList<>();
         for (TierEntity tier:tierList) {
-            if (tier.getCreatorId().equals(creatorId)){
+            if (tierIdSet.contains(tier.getId())){
                 tierIdList.add(tier.getId());
 
                 if (tier.getBenefitList() == null){
                     throw new BaseException(500,"操作失败：发布的套餐里没有添加会员权益");
                 }
-                for (BenefitEntity benefit:tier.getBenefitList() ) {
-                    if ("READ".equals(benefit.getKey())){
-                        benefitKeySet.add("READ_"+tier.getId());
-                    }else {
-                        benefitKeySet.add(benefit.getKey());
+                if ("free".equals(tier.getSubscribeDuration())){  //免费权益处理
+                    tierIdList.clear();
+                    benefitKeySet.clear();
+                    tierIdList.add(tier.getId());
+                    if (tier.getBenefitList() == null){
+                        throw new BaseException(500,"操作失败：发布的套餐里没有添加会员权益");
+                    }
+                    for (BenefitEntity benefit:tier.getBenefitList() ) {
+                        if ("READ".equals(benefit.getKey())){
+                            benefitKeySet.add("READ_"+tier.getId());
+                        }else {
+                            benefitKeySet.add(benefit.getKey());
+                        }
+                    }
+                    benefitKeySet.add("FREE");
+                    break;
+                }else {  //收费权益处理
+                    tierIdList.add(tier.getId());
+                    if (tier.getBenefitList() == null){
+                        throw new BaseException(500,"操作失败：发布的套餐里没有添加会员权益");
+                    }
+                    for (BenefitEntity benefit:tier.getBenefitList() ) {
+                        if ("FREE".equals(benefit.getKey())){
+                            benefitKeySet.add("FREE_"+tier.getId());
+                        }else if ("READ".equals(benefit.getKey())){
+                            benefitKeySet.add("READ_"+tier.getId());
+                        }else {
+                            benefitKeySet.add(benefit.getKey());
+                        }
                     }
                 }
             }
-        }
-        if (benefitKeySet.isEmpty()){
-            throw new BaseException(500,"操作失败：被选的套餐权益为空");
         }
 
         Query query = new Query();
