@@ -22,8 +22,8 @@ spring:
       uri: mongodb://127.0.0.1:27017/article_db
 
   datasource:
-    username: jerry
-    password: pass
+    username: test
+    password: test123456
     #serverTimezone=UTC 配置时区
     url: jdbc:mysql://localhost:3306/qingboatdb?serverTimezone=GMT%2b8&useUnicode=true&characterEncoding=utf-8
     driver-class-name: com.mysql.cj.jdbc.Driver
