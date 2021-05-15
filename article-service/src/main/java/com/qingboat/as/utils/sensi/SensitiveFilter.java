@@ -5,9 +5,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.NavigableSet;
+import java.util.Set;
 
 public class SensitiveFilter implements Serializable {
+
+    static final ThreadLocal<Set<String>> sWordThreadLocal = new ThreadLocal<Set<String>>();
+
 
     private static final long serialVersionUID = 1L;
 
@@ -16,7 +21,7 @@ public class SensitiveFilter implements Serializable {
      */
     public static final SensitiveFilter DEFAULT = new SensitiveFilter(
             new BufferedReader(new InputStreamReader(
-                     Thread.currentThread().getContextClassLoader().getResourceAsStream("sensi_words.txt")
+                    Thread.currentThread().getContextClassLoader().getResourceAsStream("sensi_words.txt")
                     , StandardCharsets.UTF_8)));
 
     /**
@@ -39,7 +44,7 @@ public class SensitiveFilter implements Serializable {
      * @author ZhangXiaoye
      * @date 2017年1月5日 下午4:18:07
      */
-    public SensitiveFilter(){
+    public SensitiveFilter() {
 
     }
 
@@ -53,13 +58,13 @@ public class SensitiveFilter implements Serializable {
      * @author ZhangXiaoye
      * @date 2017年1月5日 下午4:21:06
      */
-    public SensitiveFilter(BufferedReader reader){
-        try{
-            for(String line = reader.readLine(); line != null; line = reader.readLine()){
+    public SensitiveFilter(BufferedReader reader) {
+        try {
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 put(line);
             }
             reader.close();
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -72,13 +77,13 @@ public class SensitiveFilter implements Serializable {
      * @author ZhangXiaoye
      * @date 2017年1月5日 下午2:35:21
      */
-    public boolean put(String word){
+    public boolean put(String word) {
         // 长度小于2的不加入
-        if(word == null || word.trim().length() < 2){
+        if (word == null || word.trim().length() < 2) {
             return false;
         }
         // 两个字符的不考虑
-        if(word.length() == 2 && word.matches("\\w\\w")){
+        if (word.length() == 2 && word.matches("\\w\\w")) {
             return false;
         }
         StringPointer sp = new StringPointer(word.trim());
@@ -91,23 +96,23 @@ public class SensitiveFilter implements Serializable {
 
         // 从桶里拿第一个节点
         SensitiveNode node = nodes[index];
-        if(node == null){
+        if (node == null) {
             // 如果没有节点，则放进去一个
             node = new SensitiveNode(mix);
             // 并添加词
             node.words.add(sp);
             // 放入桶里
             nodes[index] = node;
-        }else{
+        } else {
             // 如果已经有节点（1个或多个），找到正确的节点
-            for(;node != null; node = node.next){
+            for (; node != null; node = node.next) {
                 // 匹配节点
-                if(node.headTwoCharMix == mix){
+                if (node.headTwoCharMix == mix) {
                     node.words.add(sp);
                     return true;
                 }
                 // 如果匹配到最后仍然不成功，则追加一个节点
-                if(node.next == null){
+                if (node.next == null) {
                     new SensitiveNode(mix, node).words.add(sp);
                     return true;
                 }
@@ -126,12 +131,12 @@ public class SensitiveFilter implements Serializable {
      * </code>
      *
      * @param sentence 句子
-     * @param replace 敏感词的替换字符
+     * @param replace  敏感词的替换字符
      * @return 过滤后的句子
      * @author ZhangXiaoye
      * @date 2017年1月5日 下午4:16:31
      */
-    public String filter(String sentence, char replace){
+    public String filter(String sentence, char replace) {
         // 先转换为StringPointer
         StringPointer sp = new StringPointer(sentence);
 
@@ -140,7 +145,7 @@ public class SensitiveFilter implements Serializable {
 
         // 匹配的起始位置
         int i = 0;
-        while(i < sp.length - 2){
+        while (i < sp.length - 2) {
             /*
              * 移动到下一个匹配位置的步进：
              * 如果未匹配为1，如果匹配是匹配的词长度
@@ -158,7 +163,7 @@ public class SensitiveFilter implements Serializable {
              * 如果非敏感词，node基本为null。
              * 这一步大幅提升效率
              */
-            if(node != null){
+            if (node != null) {
                 /*
                  * 如果能拿到第一个节点，
                  * 才计算mix（mix相同表示2个字符相同）。
@@ -170,13 +175,13 @@ public class SensitiveFilter implements Serializable {
                  * mix相同的概率非常低，提高效率
                  */
                 outer:
-                for(; node != null; node = node.next){
+                for (; node != null; node = node.next) {
                     /*
                      * 对于一个节点，先根据头2个字符判断是否属于这个节点。
                      * 如果属于这个节点，看这个节点的词库是否命中。
                      * 此代码块中访问次数已经很少，不是优化重点
                      */
-                    if(node.headTwoCharMix == mix){
+                    if (node.headTwoCharMix == mix) {
                         /*
                          * 查出比剩余sentence小的最大的词。
                          * 例如剩余sentence为"色情电影哪家强？"，
@@ -184,15 +189,19 @@ public class SensitiveFilter implements Serializable {
                          * 则从“色情电影”开始向前匹配
                          */
                         NavigableSet<StringPointer> desSet = node.words.headSet(sp.substring(i), true);
-                        if(desSet != null){
-                            for(StringPointer word: desSet.descendingSet()){
+                        if (desSet != null) {
+                            for (StringPointer word : desSet.descendingSet()) {
                                 /*
                                  * 仍然需要再判断一次，例如"色情信息哪里有？"，
                                  * 如果节点只包含"色情电影"一个词，
                                  * 仍然能够取到word为"色情电影"，但是不该匹配。
                                  */
-                                if(sp.nextStartsWith(i, word)){
+                                if (sp.nextStartsWith(i, word)) {
                                     // 匹配成功，将匹配的部分，用replace制定的内容替代
+
+                                    String words = sp.substring(i, i + word.length).toString();
+                                    setSentenceWord(words);
+
                                     sp.fill(i, i + word.length, replace);
                                     // 跳过已经替代的部分
                                     step = word.length;
@@ -213,11 +222,37 @@ public class SensitiveFilter implements Serializable {
         }
 
         // 如果没有替换，直接返回入参（节约String的构造copy）
-        if(replaced){
+        if (replaced) {
             return sp.toString();
-        }else{
+        } else {
             return sentence;
         }
     }
+
+    private static void setSentenceWord(String word) {
+        Set<String> set = sWordThreadLocal.get();
+        if (set == null) {
+            set = new HashSet<>();
+            sWordThreadLocal.set(set);
+        }
+        set.add(word);
+    }
+
+    public static Set<String> getSentenceWordAndClear() {
+        Set<String> strings =  sWordThreadLocal.get();
+        sWordThreadLocal.remove();
+        return strings;
+    }
+
+    public static Set<String> getSentenceWord() {
+        Set<String> strings =  sWordThreadLocal.get();
+        return strings;
+    }
+
+    public static void clearSentenceWord() {
+        sWordThreadLocal.remove();
+    }
+
+
 
 }
