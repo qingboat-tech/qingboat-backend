@@ -536,6 +536,7 @@ public class ArticleServiceImpl implements ArticleService {
                 //发飞书通知给客服
                 FeishuService.TextBody textBody = new FeishuService.TextBody(
                         new StringBuilder().append("文章审核驳回").append("\n")
+                                .append("创作者：").append(articleEntity.getAuthorNickName()).append("\n")
                                 .append("文章《").append(title).append("》\n")
                                 .append("标题包含敏感词:"+SensitiveFilter.getSentenceWordAndClear()+"\n").toString());
                 feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
@@ -556,6 +557,7 @@ public class ArticleServiceImpl implements ArticleService {
                 //发飞书通知给客服
                 FeishuService.TextBody textBody = new FeishuService.TextBody(
                         new StringBuilder().append("文章审核驳回").append("\n")
+                                .append("创作者：").append(articleEntity.getAuthorNickName()).append("\n")
                                 .append("文章《").append(title).append("》\n")
                                 .append("文章描述包含敏感词:"+SensitiveFilter.getSentenceWordAndClear()+"\n").toString());
                 feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
@@ -577,6 +579,7 @@ public class ArticleServiceImpl implements ArticleService {
                 //发飞书通知给客服
                 FeishuService.TextBody textBody = new FeishuService.TextBody(
                         new StringBuilder().append("文章审核驳回").append("\n")
+                                .append("创作者：").append(articleEntity.getAuthorNickName()).append("\n")
                                 .append("文章《").append(title).append("》\n")
                                 .append("文章内容包含敏感词:"+SensitiveFilter.getSentenceWordAndClear()+"\n").toString());
                 feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
