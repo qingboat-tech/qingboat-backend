@@ -11,6 +11,7 @@ import com.qingboat.as.service.ArticleCommentService;
 import com.qingboat.as.service.ArticleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -28,6 +29,7 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     private ReplyCommentDao replyCommentDao;
 
     @Autowired
+    @Lazy
     private ArticleService articleService;
 
     @Override

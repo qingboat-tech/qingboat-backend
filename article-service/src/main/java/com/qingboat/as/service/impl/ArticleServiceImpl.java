@@ -53,6 +53,7 @@ public class ArticleServiceImpl implements ArticleService {
     private UserService userService;
 
     @Autowired
+    @Lazy
     private TierService tierService;
 
     @Autowired
@@ -63,6 +64,7 @@ public class ArticleServiceImpl implements ArticleService {
     private MessageService messageService;
 
     @Autowired
+    @Lazy
     private UserSubscriptionService userSubscriptionService;
 
     @Autowired
