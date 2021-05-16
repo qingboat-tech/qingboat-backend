@@ -12,6 +12,7 @@ import com.qingboat.as.utils.sensi.SensitiveFilter;
 import com.qingboat.as.vo.ArticlePublishVo;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
+import com.qingboat.base.utils.BASE64Util;
 import com.rometools.rome.io.FeedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -262,7 +263,7 @@ public class ArticleController extends BaseController {
             }
         }
 
-        String refKey = articleId+"#"+ getUIdStr();
+        String refKey = BASE64Util.encode(articleId+"#"+ getUIdStr());
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_MONTH,10);
 
@@ -275,6 +276,7 @@ public class ArticleController extends BaseController {
     @GetMapping(value = "/getInviteUserListByInviteKey")
     @ResponseBody
     public List<UserEntity> getInviteUserListByInviteKey(@RequestParam("inviteKey") String inviteKey) {
+        inviteKey = BASE64Util.decode(inviteKey);
         Set<Object> inviteUserIdSet = redisUtil.members("AIK_"+inviteKey);
         Set<Long> inviteUserIdLongSet = new HashSet<>();
         if (inviteUserIdSet!=null && !inviteUserIdSet.isEmpty()){
@@ -306,6 +308,7 @@ public class ArticleController extends BaseController {
             }
             // 处理推荐逻辑，每个订阅者最多分享给5个好友阅读
             if (inviteKey!= null){
+                inviteKey = BASE64Util.decode(inviteKey);
                 try {
                     String[] refContent = inviteKey.split("#"); //验证其合法性
                     //refContent[0] = articleId; refContent[1] = creatorId;
