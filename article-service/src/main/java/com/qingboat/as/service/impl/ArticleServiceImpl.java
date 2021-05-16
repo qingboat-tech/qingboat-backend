@@ -831,6 +831,8 @@ public class ArticleServiceImpl implements ArticleService {
         }
         query.addCriteria(new Criteria().orOperator(criteriaList));
 
+        log.info("query:"+query.toString());
+
         Sort sort = Sort.by(Sort.Direction.DESC, "top","updatedTime");
         Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
 
