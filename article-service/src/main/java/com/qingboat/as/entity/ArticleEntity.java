@@ -71,7 +71,10 @@ public class ArticleEntity {
     private Long readCount ; //阅读数
 
     @Transient
-    private TierEntity tierEntity;
+    private TierEntity tierEntity;  //推荐需要订阅的套餐对象
+
+    @Transient
+    private Long userSubscribeTierId;  //会员订阅的套餐Id
 
     @Transient
     private Boolean hasStar ; //判断自己是否点赞

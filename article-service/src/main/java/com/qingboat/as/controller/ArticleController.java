@@ -353,6 +353,7 @@ public class ArticleController extends BaseController {
                     .ge(UserSubscriptionEntity::getExpireDate,new Date());
             UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
             if (userSubscriptionEntity !=null && userSubscriptionEntity.getBenefitList()!=null){
+                articleEntity.setUserSubscribeTierId(userSubscriptionEntity.getMemberTierId());
                 if (articleEntity.getTierIdList().contains(userSubscriptionEntity.getMemberTierId())   //订阅了该套餐的文章 或者 免费文章
                     || articleEntity.getBenefit()!=null && articleEntity.getBenefit().contains("FREE") ){
                     if (userSubscriptionEntity.getBenefitList() !=null ){
