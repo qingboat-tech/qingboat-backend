@@ -340,7 +340,10 @@ public class ArticleController extends BaseController {
                         }
                     }
 
-                } catch (Exception e) {
+                } catch (BaseException e) {
+                    throw e;
+                }catch (Exception e) {
+                    e.printStackTrace();
                     throw new BaseException(500,"ref是参数无效");
                 }
             }
