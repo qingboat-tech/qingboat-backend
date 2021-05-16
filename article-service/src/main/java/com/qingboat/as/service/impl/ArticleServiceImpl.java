@@ -162,9 +162,15 @@ public class ArticleServiceImpl implements ArticleService {
         }
         update.set("updatedTime",LocalDateTime.now());
         articleEntity.setUpdatedTime(LocalDateTime.now());
-
-        UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
-        if (result.getModifiedCount() <=0){
+        UpdateResult result = null;
+        int loopCount = 0;
+        while (loopCount++ <=5 ){
+            result= mongoTemplate.updateFirst(query, update, ArticleEntity.class); //官网表示不能保证更新操作的成功性...
+            if (result.getModifiedCount() >0){
+                return articleEntity;
+            }
+        }
+        if (result.getModifiedCount()<1){
             throw new BaseException(500,"ArticleEntity_is_not_exist");
         }
 

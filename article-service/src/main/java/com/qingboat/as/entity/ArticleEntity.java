@@ -74,7 +74,7 @@ public class ArticleEntity {
     private TierEntity tierEntity;  //推荐需要订阅的套餐对象
 
     @Transient
-    private List<Long> userSubscribeTierIdList;  //会员订阅的套餐Id
+    private List<Long> userSubscribeTierIdList;  //会员订阅的套餐Id List
 
     @Transient
     private Boolean hasStar ; //判断自己是否点赞
