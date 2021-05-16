@@ -796,20 +796,35 @@ public class ArticleServiceImpl implements ArticleService {
             Set<String> benefitSet = new HashSet<>();
             UserSubscriptionEntity entity = subscriptionEntityList.get(i);
 
-            for (BenefitEntity benefitEntity:entity.getBenefitList()) {
-                if (benefitEntity.getKey()!=null && !benefitEntity.getKey().isEmpty())
-                benefitSet.add(benefitEntity.getKey());
-            }
-            if (paid == null || !paid){
-                if (benefitSet.contains("READ") && !benefitSet.contains("FREE")){
-                    benefitSet.add("FREE");
+            Criteria criteria = null;
+            if (paid!=null){
+                if (paid){//返回付费文章
+                    if( "free".equals(entity.getSubscribeDuration()) ){
+                        continue;
+                    }
+                    criteria = new Criteria().andOperator(
+                            Criteria.where("authorId").is(String.valueOf(entity.getCreatorId())),
+                            Criteria.where("status").is(Integer.valueOf(4)),
+                            Criteria.where("tierIdList").in(entity.getMemberTierId()));
+                }else {//返回免费文章
+                    criteria = new Criteria().andOperator(
+                            Criteria.where("authorId").is(String.valueOf(entity.getCreatorId())),
+                            Criteria.where("status").is(Integer.valueOf(4)),
+                            Criteria.where("benefit").in("FREE"));
                 }
+            }else { //返回免费和付费文章
+                Criteria criteria1 = new Criteria().orOperator(
+                        Criteria.where("benefit").in("FREE"),
+                        Criteria.where("tierIdList").in(entity.getMemberTierId()));
+
+                Criteria criteria2 = new Criteria().andOperator(
+                        Criteria.where("authorId").is(String.valueOf(entity.getCreatorId())),
+                        Criteria.where("status").is(Integer.valueOf(4)),
+                        criteria1);
+
+                criteria =  new Criteria().andOperator(criteria2,criteria1);
             }
 
-            Criteria criteria = new Criteria().andOperator(
-                    Criteria.where("authorId").is(String.valueOf(entity.getCreatorId())),
-                    Criteria.where("benefit").in(benefitSet)
-            );
             criteriaList[i]= criteria;
         }
         query.addCriteria(new Criteria().orOperator(criteriaList));

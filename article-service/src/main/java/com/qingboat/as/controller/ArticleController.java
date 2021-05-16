@@ -349,10 +349,10 @@ public class ArticleController extends BaseController {
                     .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(authorId))
                     .ge(UserSubscriptionEntity::getExpireDate,new Date());
             List<UserSubscriptionEntity> userSubscriptionEntityList = userSubscriptionService.list(queryWrapper);
+            List<Long> userSubscribeTierIdList = new ArrayList<>();
             if (userSubscriptionEntityList == null || userSubscriptionEntityList.isEmpty()){
                 //没有订阅，查看付费文章（下面处理试读）
             }else {
-                List<Long> userSubscribeTierIdList = new ArrayList<>();
                 for (UserSubscriptionEntity userSubscriptionEntity: userSubscriptionEntityList){
                     userSubscribeTierIdList.add(userSubscriptionEntity.getMemberTierId());
                     // 检查是否有评论权限
@@ -378,6 +378,7 @@ public class ArticleController extends BaseController {
             }
 
             //没有订阅，查看付费文章（处理试读）
+            articleEntity.setUserSubscribeTierIdList(userSubscribeTierIdList);
             articleEntity.setData(subList(articleEntity.getData()));
             articleEntity.setStatus(7);
             return articleEntity;
