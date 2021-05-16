@@ -793,9 +793,9 @@ public class ArticleServiceImpl implements ArticleService {
             pageSize = 10;
         }
 
-        Criteria[] criteriaList = new Criteria[subscriptionEntityList.size()];
+        List<Criteria> criteriaList = new ArrayList<>();
+
         for(int i=0;i<subscriptionEntityList.size();i++){
-            Set<String> benefitSet = new HashSet<>();
             UserSubscriptionEntity entity = subscriptionEntityList.get(i);
 
             Criteria criteria = null;
@@ -815,21 +815,30 @@ public class ArticleServiceImpl implements ArticleService {
                             Criteria.where("benefit").in("FREE"));
                 }
             }else { //返回免费和付费文章
-                Criteria criteria1 = new Criteria().orOperator(
-                        Criteria.where("benefit").in("FREE"),
-                        Criteria.where("tierIdList").in(entity.getMemberTierId()));
-
-                Criteria criteria2 = new Criteria().andOperator(
+                Criteria criteria1 = null;
+                if( "free".equals(entity.getSubscribeDuration()) ){
+                    criteria1 = Criteria.where("benefit").in("FREE");
+                }else {
+                    criteria1 = new Criteria().orOperator(
+                            Criteria.where("benefit").in("FREE"),
+                            Criteria.where("tierIdList").in(entity.getMemberTierId()));
+                }
+                criteria = new Criteria().andOperator(
                         Criteria.where("authorId").is(String.valueOf(entity.getCreatorId())),
                         Criteria.where("status").is(Integer.valueOf(4)),
                         criteria1);
-
-                criteria =  new Criteria().andOperator(criteria2,criteria1);
             }
 
-            criteriaList[i]= criteria;
+            criteriaList.add(criteria);
         }
-        query.addCriteria(new Criteria().orOperator(criteriaList));
+        if (criteriaList.isEmpty()){
+            return null;
+        }
+
+        Criteria[] criteria = new Criteria[criteriaList.size()];
+        criteriaList.toArray(criteria);
+
+        query.addCriteria(new Criteria().orOperator(criteria));
 
         log.info("query:"+query.toString());
 
@@ -845,9 +854,9 @@ public class ArticleServiceImpl implements ArticleService {
 
         List articleEntityList = mongoTemplate.find(query,ArticleEntity.class);
 
-        Page studentPage = new PageImpl(articleEntityList, pageable, total);
+        Page articlePage = new PageImpl(articleEntityList, pageable, total);
 
-        return studentPage;
+        return articlePage;
     }
 //
 //    @Override
