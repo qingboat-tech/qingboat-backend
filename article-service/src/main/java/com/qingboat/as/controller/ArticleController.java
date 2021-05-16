@@ -312,18 +312,9 @@ public class ArticleController extends BaseController {
                 try {
                     String[] refContent = inviteKey.split("#"); //验证其合法性
                     //refContent[0] = articleId; refContent[1] = creatorId;
-                    if (refContent!=null && refContent.length ==2 &&  articleId.equals(refContent[0]) ){
-
-                        // 获取订阅信息
-                        QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
-                        queryWrapper.lambda()
-                                .eq(UserSubscriptionEntity::getSubscriberId,getUId())
-                                .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(authorId))
-                                .ge(UserSubscriptionEntity::getExpireDate,new Date());
-                        UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
-                        if (userSubscriptionEntity == null){
-                            throw new BaseException(500,"订阅者没有续费，试读邀请码已过期");
-                        }
+                    if (refContent!=null && refContent.length ==2
+                            &&  articleId.equals(refContent[0])
+                            && authorId.equals(refContent[1])){
 
                         if (redisUtil.isMember("AIK_"+inviteKey,readerId)){
                             articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
@@ -338,13 +329,15 @@ public class ArticleController extends BaseController {
                             articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
                             return articleEntity;
                         }
+                    }else {
+                        throw new BaseException(500,"非法邀请码");
                     }
 
                 } catch (BaseException e) {
                     throw e;
                 }catch (Exception e) {
                     e.printStackTrace();
-                    throw new BaseException(500,"ref是参数无效");
+                    throw new BaseException(500,"邀请码参数无效");
                 }
             }
 
