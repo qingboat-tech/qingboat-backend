@@ -777,6 +777,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .include("updatedTime")
                 .include("starCount")
                 .include("commentCount")
+                .include("readCount")
                 .include("type")
                 .include("status")
                 .include("tierIdList")
