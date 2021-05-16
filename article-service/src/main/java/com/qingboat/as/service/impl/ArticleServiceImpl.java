@@ -779,6 +779,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .include("commentCount")
                 .include("type")
                 .include("status")
+                .include("tierIdList")
                 .include("benefit");
 
         if (subscriptionEntityList == null || subscriptionEntityList.isEmpty()){
