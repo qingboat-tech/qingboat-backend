@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 @RestController
@@ -347,11 +348,14 @@ public class ArticleController extends BaseController {
                     .eq(UserSubscriptionEntity::getSubscriberId,getUId())
                     .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(authorId))
                     .ge(UserSubscriptionEntity::getExpireDate,new Date());
-            UserSubscriptionEntity userSubscriptionEntity = userSubscriptionService.getOne(queryWrapper);
-            if (userSubscriptionEntity !=null && userSubscriptionEntity.getBenefitList()!=null){
-                articleEntity.setUserSubscribeTierId(userSubscriptionEntity.getMemberTierId());
-                if (articleEntity.getTierIdList().contains(userSubscriptionEntity.getMemberTierId())   //订阅了该套餐的文章 或者 免费文章
-                    || articleEntity.getBenefit()!=null && articleEntity.getBenefit().contains("FREE") ){
+            List<UserSubscriptionEntity> userSubscriptionEntityList = userSubscriptionService.list(queryWrapper);
+            if (userSubscriptionEntityList == null || userSubscriptionEntityList.isEmpty()){
+                //没有订阅，查看付费文章（下面处理试读）
+            }else {
+                List<Long> userSubscribeTierIdList = new ArrayList<>();
+                for (UserSubscriptionEntity userSubscriptionEntity: userSubscriptionEntityList){
+                    userSubscribeTierIdList.add(userSubscriptionEntity.getMemberTierId());
+                    // 检查是否有评论权限
                     if (userSubscriptionEntity.getBenefitList() !=null ){
                         for (BenefitEntity benefitEntity :  userSubscriptionEntity.getBenefitList()) {
                             if ("COMMENT".equals(benefitEntity.getKey())){
@@ -360,17 +364,19 @@ public class ArticleController extends BaseController {
                             }
                         }
                     }
+                }
+
+                Set<Long> intersectElements = articleEntity.getTierIdList().stream()
+                        .filter(userSubscribeTierIdList :: contains)
+                        .collect(Collectors.toSet()); //交集运算
+
+                if ((articleEntity.getBenefit()!=null && articleEntity.getBenefit().contains("FREE"))
+                || (!intersectElements.isEmpty())){
                     articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
                     return articleEntity;
-                } else {
-//                    for (BenefitEntity benefitEntity :  userSubscriptionEntity.getBenefitList()) {
-//                        if ("READ".equals(benefitEntity.getKey()) && articleEntity.getBenefit().contains("READ_"+userSubscriptionEntity.getMemberTierId())){
-//                            articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
-//                            return articleEntity;
-//                        }
-//                    }
                 }
             }
+
             //没有订阅，查看付费文章（处理试读）
             articleEntity.setData(subList(articleEntity.getData()));
             articleEntity.setStatus(7);
