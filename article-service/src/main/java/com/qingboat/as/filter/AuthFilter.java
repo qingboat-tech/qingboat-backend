@@ -2,15 +2,11 @@ package com.qingboat.as.filter;
 
 import com.qingboat.as.entity.AuthTokenEntity;
 import com.qingboat.base.exception.BaseException;
-import org.apache.commons.io.output.TeeOutputStream;
-import org.apache.http.HttpResponse;
-import org.springframework.mock.web.DelegatingServletOutputStream;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 
 public class AuthFilter implements Filter {

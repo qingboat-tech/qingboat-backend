@@ -2,17 +2,13 @@ package com.qingboat.as.filter;
 
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.output.TeeOutputStream;
+
 import org.springframework.core.NamedThreadLocal;
-import org.springframework.mock.web.DelegatingServletOutputStream;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.IOException;
 import java.util.Map;
 
 @Slf4j
@@ -63,15 +59,6 @@ public class LogInterceptor implements HandlerInterceptor {
                 Runtime.getRuntime().totalMemory() / 1024 / 1024,
                 Runtime.getRuntime().freeMemory() / 1024 / 1024,
                 (Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() + Runtime.getRuntime().freeMemory()) / 1024 / 1024);
-
-        new HttpServletResponseWrapper(response){
-            @Override
-            public ServletOutputStream getOutputStream() throws IOException {
-                return new DelegatingServletOutputStream(
-                        new TeeOutputStream(super.getOutputStream(), System.out)
-                );
-            }
-        };
 
     }
 }
