@@ -154,7 +154,7 @@ public class CreatorSubscriptionController extends BaseController {
         Long creatorId = getUId();
         QueryWrapper<BenefitEntity> queryWrapper = new QueryWrapper<>();
         if ("system".equals(scope)){
-            queryWrapper.eq("key","FREE").or().eq("key","READ");
+            queryWrapper.eq("`key`","FREE").or().eq("`key`","READ");
         }else {
             queryWrapper.eq("creator_id",0).or().eq("creator_id",creatorId);
         }
