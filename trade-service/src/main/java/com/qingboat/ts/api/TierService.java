@@ -13,4 +13,8 @@ public interface TierService {
     @RequestMapping(value = "/readersubscription/tier" , method = RequestMethod.GET)
     TierServiceResponse getTierById(@RequestParam(value = "tierId",required = true) Long tierId);
 
+
+    @RequestMapping(value="/creatorsubscription/getTierSubscritionCount", method = RequestMethod.GET)
+    Long getTierSubscritionCount(@RequestParam("tierId") Long tierId);
+
 }
