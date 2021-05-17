@@ -205,6 +205,7 @@ public class ArticleController extends BaseController {
      *
      * @param pageIndex
      * @param creatorId  null：表示全部
+     * @param paid  null：表示全部  true 表示付费，false 表示免费
      * @return
      */
     @RequestMapping(value = "/subscriptionArticleList", method = RequestMethod.GET)
@@ -212,7 +213,7 @@ public class ArticleController extends BaseController {
     public Page<ArticleEntity> subscriptionArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,
                                                        @RequestParam(value = "pageSize",required = false) Integer pageSize,
                                                        @RequestParam(value = "creatorId",required = false) Long creatorId,
-                                                       @RequestParam(value = "creatorId",required = false) Boolean paid) {
+                                                       @RequestParam(value = "paid",required = false) Boolean paid) {
         Long subscriberId = getUId();
 
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
