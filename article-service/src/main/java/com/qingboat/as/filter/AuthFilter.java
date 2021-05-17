@@ -2,10 +2,15 @@ package com.qingboat.as.filter;
 
 import com.qingboat.as.entity.AuthTokenEntity;
 import com.qingboat.base.exception.BaseException;
+import org.apache.commons.io.output.TeeOutputStream;
+import org.apache.http.HttpResponse;
+import org.springframework.mock.web.DelegatingServletOutputStream;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 
 public class AuthFilter implements Filter {
@@ -26,6 +31,7 @@ public class AuthFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
         String token  = request.getHeader("Authorization");
         String innerSec = request.getHeader("INNER-SEC");
         String userId = request.getHeader("UID");
@@ -54,7 +60,16 @@ public class AuthFilter implements Filter {
                 throw new BaseException(500,"请求Token错误");
             }
         }
-        filterChain.doFilter(servletRequest,servletResponse);
+        filterChain.doFilter(servletRequest,response);
+//        HttpServletResponseWrapper wrapper = new HttpServletResponseWrapper(response){
+//            @Override
+//            public ServletOutputStream getOutputStream() throws IOException {
+//                return new DelegatingServletOutputStream(
+//                        new TeeOutputStream(super.getOutputStream(), System.out)
+//                );
+//            }
+//        };
+//        filterChain.doFilter(servletRequest,wrapper);
     }
 
     @Override
