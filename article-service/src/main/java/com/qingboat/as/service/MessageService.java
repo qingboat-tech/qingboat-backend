@@ -16,7 +16,7 @@ public interface MessageService {
 
     void asyncSendReplyCommentMessage(ReplyCommentEntity replyCommentEntity);
 
-    void asyncSendStarMessage(String articleId, Long starCount);
+    void asyncSendStarMessage(String articleId, Long userId, Long starCount);
 
     IPage<MessageEntity> list(Long toUserId, Integer msgType ,Integer pageIndex,Integer pageSize);
 

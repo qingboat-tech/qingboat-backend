@@ -325,20 +325,22 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
     @Override
     @Async
-    public void asyncSendStarMessage(String articleId, Long starCount) {
+    public void asyncSendStarMessage(String articleId,Long userId, Long starCount) {
 //        if (starCount %10 != 0){
 //            return;
 //        }
         //每增加10个赞，发一条点赞通知给创作者
         ArticleEntity articleEntity = articleService.findBaseInfoById(articleId);
+        UserEntity subscribeUser = userService.findByUserId(userId);
+
 
         MessageEntity msg = new MessageEntity();
         msg.setMsgType(MessageEntity.STAR_MSG);
         msg.setMsgTitle("《"+articleEntity.getTitle()+"》已经获得"+starCount+"个赞！" );
         msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
-        msg.setSenderId(0l);
-        msg.setSenderName("小鲸");
-        msg.setSenderImgUrl("https://m.qingboat.com/static/admin/img/gis/move_vertex_on.svg");
+        msg.setSenderId(subscribeUser.getUserId());
+        msg.setSenderName(subscribeUser.getNickname());
+        msg.setSenderImgUrl(subscribeUser.getHeadimgUrl());
         msg.setMsgLink(null); // TODO
         msg.setExtData("articleId",articleEntity.getId());
         msg.setExtData("articleTitle",articleEntity.getTitle());

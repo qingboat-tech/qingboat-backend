@@ -307,6 +307,7 @@ public class ArticleController extends BaseController {
             String authorId = articleEntity.getAuthorId();
             articleEntity.setHasStar( articleService.hasStar(articleId,getUId()));
             if (readerId.equals(authorId)){  //创作者自己看自己的文章
+                articleEntity.setCanComment(true);
                 return articleEntity;
             }
             // 处理推荐逻辑，每个订阅者最多分享给5个好友阅读
@@ -432,10 +433,6 @@ public class ArticleController extends BaseController {
     @ResponseBody
     public Long star(@PathVariable("id") String id){
         Long starCount = articleService.handleStarCountByArticleId(id,getUId());
-
-        //发送点赞通知
-        messageService.asyncSendStarMessage(id,starCount);
-
         return starCount;
     }
 

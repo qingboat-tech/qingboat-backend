@@ -414,13 +414,18 @@ public class ArticleServiceImpl implements ArticleService {
             if (rst){
                 redisUtil.remove(USER_STAR_PRE+userId,articleId);
             }
+            return  redisUtil.size(USER_STAR_PRE+userId);
         }else {
             boolean rst =increaseStarCountByArticleId(articleId,1);
             if (rst){
                 redisUtil.sSet(USER_STAR_PRE+userId,articleId);
             }
+            Long starCount = redisUtil.size(USER_STAR_PRE+userId);
+            //发送点赞通知
+            messageService.asyncSendStarMessage(articleId,userId,starCount);
+
+            return starCount;
         }
-        return  redisUtil.size(USER_STAR_PRE+userId);
     }
 
     @Override
