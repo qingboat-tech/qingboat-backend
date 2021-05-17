@@ -1,7 +1,9 @@
 package com.qingboat.ts.controller;
 
+import com.qingboat.base.exception.BaseException;
 import com.qingboat.base.utils.DateUtil;
 import com.qingboat.ts.api.TierService;
+import com.qingboat.ts.api.TierServiceResponse;
 import com.qingboat.ts.entity.PurchaseOrderEntity;
 import com.qingboat.ts.service.PurchaseOrderService;
 import com.qingboat.ts.vo.OrderVo;
@@ -31,6 +33,13 @@ public class PurchaseOrderController extends BaseController {
                                                    ){
         Long tierId = orderVo.getTierId();
         String periodKey = orderVo.getPeriodKey();
+
+        TierServiceResponse tierEntity = tierService.getTierById(tierId);
+        if ( tierEntity.getSubscribeLimit()>0 && tierService.getTierSubscritionCount(tierId) >= tierEntity.getSubscribeLimit())
+        {
+            throw new BaseException(500,"SUBSCRIBE LIMIT ERROR");
+        };
+
 
         log.info(" RequestParam: tierId=" +tierId);
         return purchaseOrderService.createPurchaseOrder(tierId, periodKey, uid);
