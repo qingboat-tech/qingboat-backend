@@ -86,6 +86,19 @@ public class CreatorSubscriptionController extends BaseController {
         return page;
     }
 
+    /**
+     * 获取该套餐订阅人数数据
+     */
+    @GetMapping(value = "/getTierSubscritionCount")
+    @ResponseBody
+    public Integer getTierSubscritionCount(@RequestParam("tierId") Long tierId) {
+        QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+        LambdaQueryWrapper<UserSubscriptionEntity> lambdaQueryWrapper =  queryWrapper.lambda();
+        lambdaQueryWrapper.eq(UserSubscriptionEntity::getMemberTierId, tierId);
+        return userSubscriptionService.count(queryWrapper);
+    }
+
+
 
     /**
      * 获取当前订阅人数数据 (全部、免费、付费)

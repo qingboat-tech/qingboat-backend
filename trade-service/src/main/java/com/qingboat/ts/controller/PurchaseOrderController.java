@@ -32,6 +32,10 @@ public class PurchaseOrderController extends BaseController {
         Long tierId = orderVo.getTierId();
         String periodKey = orderVo.getPeriodKey();
 
+
+
+
+
         log.info(" RequestParam: tierId=" +tierId);
         return purchaseOrderService.createPurchaseOrder(tierId, periodKey, uid);
 
