@@ -54,7 +54,7 @@ public class ArticleEntity {
 
     private Set<String> benefit = new HashSet<>();
 
-    private List<Long> tierIdList = new ArrayList<>(); //按照价格滴到高排序存放 先free、再比价
+//    private List<Long> tierIdList = new ArrayList<>(); //按照价格滴到高排序存放 先free、再比价
 
     private Set<String> tags = new HashSet<>();  //文章标签
 
@@ -73,8 +73,8 @@ public class ArticleEntity {
     @Transient
     private TierEntity tierEntity;  //推荐需要订阅的套餐对象
 
-    @Transient
-    private List<Long> userSubscribeTierIdList;  //会员订阅的套餐Id List
+//    @Transient
+//    private List<Long> userSubscribeTierIdList;  //会员订阅的套餐Id List
 
     @Transient
     private Boolean hasStar ; //判断自己是否点赞

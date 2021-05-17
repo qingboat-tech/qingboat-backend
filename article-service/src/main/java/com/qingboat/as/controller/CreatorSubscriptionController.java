@@ -1,6 +1,5 @@
 package com.qingboat.as.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -21,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/creatorsubscription")
@@ -141,10 +137,14 @@ public class CreatorSubscriptionController extends BaseController {
      */
     @GetMapping(value = "/getBenefits")
     @ResponseBody
-    public List<BenefitEntity> getBenefits() {
+    public List<BenefitEntity> getBenefits(@RequestParam(value = "scope",required = false) String scope) {
         Long creatorId = getUId();
         QueryWrapper<BenefitEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("creator_id",0).or().eq("creator_id",creatorId);
+        if ("system".equals(scope)){
+            queryWrapper.eq("key","FREE").or().eq("key","READ");
+        }else {
+            queryWrapper.eq("creator_id",0).or().eq("creator_id",creatorId);
+        }
         List<BenefitEntity> benefitEntityList = benefitService.list(queryWrapper);
 
         QueryWrapper<TierEntity> wrapper = new QueryWrapper<>();
@@ -199,8 +199,7 @@ public class CreatorSubscriptionController extends BaseController {
         Long creatorId = getUId();
         QueryWrapper<BenefitEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("id",benefitId).eq("creator_id",creatorId);
-        boolean rst = benefitService.remove(queryWrapper);
-        return rst;
+        return benefitService.remove(queryWrapper);
     }
 
 
@@ -264,8 +263,8 @@ public class CreatorSubscriptionController extends BaseController {
 
             List<BenefitEntity> bList = new ArrayList<>();
             BenefitEntity benefitEntity = new BenefitEntity();
-            benefitEntity.setId(1l);
-            benefitEntity.setCreatorId(0l);
+            benefitEntity.setId(1L);
+            benefitEntity.setCreatorId(0L);
             benefitEntity.setKey("FREE");
             benefitEntity.setTitle("每月推送优质免费文章");
             bList.add(benefitEntity);
@@ -289,22 +288,22 @@ public class CreatorSubscriptionController extends BaseController {
 
             List<BenefitEntity> bList = new ArrayList<>();
             BenefitEntity benefitEntity = new BenefitEntity();
-            benefitEntity.setId(2l);
-            benefitEntity.setCreatorId(0l);
+            benefitEntity.setId(2L);
+            benefitEntity.setCreatorId(0L);
             benefitEntity.setKey("READ");
             benefitEntity.setTitle("订阅期无限制阅读");
             bList.add(benefitEntity);
 
             benefitEntity = new BenefitEntity();
-            benefitEntity.setId(3l);
-            benefitEntity.setCreatorId(0l);
+            benefitEntity.setId(3L);
+            benefitEntity.setCreatorId(0L);
             benefitEntity.setKey("COMMENT");
             benefitEntity.setTitle("评论区互动");
             bList.add(benefitEntity);
 
             benefitEntity = new BenefitEntity();
-            benefitEntity.setId(4l);
-            benefitEntity.setCreatorId(0l);
+            benefitEntity.setId(4L);
+            benefitEntity.setCreatorId(0L);
             benefitEntity.setKey("WX_GROUP");
             benefitEntity.setTitle("加入创作者微信群");
             bList.add(benefitEntity);
@@ -329,6 +328,25 @@ public class CreatorSubscriptionController extends BaseController {
         if (StringUtils.isEmpty(tierEntity.getTitle())){
             throw new BaseException(500,"操作失败：创建会员等级标题为空");
         }
+        List<BenefitEntity> benefitEntityList = tierEntity.getBenefitList();
+        if (benefitEntityList == null || benefitEntityList.isEmpty()){
+            throw new BaseException(500,"操作失败：会员等级订阅里的权益不能为空");
+        }
+        Set<String> benefitKeySet = new HashSet<>();
+        for (BenefitEntity benefitEntity:benefitEntityList){
+            if (benefitEntity.getId() == null ){
+                throw new BaseException(500,"操作失败：创建会员等级订阅里的权益Id为空");
+            }
+            if (StringUtils.isEmpty(benefitEntity.getTitle())){
+                throw new BaseException(500,"操作失败：创建会员等级订阅里的权益标题为空");
+            }
+
+            if (StringUtils.isEmpty(benefitEntity.getKey())){
+                throw new BaseException(500,"操作失败：创建会员等级订阅里的权益Key为空");
+            }
+            benefitKeySet.add(benefitEntity.getKey());
+        }
+
         if (!("free".equals(tierEntity.getSubscribeDuration())
                 || "month".equals(tierEntity.getSubscribeDuration())
                 || "year".equals(tierEntity.getSubscribeDuration())
@@ -341,8 +359,11 @@ public class CreatorSubscriptionController extends BaseController {
             tierEntity.setYearDiscount(0.0);
             tierEntity.setMonthPrice(0);
             tierEntity.setMonthDiscount(0.0);
-        }
 
+            if (!benefitKeySet.contains("FREE")){
+                throw new BaseException(500,"操作失败：免费会员等级里需要添加'每月推送优质免费文章'权益");
+            }
+        }
         if ("month".equals(tierEntity.getSubscribeDuration()) || "monthAndYear".equals(tierEntity.getSubscribeDuration()) ){
             if (tierEntity.getMonthPrice() == null || tierEntity.getMonthPrice()<0){
                 tierEntity.setMonthPrice(0);
@@ -357,21 +378,6 @@ public class CreatorSubscriptionController extends BaseController {
             }
             if (tierEntity.getYearDiscount()>10 || tierEntity.getYearDiscount()<0){
                 throw new BaseException(500,"操作失败：创建会员等级订阅月折扣参数错误");
-            }
-        }
-        List<BenefitEntity> benefitEntityList = tierEntity.getBenefitList();
-        if (benefitEntityList == null || benefitEntityList.isEmpty()){
-            throw new BaseException(500,"操作失败：会员等级订阅里的权益不能为空");
-        }
-        for (BenefitEntity benefitEntity:benefitEntityList){
-            if (benefitEntity.getId() == null ){
-                throw new BaseException(500,"操作失败：创建会员等级订阅里的权益Id为空");
-            }
-            if (StringUtils.isEmpty(benefitEntity.getKey())){
-                throw new BaseException(500,"操作失败：创建会员等级订阅里的权益Key为空");
-            }
-            if (StringUtils.isEmpty(benefitEntity.getTitle())){
-                throw new BaseException(500,"操作失败：创建会员等级订阅里的权益标题为空");
             }
         }
 

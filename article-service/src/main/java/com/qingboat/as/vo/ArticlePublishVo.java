@@ -8,6 +8,6 @@ import java.util.Set;
 @Data
 public class ArticlePublishVo implements Serializable {
     private String articleId;
-    private Set<Long> tierIds;
+    private String publishType;   //FREE  PAID
     private Set<String> tags;
 }

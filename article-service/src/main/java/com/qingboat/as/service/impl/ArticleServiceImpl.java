@@ -1,7 +1,6 @@
 package com.qingboat.as.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -35,7 +34,6 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -100,7 +98,7 @@ public class ArticleServiceImpl implements ArticleService {
 
             if (StringUtils.isEmpty(articleEntity.getTitle())
                     && StringUtils.isEmpty(articleEntity.getDesc())
-                    && (articleEntity.getData() == null || articleEntity.getData().size() ==0) ){
+                    && (articleEntity.getData() == null || articleEntity.getData().isEmpty()) ){
                 return articleEntity;
             }
 
@@ -285,18 +283,25 @@ public class ArticleServiceImpl implements ArticleService {
         }
         // 处理返回文章读权限
         if (userId!= null){
-
             QueryWrapper<TierEntity> tierEntityQueryWrapper = new QueryWrapper<>();
-            tierEntityQueryWrapper.lambda().eq(TierEntity::getCreatorId,authorId);
-            List<TierEntity> tierList = tierService.list(tierEntityQueryWrapper);
-            if (tierList == null){
-                throw  new BaseException(500,"该创作者没有设置订阅");
-            }
-            Map<Long,TierEntity> tierMap = new HashMap<>();
-            for(TierEntity tier:tierList){
-                tierMap.put(tier.getId(),tier);
-            }
+            tierEntityQueryWrapper.eq("creator_id",Long.parseLong(authorId));
+            tierEntityQueryWrapper.eq("status",1);
+            tierEntityQueryWrapper.orderByAsc("month_price","subscribe_duration");
 
+            TierEntity freeTier = null;
+            TierEntity paidTier = null;
+            List<TierEntity> tierEntityList = tierService.list(tierEntityQueryWrapper);
+            for(TierEntity tier: tierEntityList ){
+                if ("FREE".equals(tier.getSubscribeDuration())){
+                    if (freeTier==null ){
+                        freeTier = tier;
+                    }
+                }else{
+                    if (paidTier==null){
+                        paidTier = tier;
+                    }
+                }
+            }
             QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
             LocalDate today = LocalDate.now();
             LambdaQueryWrapper<UserSubscriptionEntity> lambdaQueryWrapper = queryWrapper.lambda();
@@ -306,50 +311,35 @@ public class ArticleServiceImpl implements ArticleService {
 
             List<UserSubscriptionEntity> subscriptionEntityList = userSubscriptionService.list(queryWrapper);
             if (subscriptionEntityList!=null && !subscriptionEntityList.isEmpty()){
-                Set<Long> userTierSet = new HashSet<>();
-
+                Set<String> userBenefitSet = new HashSet<>();
                 //处理订阅者的权利合集
                 for (UserSubscriptionEntity subscriptionEntity:subscriptionEntityList){
-                    userTierSet.add(subscriptionEntity.getMemberTierId());
+                    for(BenefitEntity benefitEntity :subscriptionEntity.getBenefitList()){
+                       userBenefitSet.add(benefitEntity.getKey());
+                    }
                 }
                 //检查每篇文章可读权限
                 for(ArticleEntity articleEntity : articleEntityList){
-                    Set<String> benefitSet = articleEntity.getBenefit();
-                    List<Long> articleTierIdList = articleEntity.getTierIdList();
-                    if ( benefitSet.isEmpty() || articleTierIdList.isEmpty()){
-                        // 不可订阅
-                        articleEntity.setStatus(7);
-                    }else if (benefitSet.contains("FREE")){
+                    if (articleEntity.getBenefit().contains("FREE") || userBenefitSet.containsAll(articleEntity.getBenefit())){
                         //文章可读
                         continue;
                     }else {
-                        //取其交集，有则为可读
-                        Set<Long> intersectElements = articleTierIdList.stream().filter(userTierSet :: contains).collect(Collectors.toSet());
-                        if (intersectElements.isEmpty()){
-                            //文章不可读
-                            articleEntity.setStatus(7);
-                            //提供订阅套餐
-                            if (!articleTierIdList.isEmpty()){
-                                TierEntity suggestTier = tierMap.get(articleTierIdList.get(0));
-                                articleEntity.setTierEntity(suggestTier);
-                            }
-                        }else{
-                            //文章可读
-                            continue;
-                        }
+                        //文章不可读
+                        articleEntity.setStatus(7);
+                        articleEntity.setTierEntity(paidTier);
                     }
                 }
             }else {
-                //文章不可读
+                //阅读者没有订阅，文章不可读
                 for(ArticleEntity articleEntity : articleEntityList){
                     //文章不可读
                     articleEntity.setStatus(7);
                     //提供订阅套餐
-                    if (!articleEntity.getTierIdList().isEmpty()){
-                        TierEntity suggestTier = tierMap.get(articleEntity.getTierIdList().get(0));
-                        articleEntity.setTierEntity(suggestTier);
+                    if (articleEntity.getBenefit().contains("FREE")){
+                        articleEntity.setTierEntity(freeTier);
+                    }else {
+                        articleEntity.setTierEntity(paidTier);
                     }
-
                 }
             }
         }
@@ -452,66 +442,23 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public boolean submitReviewByArticleId(String articleId,String operatorId, Set<Long> tierIdSet,Set<String> articleTags) {
-        if (tierIdSet == null || tierIdSet.isEmpty()){
-            throw new BaseException(500,"操作失败：发布的文章没有选择套餐范围");
+    public boolean submitReviewByArticleId(String articleId,String operatorId, String publishType,Set<String> articleTags) {
+        if (publishType == null || !( "FREE".equals(publishType) || "PAID".equals(publishType))){
+            throw new BaseException(500,"操作失败：发布的文章范围参数不正确");
         }
         Set<String> benefitKeySet = new HashSet<>();
-        List<Long> tierIdList = new ArrayList<>();
         Long creatorId = Long.valueOf(operatorId);
 
         QueryWrapper<TierEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("id",tierIdSet);
         queryWrapper.eq("creator_id",creatorId);
-        queryWrapper.orderByAsc("month_price","year_price","subscribe_duration");
+        queryWrapper.eq("status",1);
 
         List<TierEntity> tierList = tierService.list(queryWrapper);
         if (tierList == null){
-            throw new BaseException(500,"操作失败：发布的文章没有选择套餐范围");
+            throw new BaseException(500,"操作失败：创作者还没有设置套餐");
         }
 
-        for (TierEntity tier:tierList) {
-            if (tierIdSet.contains(tier.getId())){
-                tierIdList.add(tier.getId());
-
-                if (tier.getBenefitList() == null){
-                    throw new BaseException(500,"操作失败：发布的套餐里没有添加会员权益");
-                }
-                if ("free".equals(tier.getSubscribeDuration())){  //免费权益处理
-                    tierIdList.clear();
-                    benefitKeySet.clear();
-                    tierIdList.add(tier.getId());
-                    if (tier.getBenefitList() == null){
-                        throw new BaseException(500,"操作失败：发布的套餐里没有添加会员权益");
-                    }
-                    for (BenefitEntity benefit:tier.getBenefitList() ) {
-                        if ("READ".equals(benefit.getKey())){
-                            benefitKeySet.add("READ_"+tier.getId());
-                        }else {
-                            benefitKeySet.add(benefit.getKey());
-                        }
-                    }
-                    benefitKeySet.add("FREE");
-                    break;
-                }else {  //收费权益处理
-                    if (tier.getBenefitList() == null){
-                        throw new BaseException(500,"操作失败：发布的套餐里没有添加会员权益");
-                    }
-                    for (BenefitEntity benefit:tier.getBenefitList() ) {
-                        if ("FREE".equals(benefit.getKey())){
-                            benefitKeySet.add("FREE_"+tier.getId());
-                        }else if ("READ".equals(benefit.getKey())){
-                            benefitKeySet.add("READ_"+tier.getId());
-                        }else {
-                            benefitKeySet.add(benefit.getKey());
-                        }
-                    }
-                }
-            }
-        }
-        if (benefitKeySet.isEmpty() || tierIdList.isEmpty()){
-            throw new BaseException(500,"操作失败：发布的套餐里没有添加会员权益或者套餐为空");
-        }
+        benefitKeySet.add(publishType);
 
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(articleId));
@@ -520,7 +467,6 @@ public class ArticleServiceImpl implements ArticleService {
         Update update = new Update();
         update.set("status",1);
         update.set("benefit",benefitKeySet);
-        update.set("tierIdList",tierIdList);
 
         if (articleTags!=null){
             update.set("tags",articleTags);
@@ -724,11 +670,11 @@ public class ArticleServiceImpl implements ArticleService {
             QueryWrapper<UserSubscriptionEntity> userSubscriptionEntityQueryWrapper = new QueryWrapper<>();
             userSubscriptionEntityQueryWrapper.gt("expire_date",today);
             userSubscriptionEntityQueryWrapper.eq("creator_id",Long.parseLong(creatorIdStr));
-            userSubscriptionEntityQueryWrapper.in("member_tier_id",articleEntity.getTierIdList());
             List<UserSubscriptionEntity> subscriptionEntityList = userSubscriptionService.list(userSubscriptionEntityQueryWrapper);
             if (subscriptionEntityList == null ){
                 return;
             }
+            //TODO  这里有点小问题，发送付费文章，免费订阅用户也能收到消息
             for (UserSubscriptionEntity userSubscriptionEntity: subscriptionEntityList){
                 String subscribeIdStr = String.valueOf(userSubscriptionEntity.getSubscriberId());
                 String  secret = AuthFilter.getSecret(subscribeIdStr);
@@ -780,7 +726,6 @@ public class ArticleServiceImpl implements ArticleService {
                 .include("readCount")
                 .include("type")
                 .include("status")
-                .include("tierIdList")
                 .include("benefit");
 
         if (subscriptionEntityList == null || subscriptionEntityList.isEmpty()){
@@ -807,7 +752,7 @@ public class ArticleServiceImpl implements ArticleService {
                     criteria = new Criteria().andOperator(
                             Criteria.where("authorId").is(String.valueOf(entity.getCreatorId())),
                             Criteria.where("status").is(Integer.valueOf(4)),
-                            Criteria.where("tierIdList").in(entity.getMemberTierId()));
+                            Criteria.where("benefit").in("READ"));
                 }else {//返回免费文章
                     criteria = new Criteria().andOperator(
                             Criteria.where("authorId").is(String.valueOf(entity.getCreatorId())),
@@ -815,18 +760,10 @@ public class ArticleServiceImpl implements ArticleService {
                             Criteria.where("benefit").in("FREE"));
                 }
             }else { //返回免费和付费文章
-                Criteria criteria1 = null;
-                if( "free".equals(entity.getSubscribeDuration()) ){
-                    criteria1 = Criteria.where("benefit").in("FREE");
-                }else {
-                    criteria1 = new Criteria().orOperator(
-                            Criteria.where("benefit").in("FREE"),
-                            Criteria.where("tierIdList").in(entity.getMemberTierId()));
-                }
-                criteria = new Criteria().andOperator(
+                    criteria = new Criteria().andOperator(
                         Criteria.where("authorId").is(String.valueOf(entity.getCreatorId())),
-                        Criteria.where("status").is(Integer.valueOf(4)),
-                        criteria1);
+                        Criteria.where("status").is(Integer.valueOf(4)));
+
             }
 
             criteriaList.add(criteria);

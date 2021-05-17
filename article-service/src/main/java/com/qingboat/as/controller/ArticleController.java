@@ -169,7 +169,7 @@ public class ArticleController extends BaseController {
     public Boolean submitReview(@Valid @RequestBody ArticlePublishVo articlePublishVo) {  //TODO 需要修改
         String uid = getUIdStr();
         //TODO  david
-        Boolean rst =articleService.submitReviewByArticleId(articlePublishVo.getArticleId(),uid,articlePublishVo.getTierIds(),articlePublishVo.getTags());
+        Boolean rst =articleService.submitReviewByArticleId(articlePublishVo.getArticleId(),uid, articlePublishVo.getPublishType(), articlePublishVo.getTags());
 
         articleService.asyncReviewByArticleId(articlePublishVo.getArticleId());
         return rst;
@@ -351,25 +351,25 @@ public class ArticleController extends BaseController {
                     .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(authorId))
                     .ge(UserSubscriptionEntity::getExpireDate,new Date());
             List<UserSubscriptionEntity> userSubscriptionEntityList = userSubscriptionService.list(queryWrapper);
-            List<Long> userSubscribeTierIdList = new ArrayList<>();
+
             if (userSubscriptionEntityList == null || userSubscriptionEntityList.isEmpty()){
                 //没有订阅，查看付费文章（下面处理试读）
             }else {
+                Set<String> userBenefitSet = new HashSet<>();
                 for (UserSubscriptionEntity userSubscriptionEntity: userSubscriptionEntityList){
-                    userSubscribeTierIdList.add(userSubscriptionEntity.getMemberTierId());
                     // 检查是否有评论权限
                     if (userSubscriptionEntity.getBenefitList() !=null ){
                         for (BenefitEntity benefitEntity :  userSubscriptionEntity.getBenefitList()) {
-                            if ("COMMENT".equals(benefitEntity.getKey())){
-                                articleEntity.setCanComment(true);
-                                break;
-                            }
+                            userBenefitSet.add(benefitEntity.getKey());
                         }
                     }
                 }
+                if (userBenefitSet.contains("COMMENT")){
+                    articleEntity.setCanComment(true);
+                }
 
-                Set<Long> intersectElements = articleEntity.getTierIdList().stream()
-                        .filter(userSubscribeTierIdList :: contains)
+                Set<String> intersectElements = articleEntity.getBenefit().stream()
+                        .filter(userBenefitSet :: contains)
                         .collect(Collectors.toSet()); //交集运算
 
                 if ((articleEntity.getBenefit()!=null && articleEntity.getBenefit().contains("FREE"))
@@ -380,7 +380,6 @@ public class ArticleController extends BaseController {
             }
 
             //没有订阅，查看付费文章（处理试读）
-            articleEntity.setUserSubscribeTierIdList(userSubscribeTierIdList);
             articleEntity.setData(subList(articleEntity.getData()));
             articleEntity.setStatus(7);
             return articleEntity;

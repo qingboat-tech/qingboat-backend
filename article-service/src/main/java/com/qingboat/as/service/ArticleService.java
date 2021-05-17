@@ -93,8 +93,13 @@ public interface ArticleService {
 
     /**
      * 提交文章审核
+     * @param articleId 文章Id
+     * @param operatorId 操作人Id
+     * @param publishType  发布类型：FREE or PAID
+     * @param articleTags 文章标签
+     * @return
      */
-    boolean submitReviewByArticleId(String articleId,String operatorId, Set<Long> tierIdSet,Set<String> articleTags);
+    boolean submitReviewByArticleId(String articleId,String operatorId, String publishType,Set<String> articleTags);
 
     /**
      * 文章审核
