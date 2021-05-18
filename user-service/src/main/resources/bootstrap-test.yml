@@ -52,17 +52,13 @@ logging:
     org.springframework.web: INFO
     com.github.binarywang.demo.wx.mp: DEBUG
     me.chanjar.weixin: DEBUG
+
+
+python:
+  host: https://m.qingboat.com
 wx:
-  mp:
-    useRedis: false
-    redisConfig:
-      host: 127.0.0.1
-      port: 6379
-    configs:
-      - appId: wx92ec79ce035595bf
-        secret: ef5b911da3cbbd582ac31dc269119bf3
-        token: c62c81034a068064f97efed3589f7c2f
-        aesKey: THGekkAcmkeAAcnC9ku7BnjiyTkCq0HeTvDuRpPjXjx
+  host: https://api.weixin.qq.com
+
 
 business-domain: https://design.qingboat.com
 business-domain-pathway-backend: https://m.qingboat.com
