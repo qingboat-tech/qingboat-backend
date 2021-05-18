@@ -71,6 +71,7 @@ public class UserController {
                     maps[i] = new HashMap<>();
                     maps[i].put("key",value[i]);
                 }
+                userProfile.setExpertiseArea(maps);
             }
             return userProfile;
 
