@@ -31,17 +31,20 @@ public class UserServiceImpl implements UserService {
         QueryWrapper<UserProfileEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id",uid);
         UserProfileEntity userProfileEntity = userProfileDao.selectOne(queryWrapper);
-        if (userProfileEntity !=null ){
-            if(1== userProfileEntity.getRole() && 1 == userProfileEntity.getStatus()){
+        return userProfileEntity;
 
-            }else {
-                userProfileEntity.setRole(1);
-                userProfileEntity.setStatus(0);
-                userProfileDao.updateById(userProfileEntity);
-            }
-            return userProfileEntity;
-        }
-        throw new BaseException(500,"userProfile is empty");
+        // 通过后台操作来审核通过
+        //        if (userProfileEntity !=null ){
+        //            if(1== userProfileEntity.getRole() && 1 == userProfileEntity.getStatus()){
+        //
+        //            }else {
+        //                userProfileEntity.setRole(1);
+        //                userProfileEntity.setStatus(0);
+        //                userProfileDao.updateById(userProfileEntity);
+        //            }
+        //            return userProfileEntity;
+        //        }
+        //        throw new BaseException(500,"userProfile is empty");
 
     }
 

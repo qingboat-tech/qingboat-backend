@@ -109,6 +109,8 @@ wx:
         token: c62c81034a068064f97efed3589f7c2f
         aesKey: THGekkAcmkeAAcnC9ku7BnjiyTkCq0HeTvDuRpPjXjx
 
+business-domain: https://writing.qingboat.com
+
 trade-service:
   host: http://localhost:8084/ts
 
