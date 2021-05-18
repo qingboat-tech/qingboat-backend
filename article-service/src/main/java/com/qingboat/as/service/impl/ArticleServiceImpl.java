@@ -635,6 +635,17 @@ public class ArticleServiceImpl implements ArticleService {
                             .append("文章《").append(title).append("》\n").toString());
             feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
 
+            // 发送站内消息
+            //发送消息
+            MessageEntity msg = new MessageEntity();
+            msg.setMsgType(MessageEntity.SYSTEM_MSG);
+            msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核通过" );
+            msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
+            msg.setSenderId(0l);
+            msg.setSenderName("管理员");
+            messageService.asyncSendMessage(msg);
+
+
 
             //发送微信消息，告知审核结果
             String creatorIdStr = String.valueOf(articleEntity.getAuthorId());
