@@ -65,11 +65,12 @@ public class UserController {
             //创投，增长，职场，产品
             UserProfileEntity userProfile =  userService.getUserProfile(userId);
             if (userProfile.getExpertiseArea() == null || userProfile.getExpertiseArea().length == 0){
-                Map[] map = new HashMap[4] ;
-                map[0].put("key","创投");
-                map[1].put("key","增长");
-                map[2].put("key","职场");
-                map[3].put("key","产品");
+                String[] value= {"创投","增长","职场","产品"};
+                Map<String,String>[] maps = new HashMap[value.length];
+                for(int i=0 ;i<value.length;i++){
+                    maps[i] = new HashMap<>();
+                    maps[i].put("key",value[i]);
+                }
             }
             return userProfile;
 
