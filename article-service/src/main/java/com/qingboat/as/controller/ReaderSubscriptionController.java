@@ -57,6 +57,8 @@ public class ReaderSubscriptionController extends BaseController {
 
         QueryWrapper<TierEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntity(tierEntity);
+        queryWrapper.orderByAsc("month_price");
+
         Long userId = (Long) getAttribute("UID");
 
         List<TierEntity> tierEntityList = tierService.list(queryWrapper);
