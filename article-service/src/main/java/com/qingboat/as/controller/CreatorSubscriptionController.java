@@ -215,6 +215,18 @@ public class CreatorSubscriptionController extends BaseController {
         return benefitService.remove(queryWrapper);
     }
 
+    /**
+     * 根据benefitKey，查询被Tier应用到的TierList
+     *
+     * @param creatorId
+     * @param benefitKey
+     * @return
+     */
+    @GetMapping(value = "/getTierListByBenefitKey")
+    @ResponseBody
+    public List<TierEntity> getTierListByBenefitKey(@RequestParam("creatorId") Long creatorId,@RequestParam("benefitKey")String benefitKey){
+        return tierService.getTierListByBenefitKey(creatorId,benefitKey);
+    }
 
     /**
      * 获取creator会员等级列表
