@@ -370,8 +370,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
         data.put("first", JSON.parse("{'value': '有新点赞啦！'}"));
         // 回复者
-        // TODO: 把小鲸改成真是用户
-        data.put("keyword1", JSON.parse("{'value': '小鲸'}"));
+        data.put("keyword1", JSON.parse("{'value': '"+subscribeUser.getNickname()+"'}"));
         // 回复时间
         data.put("keyword2", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
         // remark
