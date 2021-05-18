@@ -296,7 +296,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
         // 找到发送者的微信openId
         QueryWrapper<UserWechatEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(UserWechatEntity::getUserId,Long.parseLong(articleEntity.getAuthorId()));
+        queryWrapper.lambda().eq(UserWechatEntity::getUserId,commentEntity.getUserId());
         UserWechatEntity userWechatEntity = userWechatService.getOne(queryWrapper);
         if (userWechatEntity == null){
             throw new BaseException(500,"订阅者没有微信openId,没法发消息");
