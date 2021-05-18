@@ -10,6 +10,7 @@ import com.qingboat.us.entity.UserProfileEntity;
 import com.qingboat.us.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestAttributes;
@@ -34,6 +35,9 @@ public class UserController {
 
     @Autowired
     private MessageService messageService;
+
+    @Value("${business-domain-pathway-backend}")
+    private String businessDomainPathwayBackend;
 
 
     @PostMapping("/saveUserProfile")
@@ -97,6 +101,7 @@ public class UserController {
         // 发飞书通知
         FeishuService.TextBody textBody = new FeishuService.TextBody(
                 new StringBuilder().append("===创者者申请===").append("\n")
+                        .append("操作link：").append(this.businessDomainPathwayBackend+"/api/admin/apps/userprofile/").append("\n")
                         .append("创作者Id：").append(uid).append("\n")
                         .append("创者者昵称：").append(userProfileEntity.getNickname()).append("\n").toString());
         feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);

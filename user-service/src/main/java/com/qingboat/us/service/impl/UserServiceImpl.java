@@ -10,9 +10,11 @@ import com.qingboat.us.entity.UserProfileEntity;
 import com.qingboat.us.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Date;
 
 @Service
@@ -25,23 +27,37 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private CreatorApplyFormMongoDao creatorApplyFormMongoDao;
 
+    @Autowired
+    private TaskScheduler taskScheduler;
 
     @Override
     public UserProfileEntity applyCreator(Long uid) {
         QueryWrapper<UserProfileEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id",uid);
         UserProfileEntity userProfileEntity = userProfileDao.selectOne(queryWrapper);
-        if (userProfileEntity !=null ){
-            if(1== userProfileEntity.getRole() && 1 == userProfileEntity.getStatus()){
 
-            }else {
-                userProfileEntity.setRole(1);
-                userProfileEntity.setStatus(0);
-                userProfileDao.updateById(userProfileEntity);
+        // 把审核任务延迟执行
+        Runnable task = () -> {
+            String threadName = Thread.currentThread().getName();
+            System.out.println("Hello " + threadName);
+
+            // 通过后台操作来审核通过
+            if (userProfileEntity !=null ){
+                if(1== userProfileEntity.getRole() && 1 == userProfileEntity.getStatus()){
+
+                }else {
+                    userProfileEntity.setRole(1);
+                    userProfileEntity.setStatus(0);
+                    userProfileDao.updateById(userProfileEntity);
+                }
             }
-            return userProfileEntity;
-        }
-        throw new BaseException(500,"userProfile is empty");
+        };
+
+        taskScheduler.schedule(task,
+                new Date(OffsetDateTime.now().plusSeconds(10).toInstant().toEpochMilli())
+        );
+
+        return userProfileEntity;
 
     }
 
