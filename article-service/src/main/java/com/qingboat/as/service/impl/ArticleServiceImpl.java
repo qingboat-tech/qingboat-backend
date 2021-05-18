@@ -532,7 +532,7 @@ public class ArticleServiceImpl implements ArticleService {
                 //发送消息
                 MessageEntity msg = new MessageEntity();
                 msg.setMsgType(MessageEntity.SYSTEM_MSG);
-                msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核未通过" );
+                msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核未通过，请返回创作后台查看" );
                 msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
                 msg.setSenderId(0l);
                 msg.setSenderName("管理员");
@@ -569,7 +569,7 @@ public class ArticleServiceImpl implements ArticleService {
                 //发送消息
                 MessageEntity msg = new MessageEntity();
                 msg.setMsgType(MessageEntity.SYSTEM_MSG);
-                msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核未通过" );
+                msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核未通过，请返回创作后台查看" );
                 msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
                 msg.setSenderId(0l);
                 msg.setSenderName("管理员");
@@ -607,7 +607,7 @@ public class ArticleServiceImpl implements ArticleService {
                 //发送消息
                 MessageEntity msg = new MessageEntity();
                 msg.setMsgType(MessageEntity.SYSTEM_MSG);
-                msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核未通过" );
+                msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核未通过，请返回创作后台查看" );
                 msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
                 msg.setSenderId(0l);
                 msg.setSenderName("管理员");
