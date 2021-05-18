@@ -242,7 +242,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         }
 
         body.put("touser",userWechatEntity.getOpenId());                    // 发给谁
-        body.put("template_id",this.answerResultTemplate);                   // 那个模板
+        body.put("template_id",this.dataUpdateTemplate);                   // 那个模板
         body.put("url",this.businessDomain+"/");             // 打开地址
         body.put("data",data);
 
@@ -251,10 +251,8 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         data.put("keyword1", JSON.parse("{'value': '"+articleCommentEntity.getNickName()+"'}"));
         // 回复时间
         data.put("keyword2", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
-        // 回复内容
-        data.put("keyword3", JSON.parse("{'value': '"+articleCommentEntity.getContent()+"'}"));
         // remark
-        // data.put("remark", JSON.parse("{'value': '感谢您订阅,快来开启学习成长之旅吧！'}"));
+        data.put("remark", JSON.parse("{'value': '"+articleCommentEntity.getContent()+"'}"));
 
         log.info( " request: " +body);
         Object obj = wxMessageService.sendMessage(token,body);

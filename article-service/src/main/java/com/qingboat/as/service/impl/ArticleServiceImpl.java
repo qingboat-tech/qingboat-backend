@@ -532,7 +532,7 @@ public class ArticleServiceImpl implements ArticleService {
                 //发送消息
                 MessageEntity msg = new MessageEntity();
                 msg.setMsgType(MessageEntity.SYSTEM_MSG);
-                msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核未通过" );
+                msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核未通过，请返回创作后台查看" );
                 msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
                 msg.setSenderId(0l);
                 msg.setSenderName("管理员");
@@ -544,6 +544,37 @@ public class ArticleServiceImpl implements ArticleService {
 
                 messageService.asyncSendMessage(msg);
 
+                //发送微信消息，告知审核结果
+                String creatorIdStr = articleEntity.getAuthorId();
+                String token =  wxTokenService.getWxUserToken( AuthFilter.getSecret(creatorIdStr), creatorIdStr);
+
+                JSONObject body2 = new JSONObject();
+                JSONObject data2 = new JSONObject();
+                //
+                data2.put("first", JSON.parse("{'value':  '您的文章已经审核未通过，请返回创作后台查看'}"));
+                // 审核人
+                data2.put("keyword1", JSON.parse("{'value':  '氢舟管理员'}"));
+                // 审核内容
+                data2.put("keyword2", JSON.parse("{'value': '"+title +"'}"));
+                // 审核日期
+                data2.put("keyword3", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
+                // 备注
+                data2.put("remark", JSON.parse("{'value': ''}"));
+                // 找到发送者的微信openId
+                QueryWrapper<UserWechatEntity> queryWrapper2 = new QueryWrapper<>();
+                queryWrapper2.lambda().eq(UserWechatEntity::getUserId,articleEntity.getAuthorId());
+                UserWechatEntity userWechatEntity2 = userWechatService.getOne(queryWrapper2);
+                if (userWechatEntity2 == null){
+                    throw new BaseException(500,"creator没有微信openId,没法发消息");
+                }
+                body2.put("touser",userWechatEntity2.getOpenId());                   // 发给谁
+                body2.put("template_id",this.reviewTemplate2);                      // 那个模板
+                body2.put("url", this.businessDomain);             // 打开地址
+                body2.put("data",data2);
+
+                log.info( " request: " +body2);
+                Object obj2 = wxMessageService.sendMessage(token,body2);
+                log.info( " response: " +obj2);
 
                 return;
             }
@@ -569,7 +600,7 @@ public class ArticleServiceImpl implements ArticleService {
                 //发送消息
                 MessageEntity msg = new MessageEntity();
                 msg.setMsgType(MessageEntity.SYSTEM_MSG);
-                msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核未通过" );
+                msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核未通过，请返回创作后台查看" );
                 msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
                 msg.setSenderId(0l);
                 msg.setSenderName("管理员");
@@ -580,6 +611,38 @@ public class ArticleServiceImpl implements ArticleService {
                 msg.setExtData("articleTitle",articleEntity.getTitle());
 
                 messageService.asyncSendMessage(msg);
+
+                //发送微信消息，告知审核结果
+                String creatorIdStr = articleEntity.getAuthorId();
+                String token =  wxTokenService.getWxUserToken( AuthFilter.getSecret(creatorIdStr), creatorIdStr);
+
+                JSONObject body2 = new JSONObject();
+                JSONObject data2 = new JSONObject();
+                //
+                data2.put("first", JSON.parse("{'value':  '您的文章已经审核未通过，请返回创作后台查看'}"));
+                // 审核人
+                data2.put("keyword1", JSON.parse("{'value':  '氢舟管理员'}"));
+                // 审核内容
+                data2.put("keyword2", JSON.parse("{'value': '"+title +"'}"));
+                // 审核日期
+                data2.put("keyword3", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
+                // 备注
+                data2.put("remark", JSON.parse("{'value': ''}"));
+                // 找到发送者的微信openId
+                QueryWrapper<UserWechatEntity> queryWrapper2 = new QueryWrapper<>();
+                queryWrapper2.lambda().eq(UserWechatEntity::getUserId,articleEntity.getAuthorId());
+                UserWechatEntity userWechatEntity2 = userWechatService.getOne(queryWrapper2);
+                if (userWechatEntity2 == null){
+                    throw new BaseException(500,"creator没有微信openId,没法发消息");
+                }
+                body2.put("touser",userWechatEntity2.getOpenId());                   // 发给谁
+                body2.put("template_id",this.reviewTemplate2);                      // 那个模板
+                body2.put("url", this.businessDomain);             // 打开地址
+                body2.put("data",data2);
+
+                log.info( " request: " +body2);
+                Object obj2 = wxMessageService.sendMessage(token,body2);
+                log.info( " response: " +obj2);
 
 
                 return;
@@ -607,7 +670,7 @@ public class ArticleServiceImpl implements ArticleService {
                 //发送消息
                 MessageEntity msg = new MessageEntity();
                 msg.setMsgType(MessageEntity.SYSTEM_MSG);
-                msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核未通过" );
+                msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核未通过，请返回创作后台查看" );
                 msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
                 msg.setSenderId(0l);
                 msg.setSenderName("管理员");
@@ -618,6 +681,38 @@ public class ArticleServiceImpl implements ArticleService {
                 msg.setExtData("articleTitle",articleEntity.getTitle());
 
                 messageService.asyncSendMessage(msg);
+
+                //发送微信消息，告知审核结果
+                String creatorIdStr = articleEntity.getAuthorId();
+                String token =  wxTokenService.getWxUserToken( AuthFilter.getSecret(creatorIdStr), creatorIdStr);
+
+                JSONObject body2 = new JSONObject();
+                JSONObject data2 = new JSONObject();
+                //
+                data2.put("first", JSON.parse("{'value':  '您的文章已经审核未通过，请返回创作后台查看'}"));
+                // 审核人
+                data2.put("keyword1", JSON.parse("{'value':  '氢舟管理员'}"));
+                // 审核内容
+                data2.put("keyword2", JSON.parse("{'value': '"+title +"'}"));
+                // 审核日期
+                data2.put("keyword3", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
+                // 备注
+                data2.put("remark", JSON.parse("{'value': ''}"));
+                // 找到发送者的微信openId
+                QueryWrapper<UserWechatEntity> queryWrapper2 = new QueryWrapper<>();
+                queryWrapper2.lambda().eq(UserWechatEntity::getUserId,articleEntity.getAuthorId());
+                UserWechatEntity userWechatEntity2 = userWechatService.getOne(queryWrapper2);
+                if (userWechatEntity2 == null){
+                    throw new BaseException(500,"creator没有微信openId,没法发消息");
+                }
+                body2.put("touser",userWechatEntity2.getOpenId());                   // 发给谁
+                body2.put("template_id",this.reviewTemplate2);                      // 那个模板
+                body2.put("url", this.businessDomain);             // 打开地址
+                body2.put("data",data2);
+
+                log.info( " request: " +body2);
+                Object obj2 = wxMessageService.sendMessage(token,body2);
+                log.info( " response: " +obj2);
 
                 return;
             }
@@ -634,6 +729,19 @@ public class ArticleServiceImpl implements ArticleService {
                             .append("创作者：").append(articleEntity.getAuthorNickName()).append("\n")
                             .append("文章《").append(title).append("》\n").toString());
             feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
+
+            // 发送站内消息
+            //发送消息
+            MessageEntity msg = new MessageEntity();
+            msg.setMsgType(MessageEntity.SYSTEM_MSG);
+            msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核通过" );
+            msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
+            msg.setSenderId(0l);
+            msg.setSenderName("管理员");
+            msg.setExtData("dataType","text");
+            msg.setExtData("content","《"+articleEntity.getTitle()+"》审核通过" );
+            messageService.asyncSendMessage(msg);
+
 
 
             //发送微信消息，告知审核结果

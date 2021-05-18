@@ -1,16 +1,23 @@
 package com.qingboat.us.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
-import com.qingboat.base.task.DelayQueueManager;
+import com.qingboat.base.utils.DateUtil;
+import com.qingboat.us.api.MessageService;
+import com.qingboat.us.api.WxMessageService;
+import com.qingboat.us.api.WxTokenService;
+import com.qingboat.us.api.vo.MessageVo;
 import com.qingboat.us.dao.CreatorApplyFormMongoDao;
 import com.qingboat.us.dao.UserProfileDao;
 import com.qingboat.us.entity.CreatorApplyFormEntity;
 import com.qingboat.us.entity.UserProfileEntity;
+import com.qingboat.us.entity.UserWechatEntity;
+import com.qingboat.us.filter.AuthFilter;
 import com.qingboat.us.service.UserService;
-import com.qingboat.us.task.ApplyCreatorTask;
+import com.qingboat.us.service.UserWechatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +25,6 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.Date;
 
 @Service
@@ -27,6 +33,21 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserProfileDao userProfileDao;
+
+    @Autowired
+    private UserWechatService userWechatService;
+
+    @Autowired
+    private MessageService messageService;
+
+    @Value("${business-domain}")
+    private String businessDomain;
+
+    @Autowired
+    private WxMessageService wxMessageService;
+
+    @Autowired
+    private WxTokenService wxTokenService;
 
     @Autowired
     private CreatorApplyFormMongoDao creatorApplyFormMongoDao;
@@ -39,6 +60,9 @@ public class UserServiceImpl implements UserService {
 
     @Value("${business-domain-pathway-backend}")
     private String businessDomainPathwayBackend;
+
+    @Value("${wx-msg-template.review2}")
+    private String reviewTemplate2;
 
     @Override
     public UserProfileEntity applyCreator(Long userId) {
@@ -57,10 +81,54 @@ public class UserServiceImpl implements UserService {
                 // 发飞书通知
                 FeishuService.TextBody textBody = new FeishuService.TextBody(
                         new StringBuilder().append("===创者者申请===").append("\n")
-                                .append("操作link：").append(this.businessDomainPathwayBackend+"/api/admin/apps/userprofile/").append("\n")
+                                .append("操作link：").append(this.businessDomainPathwayBackend + "/api/admin/apps/userprofile/").append("\n")
                                 .append("创作者Id：").append(userId).append("\n")
                                 .append("创者者昵称：").append(userProfileEntity.getNickname()).append("\n").toString());
                 feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
+
+                // 发站内信
+                MessageVo msg = new MessageVo();
+                msg.setMsgType(MessageVo.SYSTEM_MSG);
+                msg.setMsgTitle("您的创作者身份已经审核通过");
+                msg.setTo(userId);
+                msg.setSenderId(0l);
+                msg.setSenderName("管理员");
+                messageService.sendMessage(msg);
+
+
+                //发送微信消息，告知审核结果
+                String creatorIdStr = String.valueOf(userProfileEntity.getUserId());
+
+                JSONObject body2 = new JSONObject();
+                JSONObject data2 = new JSONObject();
+                //
+                data2.put("first", JSON.parse("{'value':  '您的创作者身份已经审核通过'}"));
+                // 审核人
+                data2.put("keyword1", JSON.parse("{'value':  '氢舟管理员'}"));
+                // 审核内容
+                data2.put("keyword2", JSON.parse("{'value': '审核通过'}"));
+                // 审核日期
+                data2.put("keyword3", JSON.parse("{'value': '" + DateUtil.parseDateToStr(new Date(), DateUtil.DATE_FORMAT_YYYY_MM_DD) + "'}"));
+                // 备注
+                data2.put("remark", JSON.parse("{'value': '加油来创作第一篇爆款文章吧！'}"));
+                // 找到发送者的微信openId
+                QueryWrapper<UserWechatEntity> queryWrapper2 = new QueryWrapper<>();
+                queryWrapper2.lambda().eq(UserWechatEntity::getUserId, userProfileEntity.getUserId());
+                UserWechatEntity userWechatEntity2 = userWechatService.getOne(queryWrapper2);
+                if (userWechatEntity2 == null) {
+                    throw new BaseException(500, "creator没有微信openId,没法发消息");
+                }
+                body2.put("touser", userWechatEntity2.getOpenId());                   // 发给谁
+                body2.put("template_id", this.reviewTemplate2);                      // 那个模板
+                body2.put("url", this.businessDomain);             // 打开地址
+                body2.put("data", data2);
+
+                String sec = AuthFilter.getSecret(creatorIdStr);
+                String token = wxTokenService.getWxUserToken(sec, creatorIdStr);
+
+                log.info(" request: " + body2);
+                Object obj2 = wxMessageService.sendMessage(token, body2);
+                log.info(" response: " + obj2);
 
             }
         }

@@ -97,17 +97,12 @@ logging:
     org.springframework.web: INFO
     com.github.binarywang.demo.wx.mp: DEBUG
     me.chanjar.weixin: DEBUG
+
+
+python:
+  host: https://mobile.qingboat.com
 wx:
-  mp:
-    useRedis: false
-    redisConfig:
-      host: 127.0.0.1
-      port: 6379
-    configs:
-      - appId: wx92ec79ce035595bf
-        secret: ef5b911da3cbbd582ac31dc269119bf3
-        token: c62c81034a068064f97efed3589f7c2f
-        aesKey: THGekkAcmkeAAcnC9ku7BnjiyTkCq0HeTvDuRpPjXjx
+  host: https://api.weixin.qq.com
 
 business-domain: https://writing.qingboat.com
 business-domain-pathway-backend: https://mobile.qingboat.com
@@ -118,3 +113,23 @@ trade-service:
 
 article-service:
   host: http://localhost:8082/as
+
+wx-msg-template:
+
+  # 审核结果通知（##1)
+  review1: OpWw2P4_k_JosmODwvYM37h_nNL02fiHyiRS9wiBJ4o
+
+  # 审核结果通知（##2)
+  review2: tTMtRnOOz0xYgmbSdWkKNU5vvJF25EJmylKUDm6LrOA
+
+  # 新订单通知（##3)
+  new-order: y1JQ3rp9cvl7aD5QBFNbzHWgT25ApJXzeD6nfJ7BCqQ
+
+  # 购买成功通知（##4）
+  purchase-success: HahauJT3E9EM7gagrPGmv527Ac-nkrkMZqjIsYp6JOo
+
+  # 提问结果通知 (##5)
+  answer-result: q7-8TYGkqeB76ARQ809MAdY1MpzZtKE2WTBv102tJo4
+
+  #  数据更新模板 (##6)
+  data-update: O9-upsXU_RP2sPr74wuNWlN3NG3-P8_4ofc13adFU78
