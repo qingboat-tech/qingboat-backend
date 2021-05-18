@@ -1,5 +1,6 @@
 package com.qingboat.as.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -179,6 +180,32 @@ public class ReaderSubscriptionController extends BaseController {
         messageService.asyncSendSubscriptionMessage(userSubscriptionEntity);
         return userSubscriptionEntity;
     }
+
+    /**
+     * 获取当前订阅人数数据 (全部、免费、付费)
+     */
+    @GetMapping(value = "/currentCount")
+    @ResponseBody
+    public Integer getCurrentSubscriptionCount(
+            @RequestParam(value = "paid",required = false) Boolean paid,
+            @RequestParam(value = "creatorId") String creatorId) {
+        // TODO: redis缓存
+
+        QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+        LambdaQueryWrapper<UserSubscriptionEntity> lambdaQueryWrapper =  queryWrapper.lambda();
+        lambdaQueryWrapper.eq(UserSubscriptionEntity::getCreatorId, creatorId);
+        if (paid!=null){
+            if (paid){
+                lambdaQueryWrapper.ne(UserSubscriptionEntity::getOrderId,0);
+            }else {
+                lambdaQueryWrapper.eq(UserSubscriptionEntity::getOrderId,0);
+            }
+        }
+        return userSubscriptionService.count(queryWrapper);
+
+    }
+
+
 
     /**
      * 读者付费订阅的回调，支付完成的回调，共内部调用
