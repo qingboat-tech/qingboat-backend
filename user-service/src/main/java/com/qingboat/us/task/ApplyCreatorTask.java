@@ -20,11 +20,4 @@ public class ApplyCreatorTask extends DelayTask {
     public void processTask() {
         userService.applyCreator(userId);
     }
-
-    public static void main(String[] arg){
-
-        ApplyCreatorTask task = new ApplyCreatorTask(null,12L,1000*60);
-
-        System.err.println(task);
-    }
 }

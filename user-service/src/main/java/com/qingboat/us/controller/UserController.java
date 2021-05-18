@@ -95,7 +95,7 @@ public class UserController {
     public UserProfileEntity applyCreator(){
         Long uid = getUId();
         log.info(" applyCreator, RequestParam: uid=" +uid);
-        ApplyCreatorTask task = new ApplyCreatorTask(userService,uid,1000*60);
+        ApplyCreatorTask task = new ApplyCreatorTask(userService,uid,1000*60*15);
         delayQueueManager.put(task);
         return null;
     }
