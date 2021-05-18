@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
 import com.qingboat.base.utils.DateUtil;
+import com.qingboat.us.api.MessageService;
 import com.qingboat.us.api.WxMessageService;
 import com.qingboat.us.api.WxTokenService;
+import com.qingboat.us.api.vo.MessageVo;
 import com.qingboat.us.dao.CreatorApplyFormMongoDao;
 import com.qingboat.us.dao.UserProfileDao;
 import com.qingboat.us.entity.CreatorApplyFormEntity;
@@ -33,16 +35,19 @@ public class UserServiceImpl implements UserService {
     private UserProfileDao userProfileDao;
 
     @Autowired
-    UserWechatService userWechatService;
+    private UserWechatService userWechatService;
+
+    @Autowired
+    private MessageService messageService;
 
     @Value("${business-domain}")
     private String businessDomain;
 
     @Autowired
-    WxMessageService wxMessageService;
+    private WxMessageService wxMessageService;
 
     @Autowired
-    WxTokenService wxTokenService;
+    private WxTokenService wxTokenService;
 
     @Autowired
     private CreatorApplyFormMongoDao creatorApplyFormMongoDao;
@@ -80,6 +85,16 @@ public class UserServiceImpl implements UserService {
                                 .append("创作者Id：").append(userId).append("\n")
                                 .append("创者者昵称：").append(userProfileEntity.getNickname()).append("\n").toString());
                 feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
+
+                // 发站内信
+                MessageVo msg = new MessageVo();
+                msg.setMsgType(MessageVo.SYSTEM_MSG);
+                msg.setMsgTitle("您的创作者身份已经审核通过");
+                msg.setTo(userId);
+                msg.setSenderId(0l);
+                msg.setSenderName("管理员");
+                messageService.sendMessage(msg);
+
 
                 //发送微信消息，告知审核结果
                 String creatorIdStr = String.valueOf(userProfileEntity.getUserId());
