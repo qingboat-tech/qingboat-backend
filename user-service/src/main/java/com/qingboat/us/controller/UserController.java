@@ -1,5 +1,6 @@
 package com.qingboat.us.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
 import com.qingboat.us.api.MessageService;
@@ -18,6 +19,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -60,7 +62,17 @@ public class UserController {
     public UserProfileEntity getUserProfile(@RequestParam(value = "userId",required = false) Long userId,
                                             @RequestParam(value = "profileKey",required = false) String profileKey){
         if (userId!=null && userId>0){
-            return userService.getUserProfile(userId);
+            //创投，增长，职场，产品
+            UserProfileEntity userProfile =  userService.getUserProfile(userId);
+            if (userProfile.getExpertiseArea() == null || userProfile.getExpertiseArea().length == 0){
+                Map[] map = new HashMap[4] ;
+                map[0].put("key","创投");
+                map[1].put("key","增长");
+                map[2].put("key","职场");
+                map[3].put("key","产品");
+            }
+            return userProfile;
+
         }
         if (!StringUtils.isEmpty(profileKey)){
             return userService.getUserProfileByProfileKey(profileKey);
