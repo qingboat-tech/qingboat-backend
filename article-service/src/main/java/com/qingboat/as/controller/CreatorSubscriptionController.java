@@ -162,6 +162,7 @@ public class CreatorSubscriptionController extends BaseController {
 
         QueryWrapper<TierEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("creator_id",creatorId);
+        wrapper.eq("`status`",1);
 
         List<TierEntity> tierEntityList = tierService.list(wrapper);
 
