@@ -69,6 +69,11 @@ public class DelayQueueManager implements CommandLineRunner {
      */
     private void processTask(DelayTask task) {
         log.info("执行延时任务：{}", task);
-        task.processTask();
+        try {
+            task.processTask();
+        }catch (Throwable e){
+            e.printStackTrace();
+        }
+
     }
 }
