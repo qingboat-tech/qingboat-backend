@@ -292,7 +292,7 @@ public class ArticleServiceImpl implements ArticleService {
             TierEntity paidTier = null;
             List<TierEntity> tierEntityList = tierService.list(tierEntityQueryWrapper);
             for(TierEntity tier: tierEntityList ){
-                if ("FREE".equals(tier.getSubscribeDuration())){
+                if ("free".equalsIgnoreCase(tier.getSubscribeDuration())){
                     if (freeTier==null ){
                         freeTier = tier;
                     }
@@ -462,8 +462,8 @@ public class ArticleServiceImpl implements ArticleService {
         if (tierList == null){
             throw new BaseException(500,"操作失败：创作者还没有设置套餐");
         }
-
-        benefitKeySet.add(publishType);
+        String benefitKey = "FREE".equalsIgnoreCase(publishType)?"FREE":"READ";
+        benefitKeySet.add(benefitKey);
 
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(articleId));
@@ -751,7 +751,7 @@ public class ArticleServiceImpl implements ArticleService {
             Criteria criteria = null;
             if (paid!=null){
                 if (paid){//返回付费文章
-                    if( "free".equals(entity.getSubscribeDuration()) ){
+                    if( "free".equalsIgnoreCase(entity.getSubscribeDuration()) ){
                         continue;
                     }
                     criteria = new Criteria().andOperator(
