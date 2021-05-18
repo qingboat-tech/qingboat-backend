@@ -3,11 +3,13 @@ package com.qingboat.us.controller;
 import com.alibaba.fastjson.JSON;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
+import com.qingboat.base.task.DelayQueueManager;
 import com.qingboat.us.api.MessageService;
 import com.qingboat.us.api.vo.MessageVo;
 import com.qingboat.us.entity.CreatorApplyFormEntity;
 import com.qingboat.us.entity.UserProfileEntity;
 import com.qingboat.us.service.UserService;
+import com.qingboat.us.task.ApplyCreatorTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,8 +38,8 @@ public class UserController {
     @Autowired
     private MessageService messageService;
 
-    @Value("${business-domain-pathway-backend}")
-    private String businessDomainPathwayBackend;
+    @Autowired
+    private DelayQueueManager delayQueueManager;
 
 
     @PostMapping("/saveUserProfile")
@@ -93,19 +95,8 @@ public class UserController {
     public UserProfileEntity applyCreator(){
         Long uid = getUId();
         log.info(" applyCreator, RequestParam: uid=" +uid);
-
-        UserProfileEntity userProfileEntity = userService.applyCreator(uid);
-        if(1== userProfileEntity.getRole() && 1 == userProfileEntity.getStatus()){
-            throw new BaseException(500,"操作失败：该用户已经是创作者");
-        }
-        // 发飞书通知
-        FeishuService.TextBody textBody = new FeishuService.TextBody(
-                new StringBuilder().append("===创者者申请===").append("\n")
-                        .append("操作link：").append(this.businessDomainPathwayBackend+"/api/admin/apps/userprofile/").append("\n")
-                        .append("创作者Id：").append(uid).append("\n")
-                        .append("创者者昵称：").append(userProfileEntity.getNickname()).append("\n").toString());
-        feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
-
+        ApplyCreatorTask task = new ApplyCreatorTask(userService,uid,1000*60);
+        delayQueueManager.put(task);
         return null;
     }
 

@@ -2,14 +2,18 @@ package com.qingboat.us.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
+import com.qingboat.base.task.DelayQueueManager;
 import com.qingboat.us.dao.CreatorApplyFormMongoDao;
 import com.qingboat.us.dao.UserProfileDao;
 import com.qingboat.us.entity.CreatorApplyFormEntity;
 import com.qingboat.us.entity.UserProfileEntity;
 import com.qingboat.us.service.UserService;
+import com.qingboat.us.task.ApplyCreatorTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
@@ -30,34 +34,37 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private TaskScheduler taskScheduler;
 
+    @Autowired
+    private FeishuService feishuService;
+
+    @Value("${business-domain-pathway-backend}")
+    private String businessDomainPathwayBackend;
+
     @Override
-    public UserProfileEntity applyCreator(Long uid) {
+    public UserProfileEntity applyCreator(Long userId) {
+
         QueryWrapper<UserProfileEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id",uid);
+        queryWrapper.eq("user_id",userId);
         UserProfileEntity userProfileEntity = userProfileDao.selectOne(queryWrapper);
+        if (userProfileEntity !=null){
+            if(1== userProfileEntity.getRole() && 1 == userProfileEntity.getStatus()){
 
-        // 把审核任务延迟执行
-        Runnable task = () -> {
-            String threadName = Thread.currentThread().getName();
-            System.out.println("Hello " + threadName);
+            }else {
+                userProfileEntity.setRole(1);
+                userProfileEntity.setStatus(0);
+                userProfileDao.updateById(userProfileEntity);
 
-            // 通过后台操作来审核通过
-            if (userProfileEntity !=null ){
-                if(1== userProfileEntity.getRole() && 1 == userProfileEntity.getStatus()){
+                // 发飞书通知
+                FeishuService.TextBody textBody = new FeishuService.TextBody(
+                        new StringBuilder().append("===创者者申请===").append("\n")
+                                .append("操作link：").append(this.businessDomainPathwayBackend+"/api/admin/apps/userprofile/").append("\n")
+                                .append("创作者Id：").append(userId).append("\n")
+                                .append("创者者昵称：").append(userProfileEntity.getNickname()).append("\n").toString());
+                feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
 
-                }else {
-                    userProfileEntity.setRole(1);
-                    userProfileEntity.setStatus(0);
-                    userProfileDao.updateById(userProfileEntity);
-                }
             }
-        };
-
-        taskScheduler.schedule(task,
-                new Date(OffsetDateTime.now().plusSeconds(10).toInstant().toEpochMilli())
-        );
-
-        return userProfileEntity;
+        }
+        return null;
 
     }
 
