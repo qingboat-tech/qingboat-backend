@@ -10,7 +10,7 @@ import lombok.Getter;
 import java.util.Date;
 import java.util.Map;
 
-@Getter
+@Data
 public class UserServiceResponse {
 
     private Long id;
