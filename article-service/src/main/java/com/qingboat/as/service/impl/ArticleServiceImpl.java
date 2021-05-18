@@ -738,6 +738,8 @@ public class ArticleServiceImpl implements ArticleService {
             msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
             msg.setSenderId(0l);
             msg.setSenderName("管理员");
+            msg.setExtData("dataType","text");
+            msg.setExtData("content","《"+articleEntity.getTitle()+"》审核通过" );
             messageService.asyncSendMessage(msg);
 
 
