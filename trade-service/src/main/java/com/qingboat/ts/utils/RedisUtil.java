@@ -17,6 +17,9 @@ public class RedisUtil {
     //加锁失效时间，毫秒
     public static final int LOCK_EXPIRE = 300; // ms
 
+    private byte[]  LOCK= new byte[0];
+
+
     @Autowired
     private RedisTemplate redisTemplate;
     //- - - - - - - - - - - - - - - - - - - - -  公共方法 - - - - - - - - - - - - - - - - - - - -
@@ -52,14 +55,42 @@ public class RedisUtil {
         });
     }
 
-    /**
-     * 删除锁
-     *
-     * @param key
-     */
+    public boolean synLock(String key){
+        boolean rst =  lock(key);
+        if (rst){
+            return true;
+        }
+        synchronized (LOCK){
+            int loopCount =0;
+            while (loopCount++<5){
+                rst =  lock(key);
+                if (rst){
+                    return true;
+                }else {
+                    try {
+                        LOCK.wait(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return false;
+
+    }
+
+
+        /**
+         * 删除锁
+         *
+         * @param key
+         */
     public void unLock(String key) {
         String lock = LOCK_PREFIX + key;
         redisTemplate.delete(lock);
+        synchronized (LOCK){
+            LOCK.notifyAll();
+        }
     }
 
     /**
