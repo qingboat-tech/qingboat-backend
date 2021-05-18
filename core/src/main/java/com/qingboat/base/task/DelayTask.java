@@ -12,7 +12,7 @@ public  class DelayTask implements Delayed {
     public DelayTask(String taskId,long expire){
         super();
         this.taskId = taskId;
-        this.expire = expire;
+        this.expire = expire + System.currentTimeMillis();
     }
 
     @Override
