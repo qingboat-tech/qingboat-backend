@@ -65,6 +65,8 @@ wx:
         aesKey: THGekkAcmkeAAcnC9ku7BnjiyTkCq0HeTvDuRpPjXjx
 
 business-domain: https://design.qingboat.com
+business-domain-pathway-backend: https://m.qingboat.com
+
 
 trade-service:
   host: http://localhost:8084/ts

@@ -110,6 +110,8 @@ wx:
         aesKey: THGekkAcmkeAAcnC9ku7BnjiyTkCq0HeTvDuRpPjXjx
 
 business-domain: https://writing.qingboat.com
+business-domain-pathway-backend: https://mobile.qingboat.com
+
 
 trade-service:
   host: http://localhost:8084/ts
