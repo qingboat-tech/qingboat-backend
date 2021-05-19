@@ -41,7 +41,7 @@ jobs:
     - name: Copy folder content recursively to remote
       uses: garygrossgarten/github-action-scp@release
       with:
-        local: qingboat
+        local: ~/.m2/repository/com/qingboat
         remote: ~/qingboat-test-jar
         host: ${{ secrets.HOST }}
         username: ${{ secrets.SSH_USER }}
