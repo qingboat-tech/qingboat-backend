@@ -148,6 +148,14 @@
       </plugins>
     </pluginManagement>
   </build>
+  
+  <distributionManagement>
+    <repository>
+      <uniqueVersion>false</uniqueVersion>
+      <name>qingboat</name>
+      <layout>default</layout>
+    </repository>
+  </distributionManagement>
 
 
 
