@@ -122,5 +122,14 @@ public interface ArticleService {
      */
     boolean topArticle(String articleId ,Long userId);
 
+    /**
+     * 获取阅读者角色：author、free-subscriber、paid-subscriber、visitor
+     */
+    String getReaderRole(String articleId,Long userId);
+    /**
+     * 获取阅读者角色：author、free-subscriber、paid-subscriber、visitor
+     */
+    String getReaderRole(ArticleEntity article,Long userId);
+
 
 }

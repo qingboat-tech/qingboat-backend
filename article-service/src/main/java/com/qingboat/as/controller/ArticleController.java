@@ -357,6 +357,7 @@ public class ArticleController extends BaseController {
             articleEntity.setHasStar( articleService.hasStar(articleId,getUId()));
             if (readerId.equals(authorId)){  //创作者自己看自己的文章
                 articleEntity.setCanComment(true);
+                articleEntity.setReaderRole("author");
                 return articleEntity;
             }
             // 处理推荐逻辑，每个订阅者最多分享给5个好友阅读
@@ -371,6 +372,7 @@ public class ArticleController extends BaseController {
 
                         if (redisUtil.isMember("AIK_"+inviteKey,readerId)){
                             articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
+                            articleEntity.setReaderRole(articleService.getReaderRole(articleEntity,getUId()));
                             return articleEntity;
                         }
 
@@ -380,6 +382,7 @@ public class ArticleController extends BaseController {
                         }else {
                             redisUtil.sSet("AIK_"+inviteKey,readerId);
                             articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
+                            articleEntity.setReaderRole(articleService.getReaderRole(articleEntity,getUId()));
                             return articleEntity;
                         }
                     }else {
@@ -403,19 +406,25 @@ public class ArticleController extends BaseController {
             List<UserSubscriptionEntity> userSubscriptionEntityList = userSubscriptionService.list(queryWrapper);
 
             if (userSubscriptionEntityList == null || userSubscriptionEntityList.isEmpty()){
+                articleEntity.setReaderRole("visitor");
                 //没有订阅，查看付费文章（下面处理试读）
             }else {
                 Set<String> userBenefitSet = new HashSet<>();
-                for (UserSubscriptionEntity userSubscriptionEntity: userSubscriptionEntityList){
-                    // 检查是否有评论权限
-                    if (userSubscriptionEntity.getBenefitList() !=null ){
-                        for (BenefitEntity benefitEntity :  userSubscriptionEntity.getBenefitList()) {
-                            userBenefitSet.add(benefitEntity.getKey());
-                        }
+                UserSubscriptionEntity userSubscriptionEntity = userSubscriptionEntityList.get(0);
+                // 检查是否有评论权限
+                if (userSubscriptionEntity.getBenefitList() !=null ){
+                    for (BenefitEntity benefitEntity :  userSubscriptionEntity.getBenefitList()) {
+                        userBenefitSet.add(benefitEntity.getKey());
                     }
                 }
+
                 if (userBenefitSet.contains("COMMENT")){
                     articleEntity.setCanComment(true);
+                }
+                if ("free".equalsIgnoreCase(userSubscriptionEntity.getSubscribeDuration())){
+                    articleEntity.setReaderRole("free-subscriber");
+                }else {
+                    articleEntity.setReaderRole("paid-subscriber");
                 }
 
                 Set<String> intersectElements = articleEntity.getBenefit().stream()

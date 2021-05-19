@@ -964,6 +964,39 @@ public class ArticleServiceImpl implements ArticleService {
         return true;
     }
 
+    @Override
+    public String getReaderRole(String articleId, Long userId) {
+        ArticleEntity articleEntity = findBaseInfoById(articleId);
+        if (articleEntity == null){
+            throw new BaseException(500,"文章不存在");
+        }
+        return getReaderRole(articleEntity,userId);
+    }
+
+    @Override
+    public String getReaderRole(ArticleEntity article, Long userId) {
+        if (article.getAuthorId().equals(String.valueOf(userId))){
+            return "author";
+        }
+        QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+        LocalDate today = LocalDate.now();
+        LambdaQueryWrapper<UserSubscriptionEntity> lambdaQueryWrapper = queryWrapper.lambda();
+        lambdaQueryWrapper.eq(UserSubscriptionEntity::getSubscriberId,userId);
+        lambdaQueryWrapper.gt(UserSubscriptionEntity::getExpireDate,today);
+        lambdaQueryWrapper.eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(article.getAuthorId()));
+        List<UserSubscriptionEntity> subscriptionList = userSubscriptionService.list(queryWrapper);
+        if (subscriptionList == null || subscriptionList.isEmpty()){
+            return "visitor";
+        }
+        UserSubscriptionEntity subscriptionEntity = subscriptionList.get(0);
+        if ("free".equals(subscriptionEntity.getSubscribeDuration())){
+            return "free-subscriber";
+        }else {
+            return "paid-subscriber";
+        }
+    }
+
+
     private void initArticle(String authorId){
         log.info(" ======initArticle====== authorId:"+authorId);
         ArticleEntity articleEntity = new ArticleEntity();

@@ -73,6 +73,9 @@ public class ArticleEntity {
     @Transient
     private TierEntity tierEntity;  //推荐需要订阅的套餐对象
 
+    @Transient
+    private String readerRole;   //阅读者角色：author、free-subscriber、paid-subscriber、visitor
+
 //    @Transient
 //    private List<Long> userSubscribeTierIdList;  //会员订阅的套餐Id List
 
