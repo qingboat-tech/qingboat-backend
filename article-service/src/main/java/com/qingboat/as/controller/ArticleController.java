@@ -293,6 +293,55 @@ public class ArticleController extends BaseController {
     }
 
     /**
+     *  领取邀请码
+     *
+     * @param inviteKey 邀请码
+     * @return
+     */
+
+    @GetMapping(value = "/takeInviteKey")
+    @ResponseBody
+    public Boolean takeInviteKey(@RequestParam("inviteKey") String inviteKey) {
+        if (StringUtils.isEmpty(inviteKey) ){
+            throw new BaseException(500,"操作失败：请求参数缺失");
+        }
+        String readerId = getUIdStr();
+        inviteKey = BASE64Util.decode(inviteKey);
+        if (!inviteKey.contains("#")){
+            throw new BaseException(500,"非法邀请码，不能领取哦");
+        }
+
+        if (redisUtil.isMember("AIK_"+inviteKey,readerId)){
+            throw new BaseException(500,"你已经领取邀请码，不能重复领取哦");
+        }
+        long size = redisUtil.size("AIK_"+inviteKey);
+        if (size> 5){
+            throw new BaseException(500,"本次分享超出限量阅读，下次要手快哦");
+        }
+        redisUtil.sSet("AIK_"+inviteKey,readerId);
+        return Boolean.FALSE;
+    }
+
+    @GetMapping(value = "/hasTakeInviteKey")
+    @ResponseBody
+    public Boolean hasTakeInviteKey(@RequestParam("inviteKey") String inviteKey) {
+        if (StringUtils.isEmpty(inviteKey)){
+            throw new BaseException(500,"操作失败：请求参数缺失");
+        }
+        String readerId = getUIdStr();
+        inviteKey = BASE64Util.decode(inviteKey);
+        if (!inviteKey.contains("#")){
+            throw new BaseException(500,"非法邀请码，不能领取哦");
+        }
+        if (redisUtil.isMember("AIK_"+inviteKey,readerId)){
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
+
+
+
+    /**
      *
      * @param articleId
      * @param inviteKey  推荐者唯一值
