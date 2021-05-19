@@ -377,7 +377,7 @@ public class ArticleController extends BaseController {
 
                         long size = redisUtil.size("AIK_"+inviteKey);
                         if (size> 5){
-                            throw new BaseException(500,"本次分享超出限量阅读，下次要手快哦");
+                            throw new BaseException(500,"本次分享超出限量阅读，下次手速要快哦");
                         }else {
                             redisUtil.sSet("AIK_"+inviteKey,readerId);
                             articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
