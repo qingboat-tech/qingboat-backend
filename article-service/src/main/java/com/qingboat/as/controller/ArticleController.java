@@ -367,8 +367,7 @@ public class ArticleController extends BaseController {
                     String[] refContent = inviteKey.split("#"); //验证其合法性
                     //refContent[0] = articleId; refContent[1] = creatorId;
                     if (refContent!=null && refContent.length ==2
-                            &&  articleId.equals(refContent[0])
-                            && authorId.equals(refContent[1])){
+                            &&  articleId.equals(refContent[0])){
 
                         if (redisUtil.isMember("AIK_"+inviteKey,readerId)){
                             articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
