@@ -104,11 +104,8 @@ public class ReaderSubscriptionController extends BaseController {
     @GetMapping(value = "/creators")
     @ResponseBody
     public IPage<UserSubscriptionEntity> getCreatorEntityList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,@RequestParam(value = "pageSize",required = false) Integer pageSize) {
-        UserSubscriptionEntity entity = new UserSubscriptionEntity();
-        entity.setSubscriberId(getUId());
-
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.setEntity(entity);
+        queryWrapper.eq("subscriber_id",getUId());
 
         if (pageSize == null || pageSize<1){
             pageSize =10;
