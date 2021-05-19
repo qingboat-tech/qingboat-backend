@@ -243,7 +243,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
         body.put("touser",userWechatEntity.getOpenId());                    // 发给谁
         body.put("template_id",this.dataUpdateTemplate);                   // 那个模板
-        body.put("url",this.businessDomain+"/");             // 打开地址
+        body.put("url",this.businessDomain+"/articleDetail/"+articleCommentEntity.getArticleId());             // 打开地址
         body.put("data",data);
 
         data.put("first", JSON.parse("{'value': '有新评论啦！'}"));
