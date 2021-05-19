@@ -240,11 +240,12 @@ public class CreatorSubscriptionController extends BaseController {
             creatorId = getUId();
         }
 
-        QueryWrapper<TierEntity> wrapper = new QueryWrapper<>();
         TierEntity tierEntity = new TierEntity();
-        tierEntity.setStatus(1);
         tierEntity.setCreatorId(creatorId);
-        wrapper.setEntity(tierEntity);
+        tierEntity.setStatus(1);
+
+        QueryWrapper<TierEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("status",1).eq("creator_id",creatorId);
         wrapper.orderByAsc("month_price");
 
         List<TierEntity> list = tierService.list(wrapper);
