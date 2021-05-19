@@ -153,6 +153,7 @@
     <repository>
       <uniqueVersion>false</uniqueVersion>
       <name>qingboat</name>
+      <url>https://m.qingboat.com</url>
       <layout>default</layout>
     </repository>
   </distributionManagement>
