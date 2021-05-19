@@ -1,5 +1,6 @@
 package com.qingboat.as.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -229,28 +230,28 @@ public class ReaderSubscriptionController extends BaseController {
             throw new BaseException(500,"操作失败：请求参数非法");
         }
 
-        TierEntity entity = tierService.getById(memberTierId);
+        TierEntity thisSubscriptionTier = tierService.getById(memberTierId);
 
-        if (entity !=null){
-            userSubscriptionEntity.setMemberTierName(entity.getTitle());
-            Integer subscriptionLimit = entity.getSubscribeLimit();
+        if (thisSubscriptionTier !=null){
+            userSubscriptionEntity.setMemberTierName(thisSubscriptionTier.getTitle());
+            Integer subscriptionLimit = thisSubscriptionTier.getSubscribeLimit();
             if (subscriptionLimit !=null && subscriptionLimit>0){
-                //TODO 检查订阅限额
+                //检查订阅限额, 已经放在创建订单之前做检查了，此处不做限制处理了。
             }
 
-            UserSubscriptionEntity queryEntity = new UserSubscriptionEntity();
-            queryEntity.setSubscriberId(subscriberId);
-            queryEntity.setCreatorId(creatorId);
-
             QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
-            queryWrapper.setEntity(queryEntity);
+            queryWrapper.eq("subscriber_id",subscriberId);
+            queryWrapper.eq("creator_id",creatorId);
 
-            UserSubscriptionEntity beforeUserSubscription = userSubscriptionService.getOne(queryWrapper);
+            List<UserSubscriptionEntity>  beforeSubscriptionList= userSubscriptionService.list(queryWrapper);
+            log.info(" beforeSubscriptionList: "+ JSON.toJSONString(beforeSubscriptionList));
             //1、判断是否是续订
-            if (beforeUserSubscription != null ){
-                if (beforeUserSubscription.getMemberTierId().equals(memberTierId)){
-                    if (beforeUserSubscription.getOrderId() ==0 ){ // 上次和这次都是免费订阅
-                        log.info("上次和这次都是免费订阅 ");
+            if (beforeSubscriptionList != null && !beforeSubscriptionList.isEmpty() ){
+                UserSubscriptionEntity beforeUserSubscription = beforeSubscriptionList.get(0);
+                if (beforeUserSubscription.getMemberTierId().equals(memberTierId)){  // 会员续费
+                    if (beforeUserSubscription.getOrderId() ==0
+                            || "free".equalsIgnoreCase(beforeUserSubscription.getSubscribeDuration()) ){ // 上次和这次都是免费订阅
+                        log.info("上次和这次是免费订阅 ");
                         //发送订阅消息
                        // messageService.asyncSendSubscriptionMessage(userSubscriptionEntity);
                         return userSubscriptionEntity;
@@ -268,13 +269,14 @@ public class ReaderSubscriptionController extends BaseController {
                         throw  new BaseException(500," subscribeDuration= "+subscribeDuration +" 参数错误");
                     }
 
+                    beforeUserSubscription.setMemberTierName(thisSubscriptionTier.getTitle());
                     beforeUserSubscription.setOrderId(orderId);
                     beforeUserSubscription.setOrderNo(orderNo);
                     beforeUserSubscription.setOrderPrice(orderPrice);
                     beforeUserSubscription.setSubscribeDuration(subscribeDuration);
                     beforeUserSubscription.setStartDate(startTime);
                     beforeUserSubscription.setExpireDate(cal.getTime());
-                    beforeUserSubscription.setBenefitList(entity.getBenefitList());
+                    beforeUserSubscription.setBenefitList(thisSubscriptionTier.getBenefitList());
                     beforeUserSubscription.setCreatedAt(null);
                     beforeUserSubscription.setUpdatedAt(null);
                     userSubscriptionService.updateById(beforeUserSubscription);
@@ -283,12 +285,10 @@ public class ReaderSubscriptionController extends BaseController {
                     userSubscriptionService.createBillAndUpdateWallet(beforeUserSubscription);
 
                     //发送订阅消息
-                    messageService.asyncSendSubscriptionMessage(userSubscriptionEntity);
+                    messageService.asyncSendSubscriptionMessage(beforeUserSubscription);
                     return beforeUserSubscription;
                 }else { // 免费转付费会员
-                    TierEntity beforeTier  = tierService.getById(beforeUserSubscription.getMemberTierId());
-                    if (Long.valueOf(0l).equals(beforeTier.getMonthPrice())){
-
+                    if ("free".equalsIgnoreCase(beforeUserSubscription.getSubscribeDuration())){
                         Date startTime = new Date() ;
                         Calendar cal = Calendar.getInstance();
                         cal.setTime(startTime);
@@ -300,21 +300,20 @@ public class ReaderSubscriptionController extends BaseController {
                         }else {
                             throw  new BaseException(500," subscribeDuration= "+subscribeDuration +" 参数错误");
                         }
-
-                        beforeUserSubscription.setMemberTierId(entity.getId());
-                        beforeUserSubscription.setMemberTierName(entity.getTitle());
+                        beforeUserSubscription.setMemberTierId(thisSubscriptionTier.getId());
+                        beforeUserSubscription.setMemberTierName(thisSubscriptionTier.getTitle());
                         beforeUserSubscription.setOrderId(orderId);
                         beforeUserSubscription.setOrderNo(orderNo);
                         beforeUserSubscription.setOrderPrice(orderPrice);
                         beforeUserSubscription.setSubscribeDuration(subscribeDuration);
                         beforeUserSubscription.setStartDate(startTime);
                         beforeUserSubscription.setExpireDate(cal.getTime());
-                        beforeUserSubscription.setBenefitList(entity.getBenefitList());
+                        beforeUserSubscription.setBenefitList(thisSubscriptionTier.getBenefitList());
                         beforeUserSubscription.setCreatedAt(null);
                         beforeUserSubscription.setUpdatedAt(null);
                         userSubscriptionService.updateById(beforeUserSubscription);
                         //发送订阅消息
-                        messageService.asyncSendSubscriptionMessage(userSubscriptionEntity);
+                        messageService.asyncSendSubscriptionMessage(beforeUserSubscription);
 
                         // 给creator添加收益记录
                         userSubscriptionService.createBillAndUpdateWallet(beforeUserSubscription);
@@ -332,14 +331,14 @@ public class ReaderSubscriptionController extends BaseController {
                 cal.add(Calendar.MONTH,1);
             }else if ("year".equals(subscribeDuration)){
                 cal.add(Calendar.YEAR,1);
-            }else if ("free".equals(subscribeDuration) || Long.valueOf(0l).equals(entity.getMonthPrice())){
+            }else if ("free".equals(subscribeDuration) || Long.valueOf(0l).equals(thisSubscriptionTier.getMonthPrice())){
                 cal.add(Calendar.YEAR,30);
             }
 
             userSubscriptionEntity.setSubscriberId(getUId());
             userSubscriptionEntity.setStartDate(new Date());
             userSubscriptionEntity.setExpireDate(cal.getTime());
-            userSubscriptionEntity.setBenefitList(entity.getBenefitList());
+            userSubscriptionEntity.setBenefitList(thisSubscriptionTier.getBenefitList());
             userSubscriptionEntity.setOrderId(orderId);
             userSubscriptionEntity.setOrderNo(orderNo);
 
