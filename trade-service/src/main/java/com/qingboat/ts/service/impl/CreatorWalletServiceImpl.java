@@ -22,11 +22,9 @@ public class CreatorWalletServiceImpl extends ServiceImpl <CreatorWalletDao, Cre
 
     @Override
     public CreatorWalletEntity getCreatorWalletByCreatorId(Long creatorId){
-        CreatorWalletEntity walletEntity = new CreatorWalletEntity();
-        walletEntity.setCreatorId(creatorId);
         QueryWrapper<CreatorWalletEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.setEntity(walletEntity);
-        walletEntity = this.getOne(queryWrapper);
+        queryWrapper.eq("creator_id",creatorId);
+        CreatorWalletEntity walletEntity = this.getOne(queryWrapper);
         return walletEntity;
     }
 

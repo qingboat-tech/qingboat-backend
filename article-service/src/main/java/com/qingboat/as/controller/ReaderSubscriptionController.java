@@ -52,13 +52,8 @@ public class ReaderSubscriptionController extends BaseController {
     @GetMapping(value = "/tiers")
     @ResponseBody
     public List<TierEntity> getTierEntityList(@Valid @RequestParam("creatorId") Long creatorId) {
-
-        TierEntity tierEntity = new TierEntity();
-        tierEntity.setCreatorId(creatorId);
-        tierEntity.setStatus(1);
-
         QueryWrapper<TierEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.setEntity(tierEntity);
+        queryWrapper.eq("creator_id",creatorId).eq("status",1);
         queryWrapper.orderByAsc("month_price");
 
         Long userId = (Long) getAttribute("UID");
@@ -142,11 +137,8 @@ public class ReaderSubscriptionController extends BaseController {
             throw new BaseException(500,"操作失败：不能订阅自己");
         }
         //1、检查以前是否有订阅
-        UserSubscriptionEntity queryEntity = new UserSubscriptionEntity();
-        queryEntity.setSubscriberId(subscriberId);
-        queryEntity.setCreatorId(creatorId);
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.setEntity(queryEntity);
+        queryWrapper.eq("subscribe_id",subscriberId).eq("creator_id",creatorId);
         UserSubscriptionEntity beforeUserSubscription = userSubscriptionService.getOne(queryWrapper);
         if (beforeUserSubscription!=null){
             throw new BaseException(500,"操作失败：您已经订阅该创作者");
