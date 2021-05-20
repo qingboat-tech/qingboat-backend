@@ -38,7 +38,7 @@ jobs:
     - name: Show package
       run: mkdir qingboat && cp -r ~/.m2/repository/com/qingboat qingboat && ls 
       
-    - name: Copy folder content recursively to remote
+    - name: Copy folder content recursively to remote server
       uses: garygrossgarten/github-action-scp@release
       with:
         local: qingboat
