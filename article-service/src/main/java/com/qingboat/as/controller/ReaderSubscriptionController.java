@@ -136,7 +136,7 @@ public class ReaderSubscriptionController extends BaseController {
         }
         //1、检查以前是否有订阅
         QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("subscribe_id",subscriberId).eq("creator_id",creatorId);
+        queryWrapper.eq("subscriber_id",subscriberId).eq("creator_id",creatorId);
         UserSubscriptionEntity beforeUserSubscription = userSubscriptionService.getOne(queryWrapper);
         if (beforeUserSubscription!=null){
             throw new BaseException(500,"操作失败：您已经订阅该创作者");
