@@ -32,7 +32,7 @@ public class UserSubscriptionServiceImpl extends ServiceImpl<UserSubscriptionDao
         }
         creatorBillVo.setAmount(1L*userSubscriptionEntity.getOrderPrice());
         creatorBillVo.setOrderNo(userSubscriptionEntity.getOrderNo());
-        creatorBillVo.setBillTitle("新增订阅"+typeChinese+"订阅会员");
+        creatorBillVo.setBillTitle("新增"+typeChinese+"度订阅会员");
 
         String getCreatorIdStr = String.valueOf(userSubscriptionEntity.getCreatorId());
         String sec = AuthFilter.getSecret(getCreatorIdStr);
