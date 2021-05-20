@@ -25,8 +25,8 @@ sleep 1
 EOF
 
 echo "=========build service=========="
-cd /srv/qingboat-backend
-sudo mvn clean install
+# cd /srv/qingboat-backend
+# sudo mvn clean install
 
 echo "=========service restart begin=========="
 
