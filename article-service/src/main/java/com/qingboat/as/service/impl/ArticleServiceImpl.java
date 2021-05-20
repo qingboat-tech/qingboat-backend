@@ -270,7 +270,7 @@ public class ArticleServiceImpl implements ArticleService {
         }
         Sort sort = null;
         if (orderByHot!=null && orderByHot){
-            sort = Sort.by(Sort.Direction.DESC, "readCount","updatedTime");
+            sort = Sort.by(Sort.Direction.DESC, "top","readCount","updatedTime");
         }else {
             sort = Sort.by(Sort.Direction.DESC, "top","updatedTime");
         }
