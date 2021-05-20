@@ -225,6 +225,12 @@ public class ReaderSubscriptionController extends BaseController {
             if (subscriptionLimit !=null && subscriptionLimit>0){
                 //检查订阅限额, 已经放在创建订单之前做检查了，此处不做限制处理了。
             }
+            for(BenefitEntity benefitEntity : thisSubscriptionTier.getBenefitList()){
+                benefitEntity.setCreatorId(null);
+                benefitEntity.setCategory(null);
+                benefitEntity.setDesc(null);
+                benefitEntity.setUsedCount(null);
+            }
 
             QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("subscriber_id",subscriberId);
