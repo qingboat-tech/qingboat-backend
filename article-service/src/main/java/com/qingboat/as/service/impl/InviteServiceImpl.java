@@ -112,6 +112,7 @@ public class InviteServiceImpl extends ServiceImpl<InviteDao, InviteEntity> impl
             if ("你已经领取邀请码，不能重复领取哦".equals(e.getMessage())){
                 return true;
             }
+            throw e;
         }
         return rst;
     }
