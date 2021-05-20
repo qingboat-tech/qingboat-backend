@@ -95,7 +95,7 @@ public class ArticleController extends BaseController {
     @ResponseBody
     public Page<ArticleEntity> findPublishArticleList(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,
                                                       @RequestParam(value = "pageSize",required = false) Integer pageSize,
-                                                      @RequestParam(value = "hot",required = false) Boolean orderByHot ) {
+                                                      @RequestParam(value = "orderByHot",required = false) Boolean orderByHot ) {
         String uid = getUIdStr();
         return articleService.findPublishListByAuthorId(uid,pageIndex,pageSize,orderByHot,null);
     }
