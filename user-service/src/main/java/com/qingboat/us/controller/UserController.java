@@ -67,7 +67,8 @@ public class UserController {
         if (userId!=null && userId>0){
             //创投，增长，职场，产品
             UserProfileEntity userProfile =  userService.getUserProfile(userId);
-            if (userProfile.getExpertiseArea() == null || userProfile.getExpertiseArea().length == 0){
+
+            if (userProfile!=null && (userProfile.getExpertiseArea() == null || userProfile.getExpertiseArea().length == 0)){
                 String[] value= {"创投","增长","职场","产品"};
                 Map<String,String>[] maps = new HashMap[value.length];
                 for(int i=0 ;i<value.length;i++){
