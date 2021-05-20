@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qingboat.as.api.UserProfileService;
+import com.qingboat.as.api.UserProfileServiceResponse;
 import com.qingboat.as.api.WxMessageService;
 import com.qingboat.as.api.WxTokenService;
 import com.qingboat.as.dao.MessageDao;
@@ -32,6 +34,9 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserProfileService userProfileService;
 
     @Autowired
     private TierService tierService;
@@ -78,6 +83,8 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         UserEntity createUser =  userService.findByUserId(userSubscriptionEntity.getCreatorId());
         TierEntity tierEntity = tierService.getById(userSubscriptionEntity.getMemberTierId());
 
+        UserProfileServiceResponse creatorUserServiceResponse = userProfileService.getUserProfile(userSubscriptionEntity.getCreatorId());
+
         MessageEntity msg = new MessageEntity();
         msg.setMsgType(MessageEntity.SUBSCRIBE_MSG);
         msg.setMsgTitle("感谢您成功订阅："+tierEntity.getTitle());
@@ -87,6 +94,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         msg.setSenderImgUrl(createUser.getHeadimgUrl());
         msg.setMsgLink(null); // TODO
         msg.setExtData("tierEntityId",userSubscriptionEntity.getMemberTierId());
+        msg.setExtData("creatorProfileName", creatorUserServiceResponse.getProfileName());
         msg.setExtData("tierEntityName",userSubscriptionEntity.getMemberTierName());
         msg.setExtData("orderId",userSubscriptionEntity.getOrderId());
         msg.setExtData("orderPrice",userSubscriptionEntity.getOrderPrice());
@@ -216,6 +224,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         msg.setSenderImgUrl(articleCommentEntity.getHeadImgUrl());
         msg.setMsgLink(null); // TODO
         msg.setExtData("articleId",articleEntity.getId());
+        msg.setExtData("creatorId",Long.parseLong(articleEntity.getAuthorId()));
         msg.setExtData("articleTitle",articleEntity.getTitle());
         msg.setExtData("articleCommentId",articleCommentEntity.getId());
         msg.setExtData("articleCommentContent",articleCommentEntity.getContent());
@@ -276,6 +285,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         msg.setSenderImgUrl(replyCommentEntity.getHeadImgUrl());
         msg.setMsgLink(null); // TODO
         msg.setExtData("articleId",replyCommentEntity.getArticleId());
+        msg.setExtData("creatorId",Long.parseLong(articleEntity.getAuthorId()));
         msg.setExtData("articleTitle",articleEntity.getTitle());
         msg.setExtData("replyCommentId",replyCommentEntity.getId());
         msg.setExtData("replyCommentContent",replyCommentEntity.getContent());
@@ -341,6 +351,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         msg.setSenderImgUrl(subscribeUser.getHeadimgUrl());
         msg.setMsgLink(null); // TODO
         msg.setExtData("articleId",articleEntity.getId());
+        msg.setExtData("creatorId",Long.parseLong(articleEntity.getAuthorId()));
         msg.setExtData("articleTitle",articleEntity.getTitle());
         msg.setExtData("starCount",starCount);
 

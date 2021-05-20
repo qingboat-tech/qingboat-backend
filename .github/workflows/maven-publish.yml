@@ -36,13 +36,14 @@ jobs:
       run: mvn -B install --file pom.xml
 
     - name: Show package
-      run: cd ~/.m2/repository/com/ && ls
+      run: mkdir qingboat && cp -r ~/.m2/repository/com/qingboat qingboat && ls 
       
     - name: Copy folder content recursively to remote
       uses: garygrossgarten/github-action-scp@release
       with:
         local: qingboat
-        remote: ~/qingboat-test-jar
+        remote: /tmp/mypackages
         host: ${{ secrets.HOST }}
         username: ${{ secrets.SSH_USER }}
+        password: ${{ secrets.SSH_PASSWORD }}
         rmRemote: true
