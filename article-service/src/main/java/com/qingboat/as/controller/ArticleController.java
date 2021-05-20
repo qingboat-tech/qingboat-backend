@@ -309,7 +309,12 @@ public class ArticleController extends BaseController {
             }
             // 处理推荐逻辑，每个订阅者最多分享给5个好友阅读
             if (inviteKey!= null){
-                inviteService.checkAndaddInvite(inviteKey,getUId());
+                boolean rst = inviteService.checkAndaddInvite(inviteKey,getUId());
+                if (rst){
+                    articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
+                    articleEntity.setReaderRole(articleService.getReaderRole(articleEntity,getUId()));
+                    return articleEntity;
+                }
             }
 
             // 获取订阅信息
