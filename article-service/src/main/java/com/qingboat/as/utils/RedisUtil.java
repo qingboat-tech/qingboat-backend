@@ -2,21 +2,96 @@ package com.qingboat.as.utils;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Component
 public class RedisUtil {
 
+    //锁名称
+    public static final String LOCK_PREFIX = "redis_lock";
+    //加锁失效时间，毫秒
+    public static final int LOCK_EXPIRE = 300; // ms
+
+    private byte[]  LOCK= new byte[0];
+
+
     @Autowired
-    private RedisTemplate<String,Object> redisTemplate;
+    private RedisTemplate redisTemplate;
     //- - - - - - - - - - - - - - - - - - - - -  公共方法 - - - - - - - - - - - - - - - - - - - -
+
+    /**
+     *  最终加强分布式锁
+     *
+     * @param key key值
+     * @return 是否获取到
+     */
+    public boolean lock(String key){
+        String lock = LOCK_PREFIX + key;
+        // 利用lambda表达式
+        return (Boolean) redisTemplate.execute((RedisCallback) connection -> {
+
+            long expireAt = System.currentTimeMillis() + LOCK_EXPIRE + 1;
+            Boolean acquire = connection.setNX(lock.getBytes(), String.valueOf(expireAt).getBytes());
+            if (acquire) {
+                return true;
+            } else {
+                byte[] value = connection.get(lock.getBytes());
+                if (Objects.nonNull(value) && value.length > 0) {
+                    long expireTime = Long.parseLong(new String(value));
+                    // 如果锁已经过期
+                    if (expireTime < System.currentTimeMillis()) {
+                        // 重新加锁，防止死锁
+                        byte[] oldValue = connection.getSet(lock.getBytes(), String.valueOf(System.currentTimeMillis() + LOCK_EXPIRE + 1).getBytes());
+                        return Long.parseLong(new String(oldValue)) < System.currentTimeMillis();
+                    }
+                }
+            }
+            return false;
+        });
+    }
+
+    public boolean synLock(String key){
+        boolean rst =  lock(key);
+        if (rst){
+            return true;
+        }
+        synchronized (LOCK){
+            int loopCount =0;
+            while (loopCount++<5){
+                rst =  lock(key);
+                if (rst){
+                    return true;
+                }else {
+                    try {
+                        LOCK.wait(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return false;
+
+    }
+
+
+        /**
+         * 删除锁
+         *
+         * @param key
+         */
+    public void unLock(String key) {
+        String lock = LOCK_PREFIX + key;
+        redisTemplate.delete(lock);
+        synchronized (LOCK){
+            LOCK.notifyAll();
+        }
+    }
 
     /**
      * 给一个指定的 key 值附加过期时间(秒)
@@ -109,6 +184,7 @@ public class RedisUtil {
     public Object get(String key) {
         return key == null ? null : redisTemplate.opsForValue().get(key);
     }
+
 
     /**
      * 将值放入缓存

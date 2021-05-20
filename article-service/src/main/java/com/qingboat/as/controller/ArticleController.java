@@ -53,6 +53,9 @@ public class ArticleController extends BaseController {
     @Autowired
     private MessageService messageService;
 
+    @Autowired
+    private InviteService inviteService;
+
     //=======================针对 creator 接口=============================
 
     /**
@@ -245,31 +248,13 @@ public class ArticleController extends BaseController {
     @GetMapping(value = "/getInviteKey")
     @ResponseBody
     public Map<String,Object> getInviteKey(@RequestParam("articleId") String articleId) {
-        Map<String,Object> rstMap = new HashMap<>();
 
-        ArticleEntity articleEntity = articleService.findBaseInfoById(articleId);
-        if (articleEntity  == null){
-            throw  new BaseException(500,"推荐试读的文章不存在");
-        }
-        if (articleEntity.getAuthorId().equals(getUIdStr())){
-            //作者邀请试读
-        }else {
-            //检查该用户是否已订阅
-            QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
-            queryWrapper.lambda()
-                    .eq(UserSubscriptionEntity::getSubscriberId,getUId())
-                    .eq(UserSubscriptionEntity::getCreatorId,Long.parseLong(articleEntity.getAuthorId()))
-                    .ge(UserSubscriptionEntity::getExpireDate,new Date());
-            int count = userSubscriptionService.count(queryWrapper);
-            if (count == 0){
-                throw new BaseException(500,"未订阅用户，禁止推荐试读分享");
-            }
-        }
+        String refKey = inviteService.buildInviteKey(articleId,getUId());
 
-        String refKey = BASE64Util.encode(articleId+"#"+ getUIdStr());
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_MONTH,10);
 
+        Map<String,Object> rstMap = new HashMap<>();
         rstMap.put("ref",refKey);
         rstMap.put("expire",cal.getTime());
 
@@ -278,18 +263,8 @@ public class ArticleController extends BaseController {
 
     @GetMapping(value = "/getInviteUserListByInviteKey")
     @ResponseBody
-    public List<UserEntity> getInviteUserListByInviteKey(@RequestParam("inviteKey") String inviteKey) {
-        inviteKey = BASE64Util.decode(inviteKey);
-        Set<Object> inviteUserIdSet = redisUtil.members("AIK_"+inviteKey);
-        Set<Long> inviteUserIdLongSet = new HashSet<>();
-        if (inviteUserIdSet!=null && !inviteUserIdSet.isEmpty()){
-            Iterator<Object> ite =  inviteUserIdSet.iterator();
-            while (ite.hasNext()){
-                inviteUserIdLongSet.add(Long.parseLong(ite.next().toString()));
-            }
-            return userService.findListByUserIds(inviteUserIdLongSet);
-        }
-       return null;
+    public List<InviteEntity> getInviteUserListByInviteKey(@RequestParam("inviteKey") String inviteKey) {
+        return inviteService.getInviteUser(inviteKey);
     }
 
     /**
@@ -302,41 +277,13 @@ public class ArticleController extends BaseController {
     @GetMapping(value = "/takeInviteKey")
     @ResponseBody
     public Boolean takeInviteKey(@RequestParam("inviteKey") String inviteKey) {
-        if (StringUtils.isEmpty(inviteKey) ){
-            throw new BaseException(500,"操作失败：请求参数缺失");
-        }
-        String readerId = getUIdStr();
-        inviteKey = BASE64Util.decode(inviteKey);
-        if (!inviteKey.contains("#")){
-            throw new BaseException(500,"非法邀请码，不能领取哦");
-        }
-
-        if (redisUtil.isMember("AIK_"+inviteKey,readerId)){
-            throw new BaseException(500,"你已经领取邀请码，不能重复领取哦");
-        }
-        long size = redisUtil.size("AIK_"+inviteKey);
-        if (size> 5){
-            throw new BaseException(500,"本次分享超出限量阅读，下次要手快哦");
-        }
-        redisUtil.sSet("AIK_"+inviteKey,readerId);
-        return Boolean.FALSE;
+        return inviteService.addInvite(inviteKey,getUId());
     }
 
     @GetMapping(value = "/hasTakeInviteKey")
     @ResponseBody
     public Boolean hasTakeInviteKey(@RequestParam("inviteKey") String inviteKey) {
-        if (StringUtils.isEmpty(inviteKey)){
-            throw new BaseException(500,"操作失败：请求参数缺失");
-        }
-        String readerId = getUIdStr();
-        inviteKey = BASE64Util.decode(inviteKey);
-        if (!inviteKey.contains("#")){
-            throw new BaseException(500,"非法邀请码，不能领取哦");
-        }
-        if (redisUtil.isMember("AIK_"+inviteKey,readerId)){
-            return Boolean.TRUE;
-        }
-        return Boolean.FALSE;
+        return inviteService.hasTakeInviteKey(inviteKey,getUId());
     }
 
 
@@ -362,38 +309,7 @@ public class ArticleController extends BaseController {
             }
             // 处理推荐逻辑，每个订阅者最多分享给5个好友阅读
             if (inviteKey!= null){
-                inviteKey = BASE64Util.decode(inviteKey);
-                try {
-                    String[] refContent = inviteKey.split("#"); //验证其合法性
-                    //refContent[0] = articleId; refContent[1] = creatorId;
-                    if (refContent!=null && refContent.length ==2
-                            &&  articleId.equals(refContent[0])){
-
-                        if (redisUtil.isMember("AIK_"+inviteKey,readerId)){
-                            articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
-                            articleEntity.setReaderRole(articleService.getReaderRole(articleEntity,getUId()));
-                            return articleEntity;
-                        }
-
-                        long size = redisUtil.size("AIK_"+inviteKey);
-                        if (size> 5){
-                            throw new BaseException(500,"本次分享超出限量阅读，下次手速要快哦");
-                        }else {
-                            redisUtil.sSet("AIK_"+inviteKey,readerId);
-                            articleService.increaseReadCountByArticleId(articleId);//增加该文章阅读数
-                            articleEntity.setReaderRole(articleService.getReaderRole(articleEntity,getUId()));
-                            return articleEntity;
-                        }
-                    }else {
-                        throw new BaseException(500,"非法邀请码");
-                    }
-
-                } catch (BaseException e) {
-                    throw e;
-                }catch (Exception e) {
-                    e.printStackTrace();
-                    throw new BaseException(500,"邀请码参数无效");
-                }
+                inviteService.checkAndaddInvite(inviteKey,getUId());
             }
 
             // 获取订阅信息
