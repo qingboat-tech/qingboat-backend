@@ -9,10 +9,12 @@ import feign.Response;
 import feign.Util;
 import feign.codec.DecodeException;
 import feign.codec.Decoder;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 
+@Slf4j
 public class FeignDecoder implements Decoder {
 
     @Override
@@ -31,7 +33,8 @@ public class FeignDecoder implements Decoder {
         ApiResponse<?> apiResponse = mapper.readValue(body, javaType);
         if (200!=apiResponse.getCode() ){
             //对方服务异常
-            throw new BaseException(apiResponse.getCode(),apiResponse.getMessage());
+            log.error("FeignDecoder:" +apiResponse);
+            return null;
         }
         return apiResponse.getData();
     }
