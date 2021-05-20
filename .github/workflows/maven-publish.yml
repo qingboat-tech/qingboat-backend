@@ -42,7 +42,7 @@ jobs:
       uses: garygrossgarten/github-action-scp@release
       with:
         local: qingboat
-        remote: /srv/ingboat-backend/packages
+        remote: /srv/qingboat-backend/packages
         host: ${{ secrets.HOST }}
         username: ${{ secrets.SSH_USER }}
         password: ${{ secrets.SSH_PASSWORD }}
