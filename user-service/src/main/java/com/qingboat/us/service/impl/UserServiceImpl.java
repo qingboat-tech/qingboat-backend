@@ -93,6 +93,7 @@ public class UserServiceImpl implements UserService {
                 msg.setTo(userId);
                 msg.setSenderId(0l);
                 msg.setSenderName("管理员");
+                msg.setExtData("to",userId);
                 messageService.sendMessage(msg);
 
 
