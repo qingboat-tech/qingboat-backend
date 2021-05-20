@@ -35,7 +35,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B install --file pom.xml
 
-    - name: Show package
+    - name: Show package list
       run: mkdir qingboat && cp -r ~/.m2/repository/com/qingboat qingboat && ls 
       
     - name: Copy folder content recursively to remote server
