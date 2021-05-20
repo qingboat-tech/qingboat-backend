@@ -216,6 +216,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         msg.setSenderImgUrl(articleCommentEntity.getHeadImgUrl());
         msg.setMsgLink(null); // TODO
         msg.setExtData("articleId",articleEntity.getId());
+        msg.setExtData("creatorId",Long.parseLong(articleEntity.getAuthorId()));
         msg.setExtData("articleTitle",articleEntity.getTitle());
         msg.setExtData("articleCommentId",articleCommentEntity.getId());
         msg.setExtData("articleCommentContent",articleCommentEntity.getContent());
@@ -276,6 +277,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         msg.setSenderImgUrl(replyCommentEntity.getHeadImgUrl());
         msg.setMsgLink(null); // TODO
         msg.setExtData("articleId",replyCommentEntity.getArticleId());
+        msg.setExtData("creatorId",Long.parseLong(articleEntity.getAuthorId()));
         msg.setExtData("articleTitle",articleEntity.getTitle());
         msg.setExtData("replyCommentId",replyCommentEntity.getId());
         msg.setExtData("replyCommentContent",replyCommentEntity.getContent());
@@ -341,6 +343,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         msg.setSenderImgUrl(subscribeUser.getHeadimgUrl());
         msg.setMsgLink(null); // TODO
         msg.setExtData("articleId",articleEntity.getId());
+        msg.setExtData("creatorId",Long.parseLong(articleEntity.getAuthorId()));
         msg.setExtData("articleTitle",articleEntity.getTitle());
         msg.setExtData("starCount",starCount);
 
