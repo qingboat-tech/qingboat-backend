@@ -1,4 +1,4 @@
-package com.qingboat.us.api;
+package com.qingboat.api;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.cloud.openfeign.FeignClient;

@@ -1,12 +1,12 @@
 package com.qingboat.ts.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qingboat.api.TierService;
+import com.qingboat.api.UserProfileService;
+import com.qingboat.api.vo.TierVo;
+import com.qingboat.api.vo.UserProfileVo;
 import com.qingboat.base.exception.BaseException;
 import com.qingboat.base.utils.DateUtil;
-import com.qingboat.ts.api.TierService;
-import com.qingboat.ts.api.TierServiceResponse;
-import com.qingboat.ts.api.UserService;
-import com.qingboat.ts.api.UserServiceResponse;
 import com.qingboat.ts.dao.PurchaseOrderDao;
 import com.qingboat.ts.entity.PurchaseOrderEntity;
 import com.qingboat.ts.service.PurchaseOrderService;
@@ -27,7 +27,7 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderDao, Purc
     TierService tierService;
 
     @Autowired
-    UserService userService;
+    UserProfileService userProfileService;
 
     @Autowired
     RedisUtil redisUtil;
@@ -35,15 +35,15 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderDao, Purc
 
     @Override
     public PurchaseOrderEntity createPurchaseOrder(Long tierId, String periodKey, Long uid) {
-        TierServiceResponse tierServiceResponse = tierService.getTierById(tierId);
+        TierVo tierVo = tierService.getTierById(tierId);
 
-        if ( tierServiceResponse == null || tierServiceResponse.getStatus()==0) {
+        if ( tierVo == null || tierVo.getStatus()==0) {
             throw new BaseException(500,"无效的tier");
         }
 
         // 获取creator和reader的信息
-        UserServiceResponse readerUserServiceResponse = userService.getUserProfile(uid);
-        UserServiceResponse creatorUserServiceResponse = userService.getUserProfile(tierServiceResponse.getCreatorId());
+        UserProfileVo readerUserVo = userProfileService.getUserProfile(uid);
+        UserProfileVo creatorUserVo = userProfileService.getUserProfile(tierVo.getCreatorId());
 
         PurchaseOrderEntity entity = new PurchaseOrderEntity();
 
@@ -55,7 +55,7 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderDao, Purc
 
         // 金额信息
         if (Objects.equals("month",periodKey) ) {
-            Double totalAmountDouble = (tierServiceResponse.getMonthPrice() * tierServiceResponse.getMonthDiscount()/10);
+            Double totalAmountDouble = (tierVo.getMonthPrice() * tierVo.getMonthDiscount()/10);
             Integer totalAmount = totalAmountDouble.intValue();
 
             entity.setTotalAmount(totalAmount);
@@ -64,7 +64,7 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderDao, Purc
             entity.setSubscribeDuration("month");
         }
         else if (Objects.equals("year",periodKey)) {
-            Double totalAmountDouble = (tierServiceResponse.getYearPrice() * tierServiceResponse.getYearDiscount()/10);
+            Double totalAmountDouble = (tierVo.getYearPrice() * tierVo.getYearDiscount()/10);
             Integer totalAmount = totalAmountDouble.intValue();
 
             entity.setTotalAmount(totalAmount);
@@ -77,13 +77,13 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderDao, Purc
         }
 
         // 买卖人的信息
-        entity.setCreatorId(tierServiceResponse.getCreatorId());
-        entity.setCreatorNickname(creatorUserServiceResponse.getNickname());
+        entity.setCreatorId(tierVo.getCreatorId());
+        entity.setCreatorNickname(creatorUserVo.getNickname());
         entity.setPurchaseUserId(uid);
-        entity.setPurchaseUserNickname(readerUserServiceResponse.getNickname());
+        entity.setPurchaseUserNickname(readerUserVo.getNickname());
 
         // tier信息
-        entity.setSubscribeData(TierServiceResponse.ConvertToJson(tierServiceResponse));
+        entity.setSubscribeData(TierVo.ConvertToJson(tierVo));
         this.save(entity);
 
         return entity;

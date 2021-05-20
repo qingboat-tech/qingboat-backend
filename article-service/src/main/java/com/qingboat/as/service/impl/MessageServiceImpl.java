@@ -6,10 +6,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.qingboat.as.api.UserProfileService;
-import com.qingboat.as.api.UserProfileServiceResponse;
-import com.qingboat.as.api.WxMessageService;
-import com.qingboat.as.api.WxTokenService;
+import com.qingboat.api.UserProfileService;
+import com.qingboat.api.WxMessageService;
+import com.qingboat.api.WxTokenService;
+import com.qingboat.api.vo.UserProfileVo;
 import com.qingboat.as.dao.MessageDao;
 import com.qingboat.as.entity.*;
 import com.qingboat.as.filter.AuthFilter;
@@ -83,7 +83,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         UserEntity createUser =  userService.findByUserId(userSubscriptionEntity.getCreatorId());
         TierEntity tierEntity = tierService.getById(userSubscriptionEntity.getMemberTierId());
 
-        UserProfileServiceResponse creatorUserServiceResponse = userProfileService.getUserProfile(userSubscriptionEntity.getCreatorId());
+        UserProfileVo creatorUserVo = userProfileService.getUserProfile(userSubscriptionEntity.getCreatorId());
 
         MessageEntity msg = new MessageEntity();
         msg.setMsgType(MessageEntity.SUBSCRIBE_MSG);
@@ -94,7 +94,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         msg.setSenderImgUrl(createUser.getHeadimgUrl());
         msg.setMsgLink(null); // TODO
         msg.setExtData("tierEntityId",userSubscriptionEntity.getMemberTierId());
-        msg.setExtData("creatorProfileName", creatorUserServiceResponse.getProfileName());
+        msg.setExtData("creatorProfileName", creatorUserVo.getProfileName());
         msg.setExtData("tierEntityName",userSubscriptionEntity.getMemberTierName());
         msg.setExtData("orderId",userSubscriptionEntity.getOrderId());
         msg.setExtData("orderPrice",userSubscriptionEntity.getOrderPrice());

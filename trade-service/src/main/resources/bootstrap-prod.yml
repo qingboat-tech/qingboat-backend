@@ -107,8 +107,17 @@ mybatis-plus:
     jdbc-type-for-null: 'null'
 
 
+python:
+  host: https://mobile.qingboat.com
+
+wx:
+  host: https://api.weixin.qq.com
+
 article-service:
   host: http://localhost:8082/as
 
 user-service:
   host: http://localhost:8083/us
+
+trade-service:
+  host: http://localhost:8084/ts

@@ -105,8 +105,17 @@ mybatis-plus:
     # 解决oracle更新数据为null时无法转换报错，mysql不会出现此情况
     jdbc-type-for-null: 'null'
 
+python:
+  host: https://m.qingboat.com
+
+wx:
+  host: https://api.weixin.qq.com
+
 article-service:
   host: http://localhost:8082/as
 
 user-service:
   host: http://localhost:8083/us
+
+trade-service:
+  host: http://localhost:8084/ts

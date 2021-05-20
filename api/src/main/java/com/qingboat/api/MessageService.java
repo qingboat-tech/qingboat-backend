@@ -1,7 +1,7 @@
-package com.qingboat.us.api;
+package com.qingboat.api;
 
+import com.qingboat.api.vo.MessageVo;
 import com.qingboat.base.config.FeignDecoder;
-import com.qingboat.us.api.vo.MessageVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

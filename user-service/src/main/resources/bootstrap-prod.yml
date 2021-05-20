@@ -108,11 +108,14 @@ business-domain: https://writing.qingboat.com
 business-domain-pathway-backend: https://mobile.qingboat.com
 
 
-trade-service:
-  host: http://localhost:8084/ts
-
 article-service:
   host: http://localhost:8082/as
+
+user-service:
+  host: http://localhost:8083/us
+
+trade-service:
+  host: http://localhost:8084/ts
 
 wx-msg-template:
 

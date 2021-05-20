@@ -1,19 +1,14 @@
-package com.qingboat.ts.api;
+package com.qingboat.api.vo;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
-import lombok.Getter;
-import org.springframework.data.annotation.Transient;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-@Getter
-public class TierServiceResponse {
+@Data
+public class TierVo {
     private Long id;
     private String title;   //标题
     private String desc;  // 描述
@@ -40,8 +35,7 @@ public class TierServiceResponse {
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedAt;
 
-    @Transient
-    public static Map<String, Object> ConvertToJson(TierServiceResponse entity) {
+    public static Map<String, Object> ConvertToJson(TierVo entity) {
             //Object mapper instance
         ObjectMapper mapper = new ObjectMapper();
 

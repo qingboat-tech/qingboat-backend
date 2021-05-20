@@ -1,6 +1,6 @@
-package com.qingboat.as.api;
+package com.qingboat.api;
 
-import com.qingboat.as.entity.CreatorBillEntity;
+import com.qingboat.api.vo.CreatorBillVo;
 import com.qingboat.base.config.FeignDecoder;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface TradeService {
 
     @RequestMapping(value = "/bill/createBillAndUpdateWallet/" , method = RequestMethod.POST)
-    Object createBillAndUpdateWallet(@RequestBody CreatorBillEntity creatorBillEntity,
-                          @RequestHeader("INNER-SEC") String innerSec,
+    Object createBillAndUpdateWallet(@RequestBody CreatorBillVo creatorBillVo,
+                                     @RequestHeader("INNER-SEC") String innerSec,
                                      @RequestHeader("UID") String creatorId);
 
 }

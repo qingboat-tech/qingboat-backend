@@ -1,9 +1,8 @@
 package com.qingboat.ts.controller;
 
+import com.qingboat.api.TierService;
+import com.qingboat.api.vo.TierVo;
 import com.qingboat.base.exception.BaseException;
-import com.qingboat.base.utils.DateUtil;
-import com.qingboat.ts.api.TierService;
-import com.qingboat.ts.api.TierServiceResponse;
 import com.qingboat.ts.entity.PurchaseOrderEntity;
 import com.qingboat.ts.service.PurchaseOrderService;
 import com.qingboat.ts.utils.RedisUtil;
@@ -36,19 +35,19 @@ public class PurchaseOrderController extends BaseController {
         Long tierId = orderVo.getTierId();
         String periodKey = orderVo.getPeriodKey();
 
-        TierServiceResponse tierEntity = tierService.getTierById(tierId);
-        if ( tierEntity.getSubscribeLimit()>0) {
+        TierVo tierVo = tierService.getTierById(tierId);
+        if ( tierVo.getSubscribeLimit()>0) {
             try {
-                boolean lockFlag = redisUtil.synLock("tier_"+tierEntity.getId());
+                boolean lockFlag = redisUtil.synLock("tier_"+tierVo.getId());
                 if (lockFlag){
-                    if (tierService.getTierSubscritionCount(tierId) >= tierEntity.getSubscribeLimit()){
+                    if (tierService.getTierSubscritionCount(tierId) >= tierVo.getSubscribeLimit()){
                         throw new BaseException(500,"SUBSCRIBE LIMIT ERROR");
                     }else {
                         return purchaseOrderService.createPurchaseOrder(tierId, periodKey, uid);
                     }
                 }
             }finally {
-                redisUtil.unLock("tier_"+tierEntity.getId());
+                redisUtil.unLock("tier_"+tierVo.getId());
             }
         }
         return purchaseOrderService.createPurchaseOrder(tierId, periodKey, uid);

@@ -3,8 +3,8 @@ package com.qingboat.as.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.qingboat.as.api.WxMessageService;
-import com.qingboat.as.api.WxTokenService;
+import com.qingboat.api.WxMessageService;
+import com.qingboat.api.WxTokenService;
 import com.qingboat.as.entity.MessageEntity;
 import com.qingboat.as.filter.AuthFilter;
 import com.qingboat.as.service.MessageService;
@@ -19,6 +19,12 @@ public class MessageController extends BaseController {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    WxTokenService wxTokenService;
+
+    @Autowired
+    WxMessageService wxMessageService;
 
 
     @PostMapping(value = "/sendMessage")
@@ -56,11 +62,7 @@ public class MessageController extends BaseController {
         return messageService.getUnreadMessageCount(getUId(),msgType);
     }
 
-    @Autowired
-    WxTokenService wxTokenService;
 
-    @Autowired
-    WxMessageService wxMessageService;
 
     @GetMapping(value = "/getToken")
     @ResponseBody
