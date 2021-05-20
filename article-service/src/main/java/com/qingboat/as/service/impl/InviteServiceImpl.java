@@ -85,7 +85,7 @@ public class InviteServiceImpl extends ServiceImpl<InviteDao, InviteEntity> impl
             queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("invite_key",inviteKey);
             count = this.count(queryWrapper);
-            if (count> READ_LIMIT){
+            if (count>= READ_LIMIT){
                 throw new BaseException(500,"本次分享超出限量阅读，下次手速要快哦");
             }
             UserEntity user = userService.findByUserId(operatorId);
