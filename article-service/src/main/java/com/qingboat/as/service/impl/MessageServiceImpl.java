@@ -252,7 +252,8 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
         body.put("touser",userWechatEntity.getOpenId());                    // 发给谁
         body.put("template_id",this.dataUpdateTemplate);                   // 那个模板
-        body.put("url",this.businessDomain+"/articleDetail/"+articleCommentEntity.getArticleId());             // 打开地址
+        // 配合前端展示，居然后边还传递了一个creatorId
+        body.put("url",this.businessDomain+"/articleDetail/"+articleCommentEntity.getArticleId()+"/"+creatorIdStr);
         body.put("data",data);
 
         data.put("first", JSON.parse("{'value': '有新评论啦！'}"));
@@ -312,7 +313,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
         body.put("touser",userWechatEntity.getOpenId());                    // 发给谁
         body.put("template_id",this.answerResultTemplate);                   // 那个模板
-        body.put("url",this.businessDomain+"/");             // 打开地址
+        body.put("url",this.businessDomain+"/articleDetail/"+replyCommentEntity.getArticleId()+"/"+creatorIdStr);
         body.put("data",data);
 
         data.put("first", JSON.parse("{'value': '有新回复啦！'}"));
@@ -374,7 +375,8 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
         body.put("touser",userWechatEntity.getOpenId());                    // 发给谁
         body.put("template_id",this.dataUpdateTemplate);                   // 那个模板
-        body.put("url",this.businessDomain+"/");             // 打开地址
+        body.put("url",this.businessDomain+"/articleDetail/"+articleEntity.getId()+"/"+creatorIdStr);
+
         body.put("data",data);
 
         data.put("first", JSON.parse("{'value': '有新点赞啦！'}"));
