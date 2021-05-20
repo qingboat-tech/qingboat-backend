@@ -179,12 +179,8 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         data2.put("keyword4", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
 
         // 交易流水号
-        if (userSubscriptionEntity.getOrderNo() ==null) {
-            data2.put("keyword5", JSON.parse("{'value': ''}"));
-        }
-        else {
-            data2.put("keyword5", JSON.parse("{'value': '"+userSubscriptionEntity.getOrderNo() +"'}"));
-        }
+        String orderNo = userSubscriptionEntity.getOrderNo() ==null?"":userSubscriptionEntity.getOrderNo();
+        data2.put("keyword5", JSON.parse("{'value': '"+orderNo +"'}"));
 
         // 备注
         data2.put("remark", JSON.parse("{'value': '加油来创作下一篇爆款吧！'}"));
