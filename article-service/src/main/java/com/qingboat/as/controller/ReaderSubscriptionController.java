@@ -128,6 +128,11 @@ public class ReaderSubscriptionController extends BaseController {
         Long creatorId = Long.valueOf(param.get("creatorId").toString());
         Long  tierId = Long.valueOf(param.get("tierId").toString()) ;
         Long subscriberId = getUId();
+        UserEntity userEntity = userService.findByUserId(subscriberId);
+        if (userEntity == null){
+            throw new BaseException(500,"操作失败：非法用户");
+        }
+
         if (creatorId == null || tierId == null){
             throw new BaseException(500,"操作失败：请求参数非法");
         }
