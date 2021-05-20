@@ -111,3 +111,6 @@ article-service:
 user-service:
   host: http://localhost:8083/us
 
+trade-service:
+  host: http://localhost:8084/ts
+

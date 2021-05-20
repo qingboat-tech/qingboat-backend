@@ -1,17 +1,13 @@
-package com.qingboat.ts.api;
+package com.qingboat.api.vo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import lombok.Getter;
 
 import java.util.Date;
 import java.util.Map;
 
 @Data
-public class UserServiceResponse {
+public class UserProfileVo {
 
     private Long id;
     private Long userId;
@@ -22,7 +18,6 @@ public class UserServiceResponse {
     private String description;
     private String phone;
 
-    @TableField(typeHandler = FastjsonTypeHandler.class)
     private Map[] expertiseArea;//创作者标签： json String, 格式：[{'key':'技术'}]
 
     private Integer role;  // 1:创作者；2：阅读者

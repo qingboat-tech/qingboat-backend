@@ -1,5 +1,6 @@
-package com.qingboat.ts.api;
+package com.qingboat.api;
 
+import com.qingboat.api.vo.TierVo;
 import com.qingboat.base.config.FeignDecoder;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface TierService {
 
     @RequestMapping(value = "/readersubscription/tier" , method = RequestMethod.GET)
-    TierServiceResponse getTierById(@RequestParam(value = "tierId",required = true) Long tierId);
+    TierVo getTierById(@RequestParam(value = "tierId",required = true) Long tierId);
 
 
     @RequestMapping(value="/creatorsubscription/getTierSubscritionCount", method = RequestMethod.GET)

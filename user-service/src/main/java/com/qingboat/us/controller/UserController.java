@@ -1,18 +1,16 @@
 package com.qingboat.us.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
 import com.qingboat.base.task.DelayQueueManager;
-import com.qingboat.us.api.MessageService;
-import com.qingboat.us.api.vo.MessageVo;
+import com.qingboat.api.MessageService;
+import com.qingboat.api.vo.MessageVo;
 import com.qingboat.us.entity.CreatorApplyFormEntity;
 import com.qingboat.us.entity.UserProfileEntity;
 import com.qingboat.us.service.UserService;
 import com.qingboat.us.task.ApplyCreatorTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestAttributes;
@@ -21,7 +19,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 

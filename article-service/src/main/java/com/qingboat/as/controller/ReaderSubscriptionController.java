@@ -5,10 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.qingboat.as.api.TradeService;
 import com.qingboat.as.entity.*;
 
-import com.qingboat.as.filter.AuthFilter;
 import com.qingboat.as.service.MessageService;
 import com.qingboat.as.service.TierService;
 import com.qingboat.as.service.UserService;
