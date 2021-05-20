@@ -123,7 +123,6 @@ public class InviteServiceImpl extends ServiceImpl<InviteDao, InviteEntity> impl
         if (!decode.contains("#")){
             throw new BaseException(500,"非法邀请码，不能领取哦");
         }
-
         QueryWrapper<InviteEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("invite_key",inviteKey);
         queryWrapper.eq("user_id",operatorId);
