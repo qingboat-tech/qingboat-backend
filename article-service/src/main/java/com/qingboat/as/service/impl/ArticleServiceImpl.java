@@ -569,7 +569,7 @@ public class ArticleServiceImpl implements ArticleService {
                 }
                 body2.put("touser",userWechatEntity2.getOpenId());                   // 发给谁
                 body2.put("template_id",this.reviewTemplate2);                      // 那个模板
-                body2.put("url",this.businessDomain+"/articleDetail/"+articleEntity.getId()+"/"+creatorIdStr);
+                body2.put("url",this.businessDomain+"/creatorcenter/index");
 
                 body2.put("data",data2);
 
@@ -638,7 +638,7 @@ public class ArticleServiceImpl implements ArticleService {
                 }
                 body2.put("touser",userWechatEntity2.getOpenId());                   // 发给谁
                 body2.put("template_id",this.reviewTemplate2);                      // 那个模板
-                body2.put("url", this.businessDomain);             // 打开地址
+                body2.put("url",this.businessDomain+"/creatorcenter/index");
                 body2.put("data",data2);
 
                 log.info( " request: " +body2);
@@ -708,7 +708,7 @@ public class ArticleServiceImpl implements ArticleService {
                 }
                 body2.put("touser",userWechatEntity2.getOpenId());                   // 发给谁
                 body2.put("template_id",this.reviewTemplate2);                      // 那个模板
-                body2.put("url", this.businessDomain);             // 打开地址
+                body2.put("url",this.businessDomain+"/creatorcenter/index");
                 body2.put("data",data2);
 
                 log.info( " request: " +body2);
@@ -772,7 +772,7 @@ public class ArticleServiceImpl implements ArticleService {
             }
             body2.put("touser",userWechatEntity2.getOpenId());                   // 发给谁
             body2.put("template_id",this.reviewTemplate2);                      // 那个模板
-            body2.put("url", this.businessDomain+"/creatorcenter/subscribe");             // 打开地址
+            body2.put("url",this.businessDomain+"/articleDetail/"+articleEntity.getId()+"/"+creatorIdStr);
             body2.put("data",data2);
 
             log.info( " request: " +body2);
