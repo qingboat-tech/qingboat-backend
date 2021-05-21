@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -257,6 +258,47 @@ public class RedisUtil {
     }
 
     //- - - - - - - - - - - - - - - - - - - - -  set类型 - - - - - - - - - - - - - - - - - - - -
+
+    /**
+     * 将数据放入有序set缓存
+     *
+     * @param key 键
+     * @return
+     */
+    public Boolean zAdd(String key,String value,double v){
+        return redisTemplate.opsForZSet().add(key,value,v);
+    }
+    /**
+     * 有序集合获取
+     * @param key
+     * @param scoure
+     * @param scoure1
+     * @return
+     */
+    public Set<Object> zRangeByScore(String key,double scoure,double scoure1){
+        return redisTemplate.opsForZSet().rangeByScore(key, scoure, scoure1);
+    }
+
+    public Set<ZSetOperations.TypedTuple<Object>>  zRangeByScoreWithScores(String key, double scoure, double scoure1){
+        return redisTemplate.opsForZSet().rangeByScoreWithScores(key, scoure, scoure1);
+    }
+
+    public Set<Object> zRemove(String key,Object item){
+        redisTemplate.opsForZSet().remove(key,item);
+        return null;
+    }
+
+
+        /**
+         * 有序集合获取
+         * @param key
+         * @param scoure
+         * @param scoure1
+         * @return
+         */
+    public Set<Object> zRange(String key,long scoure,long scoure1){
+        return redisTemplate.opsForZSet().range(key, scoure, scoure1);
+    }
 
     /**
      * 将数据放入set缓存
