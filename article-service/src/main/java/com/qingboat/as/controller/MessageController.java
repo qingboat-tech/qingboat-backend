@@ -62,6 +62,15 @@ public class MessageController extends BaseController {
         return messageService.getUnreadMessageCount(getUId(),msgType);
     }
 
+    /**
+     * 根据消息类型，返回未读消息数
+     */
+    @GetMapping(value = "/getUnreadGroupbyMessageCount")
+    @ResponseBody
+    public Object unReadCount() {
+        return messageService.getUnreadGroupbyMessageCount(getUId());
+    }
+
 
 
     @GetMapping(value = "/getToken")

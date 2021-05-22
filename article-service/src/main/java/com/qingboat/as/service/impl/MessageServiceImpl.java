@@ -23,9 +23,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -455,6 +453,14 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         QueryWrapper<MessageEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntity(entity);
         return this.count(queryWrapper);
+    }
+
+    @Override
+    public List<Map<String,Integer>> getUnreadGroupbyMessageCount(Long toUserId) {
+        MessageEntity messageEntity = new MessageEntity();
+        messageEntity.setTo(toUserId);
+
+        return baseMapper.getGroupUnreadCountByUserId(messageEntity);
     }
 
 }

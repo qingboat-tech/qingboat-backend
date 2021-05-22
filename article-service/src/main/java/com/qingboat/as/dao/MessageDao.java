@@ -6,8 +6,14 @@ import com.qingboat.as.entity.TierEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Map;
+
 @Repository
 @Mapper
 public interface MessageDao extends BaseMapper<MessageEntity> {
+
+
+    List<Map<String,Integer>> getGroupUnreadCountByUserId(MessageEntity messageEntity);
 
 }
