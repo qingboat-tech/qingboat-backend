@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
         queryWrapper.eq("user_id",userId);
         UserProfileEntity userProfileEntity = userProfileDao.selectOne(queryWrapper);
         if (userProfileEntity !=null){
-            if(1== userProfileEntity.getRole() && 1 == userProfileEntity.getStatus()){
+            if(1== userProfileEntity.getRole()){
 
             }else {
                 userProfileEntity.setRole(1);
