@@ -56,12 +56,15 @@ public class RedisQueue {
                 if (!lockFlag){
                     return;
                 }
+                String[] todoMsgIds = new String[rst.size()];
+                int index = 0;
 
                 log.info(" 消息监听器: 等待执行任务数：" + rst.size());
                 Map<Object, Method> map = getBean(StreamListener.class);
                 Iterator ite = rst.iterator();
                 while (ite.hasNext()){
                     String msgId  = (String) ite.next();
+                    todoMsgIds[index++] = msgId;
                     Object v = redisUtil.get(msgId);
                     if (v ==null){
                         continue;
@@ -83,10 +86,9 @@ public class RedisQueue {
                         log.error("消息监听器 msgId删除异常: msgId= ", msgId);
                     }
                 }
-                String[] msgIdArray = (String[]) rst.toArray();
-                long delRst = redisUtil.zRemove(QUEUE_NAME,msgIdArray);
+                long delRst = redisUtil.zRemove(QUEUE_NAME,todoMsgIds);
                 if (delRst != delRst){
-                    log.error("消息监听器 zSet删除异常: msgId= ", msgIdArray);
+                    log.error("消息监听器 zSet删除异常: msgId= ", todoMsgIds);
                 }
             }
         }finally {
