@@ -11,7 +11,6 @@ import com.qingboat.us.entity.UserProfileEntity;
 import com.qingboat.us.redis.mq.RedisMessage;
 import com.qingboat.us.redis.mq.RedisQueue;
 import com.qingboat.us.service.UserService;
-import com.qingboat.us.task.ApplyCreatorTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
