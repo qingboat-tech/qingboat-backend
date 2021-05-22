@@ -1,4 +1,4 @@
-package com.qingboat.as.redis.mq;
+package com.qingboat.us.redis.mq;
 
 import lombok.Data;
 
@@ -30,7 +30,7 @@ public class RedisMessage<T>  implements Serializable {
     /**
      * 延时时间, 格式为时间戳: 当前时间戳 + 实际延迟毫秒数
      */
-    private Long delayTime = System.currentTimeMillis() + 10000L;  // 30秒
+    private Long delayTime = System.currentTimeMillis() + 10000L;  // 10秒
     /**
      * 消息发送时间
      */

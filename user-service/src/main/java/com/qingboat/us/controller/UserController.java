@@ -1,5 +1,6 @@
 package com.qingboat.us.controller;
 
+import com.baomidou.mybatisplus.extension.api.R;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
 import com.qingboat.base.task.DelayQueueManager;
@@ -7,6 +8,8 @@ import com.qingboat.api.MessageService;
 import com.qingboat.api.vo.MessageVo;
 import com.qingboat.us.entity.CreatorApplyFormEntity;
 import com.qingboat.us.entity.UserProfileEntity;
+import com.qingboat.us.redis.mq.RedisMessage;
+import com.qingboat.us.redis.mq.RedisQueue;
 import com.qingboat.us.service.UserService;
 import com.qingboat.us.task.ApplyCreatorTask;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +39,7 @@ public class UserController {
     private MessageService messageService;
 
     @Autowired
-    private DelayQueueManager delayQueueManager;
+    private RedisQueue redisQueue;
 
 
     @PostMapping("/saveUserProfile")
@@ -93,8 +96,13 @@ public class UserController {
     public UserProfileEntity applyCreator(){
         Long uid = getUId();
         log.info(" applyCreator, RequestParam: uid=" +uid);
-        ApplyCreatorTask task = new ApplyCreatorTask(userService,uid,1000*60*15);
-        delayQueueManager.put(task);
+
+        RedisMessage<Long> redisMessage = new RedisMessage();
+        redisMessage.setBody(uid);
+        redisMessage.setDelayTime(60*1000*5L);
+        redisMessage.setTopic("TOPIC:applyCreator");
+
+        redisQueue.push(redisMessage);
         return null;
     }
 

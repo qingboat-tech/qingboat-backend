@@ -1,4 +1,4 @@
-package com.qingboat.as.redis.mq.annotation;
+package com.qingboat.us.redis.mq.annotation;
 
 import java.lang.annotation.*;
 

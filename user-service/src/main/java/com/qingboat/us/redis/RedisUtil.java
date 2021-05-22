@@ -1,4 +1,4 @@
-package com.qingboat.as.utils;
+package com.qingboat.us.redis;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

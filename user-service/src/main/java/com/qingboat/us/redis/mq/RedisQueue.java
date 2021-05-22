@@ -1,12 +1,11 @@
-package com.qingboat.as.redis.mq;
+package com.qingboat.us.redis.mq;
 
 import com.alibaba.fastjson.JSON;
-import com.qingboat.as.redis.mq.annotation.StreamListener;
-import com.qingboat.as.utils.RedisUtil;
+import com.qingboat.us.redis.RedisUtil;
+import com.qingboat.us.redis.mq.annotation.StreamListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -50,13 +49,15 @@ public class RedisQueue {
     @Scheduled(cron = "0/2 * * * * ?") //每2秒执行一次
     public void scheduledTaskByCorn() {
         try{
-            //获取锁
-            boolean lockFlag = redisUtil.lock(QUEUE_NAME);
-            if (!lockFlag){
-                return;
-            }
             Set<Object> rst = redisUtil.zRangeByScore(QUEUE_NAME,0,System.currentTimeMillis());
             if (rst !=null && !rst.isEmpty()){
+                //获取锁
+                boolean lockFlag = redisUtil.lock(QUEUE_NAME);
+                if (!lockFlag){
+                    return;
+                }
+
+                log.info(" 消息监听器: 等待执行任务数：" + rst.size());
                 Map<Object, Method> map = getBean(StreamListener.class);
                 Iterator ite = rst.iterator();
                 while (ite.hasNext()){
@@ -65,27 +66,27 @@ public class RedisQueue {
                     if (v ==null){
                         continue;
                     }
-
                     for (Map.Entry<Object, Method> entry : map.entrySet()) {
-                        RedisMessage msg = JSON.parseObject(String.valueOf(v),RedisMessage.class);
+                        RedisMessage msg = JSON.parseObject(String.valueOf(v), RedisMessage.class);
                         executors.submit(() -> {
                             try {
                                 entry.getValue().invoke(entry.getKey(), msg);
                             } catch (Throwable t) {
                                 // 失败重新放入失败队列
                                 log.error("消息监听器发送异常: ", t);
-                            }finally {
-
-                                boolean deleteRst = redisUtil.deleteKey(msgId);
-                                if (!deleteRst){
-                                    log.error("消息监听器删除异常: msgId= ", msgId);
-                                }
-                                redisUtil.zRemove(QUEUE_NAME,msgId);
                             }
                         });
                         log.info("监听器-监听到到期消息: {}", JSON.toJSONString(msg));
-                        break;
                     }
+                    boolean deleteRst = redisUtil.deleteKey(msgId);
+                    if (!deleteRst){
+                        log.error("消息监听器 msgId删除异常: msgId= ", msgId);
+                    }
+                    long delRst = redisUtil.zRemove(QUEUE_NAME,msgId);
+                    if (delRst <=0){
+                        log.error("消息监听器 zSet删除异常: msgId= ", msgId);
+                    }
+
                 }
             }
         }finally {
@@ -114,7 +115,6 @@ public class RedisQueue {
         this.map = map;
         return map;
     }
-
 
 
 }
