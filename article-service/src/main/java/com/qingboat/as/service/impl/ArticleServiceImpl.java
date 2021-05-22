@@ -810,7 +810,7 @@ public class ArticleServiceImpl implements ArticleService {
                 bodyData.put("first", JSON.parse("{'value': '您订阅的套餐有新的文章啦！'}"));
                 bodyData.put("keyword1", JSON.parse("{'value': '"+articleEntity.getAuthorNickName()+"'}"));
                 bodyData.put("keyword2", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
-                bodyData.put("remark", JSON.parse("{'value': '感谢您订阅,快来开启学习成长之旅吧！'}"));
+                bodyData.put("remark", JSON.parse("{'value': '"+articleEntity.getTitle()+"'}"));
 
                 log.info( " request: " +body);
                 Object obj = wxMessageService.sendMessage(sendToken,body);
