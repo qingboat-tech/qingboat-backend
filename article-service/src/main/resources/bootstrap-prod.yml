@@ -131,7 +131,7 @@ user-service:
 trade-service:
   host: http://localhost:8084/ts
 
-business-domain: https://design.qingboat.com
+business-domain: https://creator.qingboat.com
 
 wx-msg-template:
 

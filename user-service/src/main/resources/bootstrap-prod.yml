@@ -126,7 +126,7 @@ python:
 wx:
   host: https://api.weixin.qq.com
 
-business-domain: https://writing.qingboat.com
+business-domain: https://creator.qingboat.com
 business-domain-pathway-backend: https://mobile.qingboat.com
 
 
