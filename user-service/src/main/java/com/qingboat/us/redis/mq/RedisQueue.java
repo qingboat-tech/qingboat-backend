@@ -40,7 +40,7 @@ public class RedisQueue {
             msg.setDelayTime(System.currentTimeMillis());
         }
 
-        redisUtil.zAdd(QUEUE_NAME, msg.getId(), msg.getDelayTime());
+        redisUtil.zAdd(QUEUE_NAME, msg.getId(), System.currentTimeMillis()+msg.getDelayTime());
         redisUtil.set(msg.getId(), JSON.toJSONString(msg));
 
         //释放锁
