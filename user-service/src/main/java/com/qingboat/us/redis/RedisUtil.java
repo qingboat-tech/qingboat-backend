@@ -283,7 +283,7 @@ public class RedisUtil {
         return redisTemplate.opsForZSet().rangeByScoreWithScores(key, scoure, scoure1);
     }
 
-    public long zRemove(String key,Object item){
+    public long zRemove(String key,Object ...item){
         return redisTemplate.opsForZSet().remove(key,item);
     }
 
