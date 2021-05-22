@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.qingboat.as.dao.MessageDao">
+
+    <select id="getGroupUnreadCountByUserId" resultType="java.util.Map"
+            parameterType="com.qingboat.as.entity.MessageEntity">
+        SELECT  msg_type AS msgType , count(*) AS cnt FROM apps_msg
+        WHERE `to` = #{to} and `read_flag`=0 GROUP BY msg_type
+    </select>
+
+</mapper>
+

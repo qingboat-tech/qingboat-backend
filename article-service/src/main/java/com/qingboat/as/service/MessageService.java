@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.qingboat.as.dao.MessageDao;
 import com.qingboat.as.entity.*;
 
+import java.util.List;
+import java.util.Map;
+
 public interface MessageService {
 
     void asyncSendMessage(MessageEntity msg);
@@ -23,5 +26,8 @@ public interface MessageService {
     MessageEntity getLastUnReadMessage(Long toUserId,Integer msgType);
 
     Integer getUnreadMessageCount(Long toUserId, Integer msgType);
+
+    List<Map<String,Integer>> getUnreadGroupbyMessageCount(Long toUserId);
+
 
 }
