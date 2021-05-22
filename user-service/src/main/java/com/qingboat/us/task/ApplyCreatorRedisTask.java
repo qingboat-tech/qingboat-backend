@@ -8,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 @Component
 @Slf4j
 public class ApplyCreatorRedisTask {
@@ -21,7 +19,7 @@ public class ApplyCreatorRedisTask {
     @StreamListener
     public void processTask(RedisMessage message) {
         if ("TOPIC:applyCreator".equals(message.getTopic())){
-            Long userId = (Long) message.getBody();
+            Long userId = Long.valueOf(String.valueOf(message.getBody())) ;
             userService.applyCreator(userId);
         }
         log.info("processTask，消息处理监听器, msg: {}", JSON.toJSONString(message));
