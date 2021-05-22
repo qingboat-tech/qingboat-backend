@@ -8,6 +8,7 @@ import com.qingboat.api.MessageService;
 import com.qingboat.api.vo.MessageVo;
 import com.qingboat.us.entity.CreatorApplyFormEntity;
 import com.qingboat.us.entity.UserProfileEntity;
+import com.qingboat.us.redis.RedisUtil;
 import com.qingboat.us.redis.mq.RedisMessage;
 import com.qingboat.us.redis.mq.RedisQueue;
 import com.qingboat.us.service.UserService;
@@ -26,7 +27,7 @@ import java.util.Map;
 
 @RestController
 @Slf4j
-public class UserController {
+public class UserController extends BaseController  {
 
     @Autowired
     private UserService userService;
@@ -39,6 +40,9 @@ public class UserController {
 
     @Autowired
     private RedisQueue redisQueue;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
 
     @PostMapping("/saveUserProfile")
@@ -168,18 +172,20 @@ public class UserController {
         return creatorApplyFormEntity;
     }
 
-
-    private Long getUId(){
-        Long uid = null;
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();//这个RequestContextHolder是Springmvc提供来获得请求的东西
-        if(requestAttributes !=null && requestAttributes instanceof ServletRequestAttributes){
-            HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
-            uid = (Long) request.getAttribute("UID");
-        }
-        if (uid == null){
-            throw new BaseException(401,"AUTH_ERROR");
-        }
-        return uid;
+    @GetMapping("/getGuideFlag")
+    @ResponseBody
+    public Boolean getGuideFlag(){
+        String uid = getUIdStr();
+        return redisUtil.get("GuideFlagUser:"+uid) == null ?Boolean.TRUE:Boolean.FALSE;
     }
+
+    @GetMapping("/setGuideFlag")
+    @ResponseBody
+    public Boolean setGuideFlag(){
+        String uid = getUIdStr();
+        redisUtil.set("GuideFlagUser:"+uid,"1");
+        return Boolean.TRUE;
+    }
+
 
 }
