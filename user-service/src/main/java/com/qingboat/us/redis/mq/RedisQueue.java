@@ -82,11 +82,11 @@ public class RedisQueue {
                     if (!deleteRst){
                         log.error("消息监听器 msgId删除异常: msgId= ", msgId);
                     }
-                    long delRst = redisUtil.zRemove(QUEUE_NAME,msgId);
-                    if (delRst <=0){
-                        log.error("消息监听器 zSet删除异常: msgId= ", msgId);
-                    }
-
+                }
+                String[] msgIdArray = (String[]) rst.toArray();
+                long delRst = redisUtil.zRemove(QUEUE_NAME,msgIdArray);
+                if (delRst != delRst){
+                    log.error("消息监听器 zSet删除异常: msgId= ", msgIdArray);
                 }
             }
         }finally {
