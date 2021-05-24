@@ -133,6 +133,12 @@ trade-service:
 
 business-domain: https://creator.qingboat.com
 
+glob-exception:
+  hook-key: ee3ad0c0-a954-4fa0-8711-edc1d977d360
+
+biz-exception:
+  hook-key: ece23b3d-7436-4568-af15-8837d2105e1c
+
 wx-msg-template:
 
   # 审核结果通知（##1)

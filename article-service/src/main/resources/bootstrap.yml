@@ -132,6 +132,12 @@ trade-service:
 
 business-domain: https://design.qingboat.com
 
+glob-exception:
+  hook-key: ac2dbfbf-882e-4f20-8d15-d1ce23c20aa0
+
+biz-exception:
+    hook-key: ac2dbfbf-882e-4f20-8d15-d1ce23c20aa0
+
 wx-msg-template:
 
   # 审核结果通知（##1)
