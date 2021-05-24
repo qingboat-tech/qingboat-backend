@@ -28,15 +28,41 @@ public class ExceptionFeishuAlarmService {
 
     @Async
     public void alarmSystemException(Exception e){
-        FeishuService.TextBody textBody = new FeishuService.TextBody("[系统异常]\n 用户ID：" +getUId()+"\n"+ e.toString());
-        feishuService.sendTextMsg(globExceptionHookKey,textBody);
+        FeishuService.PostBody postBody = new FeishuService.PostBody();
+        postBody.setTitle("系统异常");
+        FeishuService.PostTextTag textTag = new FeishuService.PostTextTag();
+        textTag.setText("用户Id:");
+        FeishuService.PostLinkTag linkTag = new FeishuService.PostLinkTag();
+        linkTag.setText(getUId()+"");
+        linkTag.setHref("https://creator.qingboat.com");
+
+        FeishuService.PostTextTag contentTag = new FeishuService.PostTextTag();
+        contentTag.setText(e.toString());
+
+        postBody.addContent(textTag,linkTag);
+        postBody.addContent(contentTag);
+
+        feishuService.sendTextMsg(globExceptionHookKey,postBody);
     }
 
 
     @Async
     public void alarmBizException(BaseException e){
-        FeishuService.TextBody textBody = new FeishuService.TextBody("[业务异常]\n 用户ID：" +getUId()+"\n"+ e.toString());
-        feishuService.sendTextMsg(bizExceptionHookKey,textBody);
+        FeishuService.PostBody postBody = new FeishuService.PostBody();
+        postBody.setTitle("业务异常");
+        FeishuService.PostTextTag textTag = new FeishuService.PostTextTag();
+        textTag.setText("用户Id:");
+        FeishuService.PostLinkTag linkTag = new FeishuService.PostLinkTag();
+        linkTag.setText(getUId()+"");
+        linkTag.setHref("https://creator.qingboat.com");
+
+        FeishuService.PostTextTag contentTag = new FeishuService.PostTextTag();
+        contentTag.setText(e.toString());
+
+        postBody.addContent(textTag,linkTag);
+        postBody.addContent(contentTag);
+
+        feishuService.sendTextMsg(bizExceptionHookKey,postBody);
     }
 
     protected   Object getAttribute(String s) {
