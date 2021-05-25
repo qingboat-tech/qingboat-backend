@@ -1,7 +1,7 @@
 package com.qingboat.as.config;
 
 import com.qingboat.as.filter.AuthFilter;
-import com.qingboat.as.filter.LogInterceptor;
+import com.qingboat.base.filter.LogInterceptor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
