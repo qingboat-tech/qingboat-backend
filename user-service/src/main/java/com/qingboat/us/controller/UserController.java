@@ -1,16 +1,20 @@
 package com.qingboat.us.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
 import com.qingboat.base.task.DelayQueueManager;
 import com.qingboat.api.MessageService;
 import com.qingboat.api.vo.MessageVo;
+import com.qingboat.us.entity.AuthTokenEntity;
+import com.qingboat.us.entity.AuthUserEntity;
 import com.qingboat.us.entity.CreatorApplyFormEntity;
 import com.qingboat.us.entity.UserProfileEntity;
 import com.qingboat.us.redis.RedisUtil;
 import com.qingboat.us.redis.mq.RedisMessage;
 import com.qingboat.us.redis.mq.RedisQueue;
+import com.qingboat.us.service.AuthUserService;
 import com.qingboat.us.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +47,56 @@ public class UserController extends BaseController  {
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private AuthUserService authUserService;
+
+
+    @PostMapping("/adminProxyLogin")
+    @ResponseBody
+    public Map<String,Object> adminProxyLogin(@Valid @RequestBody Map<String,Object> param){
+        String userNanme  = (String) param.get("userName");
+        String password = (String) param.get("password");
+        Integer creatorId = (Integer) param.get("creatorId");
+
+        AuthUserEntity authUserEntity = authUserService.getAuthUerByUserNameAndPwd(userNanme,password);
+        if (authUserEntity!=null && authUserEntity.getIsStaff()==1){
+
+            UserProfileEntity profile = userService.getUserProfile(Long.valueOf(creatorId));
+            if (profile!= null ){
+
+                Map<String,Object> returnData = new HashMap<>();
+
+                Map<String,Object> rst = new HashMap<>();
+                rst.put("description",profile.getDescription());
+                rst.put("expertise_area",profile.getExpertiseArea());
+                rst.put("follower_cnt",0);
+                rst.put("following_cnt",0);
+                rst.put("headimg_url",profile.getHeadimgUrl());
+                rst.put("id",profile.getDescription());
+                rst.put("industry","互联网/科技");
+                rst.put("is_bind_phone",true);
+                rst.put("like_cnt",0);
+                rst.put("nickname",profile.getNickname());
+                rst.put("position",profile.getPosition());
+                rst.put("ref_code","");
+                rst.put("role",profile.getRole());
+                rst.put("user_id",profile.getUserId());
+
+                returnData.put("profile",rst);
+
+                AuthTokenEntity authToken = new AuthTokenEntity();
+                QueryWrapper<AuthTokenEntity> wrapper = new QueryWrapper<>();
+                wrapper.eq("user_id",creatorId);
+                authToken = authToken.selectOne(wrapper);
+
+                returnData.put("token",authToken.getKey());
+
+                return returnData;
+            }
+        }
+        throw new BaseException(500,"管理员授权登录错误");
+    }
 
 
     @PostMapping("/saveUserProfile")
