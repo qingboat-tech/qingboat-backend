@@ -7,115 +7,123 @@ spring:
   application:
     name: user-service
 
-  datasource:
-    username: qingboatproduction
-    password: asdthek6u2n
-    #serverTimezone=UTC 配置时区
-    url: jdbc:mysql://127.0.0.1:3306/qingboatdb?serverTimezone=GMT%2b8&useUnicode=true&characterEncoding=utf-8
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    type: com.alibaba.druid.pool.DruidDataSource
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848 #服务器ip或本地ip
+        file-extension: yml
 
-    #Spring Boot 默认是不注入这些属性值的，需要自己绑定
-    #druid 数据源专有配置
-    initialSize: 5
-    minIdle: 5
-    maxActive: 20
-    maxWait: 60000
-    timeBetweenEvictionRunsMillis: 60000
-    minEvictableIdleTimeMillis: 300000
-    validationQuery: SELECT 1 FROM DUAL
-    testWhileIdle: true
-    testOnBorrow: false
-    testOnReturn: false
-    poolPreparedStatements: true
-
-    #配置监控统计拦截的filters，stat:监控统计、log4j：日志记录、wall：防御sql注入
-    #如果允许时报错  java.lang.ClassNotFoundException: org.apache.log4j.Priority
-    #则导入 log4j 依赖即可，Maven 地址：https://mvnrepository.com/artifact/log4j/log4j
-    filters: stat,wall,log4j
-    maxPoolPreparedStatementPerConnectionSize: 20
-    useGlobalDataSourceStat: true
-    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
-
-  redis:
-    host: localhost
-    port: 6379
-    # 连接超时时间
-    timeout: 10000ms
-    # Redis默认情况下有16个分片，这里配置具体使用的分片
-    database: 5
-    lettuce:
-      pool:
-        # 连接池最大连接数（使用负值表示没有限制） 默认 8
-        max-active: 8
-        # 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1
-        max-wait: -1ms
-        # 连接池中的最大空闲连接 默认 8
-        max-idle: 8
-        # 连接池中的最小空闲连接 默认 0
-        min-idle: 0
-  cache:
-    # 一般来说是不用配置的，Spring Cache 会根据依赖的包自行装配
-    type: redis
-
-feign:
-  httpclient:
-    enabled: true
-  okhttp:
-    enabled: true
-
-mybatis:
-  mapper-locations: mapper/*.xml
-
-
-logging:
-  level:
-    org.springframework.web: INFO
-    com.github.binarywang.demo.wx.mp: DEBUG
-    me.chanjar.weixin: DEBUG
-
-
-python:
-  host: https://m.qingboat.com
-wx:
-  host: https://api.weixin.qq.com
-
-
-business-domain: https://design.qingboat.com
-business-domain-pathway-backend: https://m.qingboat.com
-
-
-article-service:
-  host: http://localhost:8082/as
-
-user-service:
-  host: http://localhost:8083/us
-
-trade-service:
-  host: http://localhost:8084/ts
-
-glob-exception:
-  hook-key: ac2dbfbf-882e-4f20-8d15-d1ce23c20aa0
-
-biz-exception:
-  hook-key: ac2dbfbf-882e-4f20-8d15-d1ce23c20aa0
-
-wx-msg-template:
-
-  # 审核结果通知（##1)
-  review1: QX3xmQDeiOFAx2oZ90-dSQG5nwgSyRcBWjWEhT1sCZ8
-
-  # 审核结果通知（##2)
-  review2: dJoehPN6ci4wpkp_U6OH4RqXZo2Og11tmhosizSZTF4
-
-  # 新订单通知（##3)
-  new-order: -n6SwRRAUhsFx2ZX0ULIzmCdNXVDomDaGCUkx0AkSQ0
-
-  # 购买成功通知（##4）
-  purchase-success: 6OmuuN2hDooZRcnSrvZuEl1Aowo4fkR0UlIn34UbgCA
-
-  # 提问结果通知 (##5)
-  answer-result: 2aDoiWJZEjaDx-pgjNbC1h1QSANcjzDlCYH0saRu-hs
-
-  #  数据更新模板 (##6)
-  data-update: Yb6vx1hu0iXh7KcvUueOco4d2l4jOey5rnb6LoIIFQo
+#  datasource:
+#    username: qingboatproduction
+#    password: asdthek6u2n
+#    #serverTimezone=UTC 配置时区
+#    url: jdbc:mysql://127.0.0.1:3306/qingboatdb?serverTimezone=GMT%2b8&useUnicode=true&characterEncoding=utf-8
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    type: com.alibaba.druid.pool.DruidDataSource
+#
+#    #Spring Boot 默认是不注入这些属性值的，需要自己绑定
+#    #druid 数据源专有配置
+#    initialSize: 5
+#    minIdle: 5
+#    maxActive: 20
+#    maxWait: 60000
+#    timeBetweenEvictionRunsMillis: 60000
+#    minEvictableIdleTimeMillis: 300000
+#    validationQuery: SELECT 1 FROM DUAL
+#    testWhileIdle: true
+#    testOnBorrow: false
+#    testOnReturn: false
+#    poolPreparedStatements: true
+#
+#    #配置监控统计拦截的filters，stat:监控统计、log4j：日志记录、wall：防御sql注入
+#    #如果允许时报错  java.lang.ClassNotFoundException: org.apache.log4j.Priority
+#    #则导入 log4j 依赖即可，Maven 地址：https://mvnrepository.com/artifact/log4j/log4j
+#    filters: stat,wall,log4j
+#    maxPoolPreparedStatementPerConnectionSize: 20
+#    useGlobalDataSourceStat: true
+#    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+#
+#  redis:
+#    host: localhost
+#    port: 6379
+#    # 连接超时时间
+#    timeout: 10000ms
+#    # Redis默认情况下有16个分片，这里配置具体使用的分片
+#    database: 5
+#    lettuce:
+#      pool:
+#        # 连接池最大连接数（使用负值表示没有限制） 默认 8
+#        max-active: 8
+#        # 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1
+#        max-wait: -1ms
+#        # 连接池中的最大空闲连接 默认 8
+#        max-idle: 8
+#        # 连接池中的最小空闲连接 默认 0
+#        min-idle: 0
+#  cache:
+#    # 一般来说是不用配置的，Spring Cache 会根据依赖的包自行装配
+#    type: redis
+#
+#feign:
+#  httpclient:
+#    enabled: true
+#  okhttp:
+#    enabled: true
+#
+#mybatis:
+#  mapper-locations: mapper/*.xml
+#
+#
+#logging:
+#  level:
+#    org.springframework.web: INFO
+#    com.github.binarywang.demo.wx.mp: DEBUG
+#    me.chanjar.weixin: DEBUG
+#
+#
+#python:
+#  host: https://m.qingboat.com
+#wx:
+#  host: https://api.weixin.qq.com
+#
+#
+#business-domain: https://design.qingboat.com
+#business-domain-pathway-backend: https://m.qingboat.com
+#
+#
+#article-service:
+#  host: http://localhost:8082/as
+#
+#user-service:
+#  host: http://localhost:8083/us
+#
+#trade-service:
+#  host: http://localhost:8084/ts
+#
+#glob-exception:
+#  hook-key: ac2dbfbf-882e-4f20-8d15-d1ce23c20aa0
+#
+#biz-exception:
+#  hook-key: ac2dbfbf-882e-4f20-8d15-d1ce23c20aa0
+#
+#wx-msg-template:
+#
+#  # 审核结果通知（##1)
+#  review1: QX3xmQDeiOFAx2oZ90-dSQG5nwgSyRcBWjWEhT1sCZ8
+#
+#  # 审核结果通知（##2)
+#  review2: dJoehPN6ci4wpkp_U6OH4RqXZo2Og11tmhosizSZTF4
+#
+#  # 新订单通知（##3)
+#  new-order: -n6SwRRAUhsFx2ZX0ULIzmCdNXVDomDaGCUkx0AkSQ0
+#
+#  # 购买成功通知（##4）
+#  purchase-success: 6OmuuN2hDooZRcnSrvZuEl1Aowo4fkR0UlIn34UbgCA
+#
+#  # 提问结果通知 (##5)
+#  answer-result: 2aDoiWJZEjaDx-pgjNbC1h1QSANcjzDlCYH0saRu-hs
+#
+#  #  数据更新模板 (##6)
+#  data-update: Yb6vx1hu0iXh7KcvUueOco4d2l4jOey5rnb6LoIIFQo

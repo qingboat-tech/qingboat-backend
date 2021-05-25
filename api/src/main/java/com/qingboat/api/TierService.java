@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-@FeignClient(name = "tier-service",url = "${article-service.host}", configuration = {FeignDecoder.class})
+@FeignClient(name = "article-service", configuration = {FeignDecoder.class})
 public interface TierService {
 
     @RequestMapping(value = "/readersubscription/tier" , method = RequestMethod.GET)

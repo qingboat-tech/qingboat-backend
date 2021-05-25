@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(name = "trade-service",url = "${trade-service.host}",configuration = {FeignDecoder.class})
+@FeignClient(name = "trade-service",configuration = {FeignDecoder.class})
 public interface TradeService {
 
     @RequestMapping(value = "/bill/createBillAndUpdateWallet/" , method = RequestMethod.POST)
