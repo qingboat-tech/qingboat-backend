@@ -5,7 +5,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.qingboat.us.dao.AuthUserDao;
 import com.qingboat.us.entity.AuthUserEntity;
 import com.qingboat.us.service.AuthUserService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
+@Service
+@Slf4j
 public class AuthUserServiceImpl extends ServiceImpl<AuthUserDao, AuthUserEntity> implements AuthUserService {
     @Override
     public AuthUserEntity getAuthUerByUserNameAndPwd(String userName, String password) {
