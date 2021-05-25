@@ -16,6 +16,9 @@ spring:
       max-file-size: 5MB
       max-request-size: 50MB
 
+  main:
+    allow-bean-definition-overriding: true
+
   cloud:
     nacos:
       discovery:

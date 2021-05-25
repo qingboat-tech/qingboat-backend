@@ -10,6 +10,9 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     default-property-inclusion: non_null
 
+  main:
+    allow-bean-definition-overriding: true
+
   cloud:
     nacos:
       discovery:

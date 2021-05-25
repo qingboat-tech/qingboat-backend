@@ -20,10 +20,13 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: localhost:8848
       config:
-        server-addr: 127.0.0.1:8848 #服务器ip或本地ip
+        server-addr: localhost:8848 #服务器ip或本地ip
         file-extension: yml
+
+  main:
+    allow-bean-definition-overriding: true
 #
 #  data:
 #    mongodb:

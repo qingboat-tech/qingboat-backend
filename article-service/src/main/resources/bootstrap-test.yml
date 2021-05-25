@@ -17,12 +17,15 @@ spring:
       max-file-size: 500MB
       max-request-size: 5000MB
 
+  main:
+    allow-bean-definition-overriding: true
+
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: localhost:8848
       config:
-        server-addr: 127.0.0.1:8848 #服务器ip或本地ip
+        server-addr: localhost:8848 #服务器ip或本地ip
         file-extension: yml
 
 #  data:
@@ -124,45 +127,45 @@ spring:
 #    # 解决oracle更新数据为null时无法转换报错，mysql不会出现此情况
 #    jdbc-type-for-null: 'null'
 
-python:
-  host: https://m.qingboat.com
-
-wx:
-  host: https://api.weixin.qq.com
-
-article-service:
-  host: http://localhost:8082/as
-
-user-service:
-  host: http://localhost:8083/us
-
-trade-service:
-  host: http://localhost:8084/ts
-
-business-domain: https://design.qingboat.com
-
-glob-exception:
-  hook-key: ac2dbfbf-882e-4f20-8d15-d1ce23c20aa0
-
-biz-exception:
-  hook-key: ac2dbfbf-882e-4f20-8d15-d1ce23c20aa0
-
-wx-msg-template:
-
-  # 审核结果通知（##1)
-  review1: QX3xmQDeiOFAx2oZ90-dSQG5nwgSyRcBWjWEhT1sCZ8
-
-  # 审核结果通知（##2)
-  review2: dJoehPN6ci4wpkp_U6OH4RqXZo2Og11tmhosizSZTF4
-
-  # 新订单通知（##3)
-  new-order: -n6SwRRAUhsFx2ZX0ULIzmCdNXVDomDaGCUkx0AkSQ0
-
-  # 购买成功通知（##4）
-  purchase-success: 6OmuuN2hDooZRcnSrvZuEl1Aowo4fkR0UlIn34UbgCA
-
-  # 提问结果通知 (##5)
-  answer-result: 2aDoiWJZEjaDx-pgjNbC1h1QSANcjzDlCYH0saRu-hs
-
-  #  数据更新模板 (##6)
-  data-update: Yb6vx1hu0iXh7KcvUueOco4d2l4jOey5rnb6LoIIFQo
+#python:
+#  host: https://m.qingboat.com
+#
+#wx:
+#  host: https://api.weixin.qq.com
+#
+#article-service:
+#  host: http://localhost:8082/as
+#
+#user-service:
+#  host: http://localhost:8083/us
+#
+#trade-service:
+#  host: http://localhost:8084/ts
+#
+#business-domain: https://design.qingboat.com
+#
+#glob-exception:
+#  hook-key: ac2dbfbf-882e-4f20-8d15-d1ce23c20aa0
+#
+#biz-exception:
+#  hook-key: ac2dbfbf-882e-4f20-8d15-d1ce23c20aa0
+#
+#wx-msg-template:
+#
+#  # 审核结果通知（##1)
+#  review1: QX3xmQDeiOFAx2oZ90-dSQG5nwgSyRcBWjWEhT1sCZ8
+#
+#  # 审核结果通知（##2)
+#  review2: dJoehPN6ci4wpkp_U6OH4RqXZo2Og11tmhosizSZTF4
+#
+#  # 新订单通知（##3)
+#  new-order: -n6SwRRAUhsFx2ZX0ULIzmCdNXVDomDaGCUkx0AkSQ0
+#
+#  # 购买成功通知（##4）
+#  purchase-success: 6OmuuN2hDooZRcnSrvZuEl1Aowo4fkR0UlIn34UbgCA
+#
+#  # 提问结果通知 (##5)
+#  answer-result: 2aDoiWJZEjaDx-pgjNbC1h1QSANcjzDlCYH0saRu-hs
+#
+#  #  数据更新模板 (##6)
+#  data-update: Yb6vx1hu0iXh7KcvUueOco4d2l4jOey5rnb6LoIIFQo

@@ -17,12 +17,15 @@ spring:
       max-file-size: 5MB
       max-request-size: 50MB
 
+  main:
+    allow-bean-definition-overriding: true
+
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: localhost:8848
       config:
-        server-addr: 127.0.0.1:8848 #服务器ip或本地ip
+        server-addr: localhost:8848 #服务器ip或本地ip
         file-extension: yml
 
 #  data:
