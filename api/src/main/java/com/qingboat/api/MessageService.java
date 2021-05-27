@@ -11,6 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @FeignClient(name = "article-service",configuration = {FeignDecoder.class})
 public interface MessageService {
 
-    @RequestMapping(value = "/msg/sendMessage" , method = RequestMethod.POST)
+    @RequestMapping(value = "/as/msg/sendMessage" , method = RequestMethod.POST)
     void sendMessage(@RequestBody MessageVo messageVo);
 }

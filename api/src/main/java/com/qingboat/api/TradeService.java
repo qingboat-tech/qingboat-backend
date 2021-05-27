@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @FeignClient(name = "trade-service",configuration = {FeignDecoder.class})
 public interface TradeService {
 
-    @RequestMapping(value = "/bill/createBillAndUpdateWallet/" , method = RequestMethod.POST)
+    @RequestMapping(value = "/ts/bill/createBillAndUpdateWallet/" , method = RequestMethod.POST)
     Object createBillAndUpdateWallet(@RequestBody CreatorBillVo creatorBillVo,
                                      @RequestHeader("INNER-SEC") String innerSec,
                                      @RequestHeader("UID") String creatorId);

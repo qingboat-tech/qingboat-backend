@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "article-service", configuration = {FeignDecoder.class})
 public interface TierService {
 
-    @RequestMapping(value = "/readersubscription/tier" , method = RequestMethod.GET)
+    @RequestMapping(value = "/as/readersubscription/tier" , method = RequestMethod.GET)
     TierVo getTierById(@RequestParam(value = "tierId",required = true) Long tierId);
 
 
-    @RequestMapping(value="/creatorsubscription/getTierSubscritionCount", method = RequestMethod.GET)
+    @RequestMapping(value="/as/creatorsubscription/getTierSubscritionCount", method = RequestMethod.GET)
     Long getTierSubscritionCount(@RequestParam("tierId") Long tierId);
 
 }

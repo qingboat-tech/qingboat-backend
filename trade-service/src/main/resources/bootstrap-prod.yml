@@ -124,15 +124,6 @@ spring:
 #wx:
 #  host: https://api.weixin.qq.com
 #
-#article-service:
-#  host: http://localhost:8082/as
-#
-#user-service:
-#  host: http://localhost:8083/us
-#
-#trade-service:
-#  host: http://localhost:8084/ts
-#
 #glob-exception:
 #  hook-key: ee3ad0c0-a954-4fa0-8711-edc1d977d360
 #

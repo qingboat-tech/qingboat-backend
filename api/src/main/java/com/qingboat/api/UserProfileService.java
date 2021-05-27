@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "user-service", configuration = {FeignDecoder.class})
 public interface UserProfileService {
 
-    @RequestMapping(value = "/getUserProfile/" , method = RequestMethod.GET)
+    @RequestMapping(value = "/us/getUserProfile/" , method = RequestMethod.GET)
     UserProfileVo getUserProfile(@RequestParam(value = "userId",required = true) Long userId);
 
 }
