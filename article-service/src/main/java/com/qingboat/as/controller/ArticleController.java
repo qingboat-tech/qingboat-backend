@@ -205,6 +205,19 @@ public class ArticleController extends BaseController {
     }
 
     /**
+     * 根据作者分页查询已发布文章列表(匿名查询）
+     */
+    @GetMapping(value = "/findArticleListWithStatusAnonymous")
+    @ResponseBody
+    public Page<ArticleEntity> findArticleListWithStatusAnonymous(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,
+                                                         @RequestParam(value = "pageSize",required = false) Integer pageSize,
+                                                         @RequestParam(value = "creatorId") String creatorId ) {
+        Long userId = 0l;
+        return articleService.findPublishListByAuthorId(creatorId,pageIndex,pageSize,Boolean.TRUE,userId);
+    }
+
+
+    /**
      *
      * @param pageIndex
      * @param creatorId  null：表示全部
