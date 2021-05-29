@@ -8,4 +8,7 @@ public interface UserSubscriptionService extends IService<UserSubscriptionEntity
 
     Object createBillAndUpdateWallet(UserSubscriptionEntity userSubscriptionEntity);
 
+
+    UserSubscriptionEntity subscribe(UserSubscriptionEntity userSubscriptionEntity);
+
 }

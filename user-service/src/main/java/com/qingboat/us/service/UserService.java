@@ -12,6 +12,8 @@ public interface UserService {
 
     UserProfileEntity getUserProfileByProfileKey(String profileKey);
 
+    UserProfileEntity getUserProfileByLuckyCode(String profileKey);
+
 
     Boolean confirmCreator(Long applyUserId,Boolean rst);
 

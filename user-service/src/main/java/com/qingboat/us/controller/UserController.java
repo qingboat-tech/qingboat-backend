@@ -2,15 +2,21 @@ package com.qingboat.us.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.R;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.qingboat.api.TierService;
+import com.qingboat.api.vo.TierVo;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
 import com.qingboat.base.task.DelayQueueManager;
 import com.qingboat.api.MessageService;
 import com.qingboat.api.vo.MessageVo;
+import com.qingboat.api.UserSubscriptionService;
+import com.qingboat.api.vo.UserSubscriptionVo;
 import com.qingboat.us.entity.AuthTokenEntity;
 import com.qingboat.us.entity.AuthUserEntity;
 import com.qingboat.us.entity.CreatorApplyFormEntity;
 import com.qingboat.us.entity.UserProfileEntity;
+import com.qingboat.us.filter.AuthFilter;
 import com.qingboat.us.redis.RedisUtil;
 import com.qingboat.us.redis.mq.RedisMessage;
 import com.qingboat.us.redis.mq.RedisQueue;
@@ -26,7 +32,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -43,10 +51,16 @@ public class UserController extends BaseController  {
     private MessageService messageService;
 
     @Autowired
+    private UserSubscriptionService userSubscriptionService;
+
+    @Autowired
     private RedisQueue redisQueue;
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private TierService tierService;
 
     @Autowired
     private AuthUserService authUserService;
@@ -69,6 +83,7 @@ public class UserController extends BaseController  {
 
                 Map<String,Object> rst = new HashMap<>();
                 rst.put("description",profile.getDescription());
+                rst.put("expertise_area",profile.getExpertiseArea());
                 rst.put("expertise_area",profile.getExpertiseArea());
                 rst.put("follower_cnt",0);
                 rst.put("following_cnt",0);
@@ -119,6 +134,61 @@ public class UserController extends BaseController  {
 
         return userService.saveUserProfile(userProfileEntity);
     }
+
+    /**
+        使用口令卡自动添加订阅关系
+     */
+    @PostMapping("/saveLuckyCode")
+    @ResponseBody
+    public Boolean saveLuckyCode(@Valid @RequestBody UserProfileEntity userProfileEntity){
+        Long uid = getUId();
+        log.info(" RequestParam: uid=" +uid + ",RequestBody"+userProfileEntity);
+
+        // 检查口令卡是否存在
+        if (!StringUtils.isEmpty(userProfileEntity.getLuckyCode())){
+            UserProfileEntity entity = userService.getUserProfileByLuckyCode(userProfileEntity.getLuckyCode());
+            if (entity == null){
+                throw  new BaseException(500,"无效的口令码");
+            }
+
+            Long creatorId = entity.getUserId();
+            log.info("请求用户"+creatorId);
+
+            String uIdStr = String.valueOf(uid);
+            String sec = AuthFilter.getSecret(uIdStr);
+
+            List<TierVo> tierVolist = tierService.getTierList(creatorId,sec,uid);
+
+            Long targetTierId = null;
+            // 从列表中找到定价为零的
+            for (TierVo e:tierVolist) {
+                if (e.getMonthPrice() > 0) {
+                    targetTierId = e.getId();
+                    break;
+                }
+            }
+            if (targetTierId ==null){
+                throw new BaseException(500,"未找到有效的套餐");
+            }
+
+            UserSubscriptionVo userSubscriptionVo = new UserSubscriptionVo();
+            userSubscriptionVo.setSubscriberId(uid);
+            userSubscriptionVo.setCreatorId(creatorId);
+            userSubscriptionVo.setMemberTierId(targetTierId);
+            userSubscriptionVo.setOrderId(0l);
+            userSubscriptionVo.setOrderPrice(0);
+            userSubscriptionVo.setSubscribeDuration("year");
+            userSubscriptionVo.setOrderNo("");
+            log.info(userSubscriptionVo.toString());
+
+            // 自动订阅
+            userSubscriptionService.userSubscription(userSubscriptionVo,sec,uid);;
+        }
+
+
+        return null;
+    }
+
 
     @GetMapping("/getUserProfile")
     @ResponseBody

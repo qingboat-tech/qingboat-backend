@@ -152,6 +152,14 @@ public class UserServiceImpl implements UserService {
         return userProfileEntity;
     }
 
+    @Override
+    public UserProfileEntity getUserProfileByLuckyCode(String profileKey) {
+        QueryWrapper<UserProfileEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("lucky_code",profileKey);
+        UserProfileEntity userProfileEntity = userProfileDao.selectOne(queryWrapper);
+        return userProfileEntity;
+    }
+
 
     @Override
     public Boolean confirmCreator(Long applyUserId, Boolean rst) {
