@@ -8,6 +8,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class UserSubscriptionVo implements Serializable {
@@ -36,6 +37,8 @@ public class UserSubscriptionVo implements Serializable {
     private String orderNo;   // 订单号
 
     private Integer orderPrice ;  // 实际支付的订单金额（分）
+
+    private List<Object> benefitList;//权益列表： json String
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdAt;
