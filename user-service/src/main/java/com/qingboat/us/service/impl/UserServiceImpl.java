@@ -81,8 +81,9 @@ public class UserServiceImpl implements UserService {
                 // 发飞书通知
                 FeishuService.TextBody textBody = new FeishuService.TextBody(
                         new StringBuilder().append("===创者者申请===").append("\n")
-                                .append("操作link：").append(this.businessDomainPathwayBackend + "/api/admin/apps/userprofile/").append("\n")
+                                .append("操作link：").append(this.businessDomainPathwayBackend + "/api/admin/apps/userprofile/"+userId+"/change/").append("\n")
                                 .append("创作者Id：").append(userId).append("\n")
+                                .append("操作步骤：请将role状态改为1").append("\n")
                                 .append("创者者昵称：").append(userProfileEntity.getNickname()).append("\n").toString());
                 feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
 
