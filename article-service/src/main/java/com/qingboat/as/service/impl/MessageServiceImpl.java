@@ -84,7 +84,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         UserProfileVo creatorUserVo = userProfileService.getUserProfile(userSubscriptionEntity.getCreatorId());
 
         MessageEntity msg = new MessageEntity();
-        msg.setMsgType(MessageEntity.SUBSCRIBE_MSG);
+        msg.setMsgType(MessageEntity.SYSTEM_MSG);
         msg.setMsgTitle("感谢您成功订阅："+tierEntity.getTitle() + ",点击<a href=\"" +  this.businessDomain+"/qwqr\">"  + "链接</a>加入创作者会员群");
         msg.setTo(subscribeUser.getUserId());
         msg.setSenderId(createUser.getUserId());
