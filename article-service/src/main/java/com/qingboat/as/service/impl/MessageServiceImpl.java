@@ -85,7 +85,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
         MessageEntity msg = new MessageEntity();
         msg.setMsgType(MessageEntity.SUBSCRIBE_MSG);
-        msg.setMsgTitle("感谢您成功订阅："+tierEntity.getTitle());
+        msg.setMsgTitle("感谢您成功订阅："+tierEntity.getTitle() + ",点击<a href=\"" +  this.businessDomain+"/qwqr\">"  + "链接</a>加入创作者会员群");
         msg.setTo(subscribeUser.getUserId());
         msg.setSenderId(createUser.getUserId());
         msg.setSenderName(createUser.getNickname());
@@ -123,13 +123,13 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
         body.put("touser",userWechatEntity.getOpenId());                    // 发给谁
         body.put("template_id",this.dataUpdateTemplate);                // 那个模板
-        body.put("url",this.businessDomain+"/mysubscription");             // 打开地址
+        body.put("url",this.businessDomain+"/qwqr");             // 打开地址
         body.put("data",data);
 
         data.put("first", JSON.parse("{'value': '订阅成功啦！'}"));
         data.put("keyword1", JSON.parse("{'value': '"+createUser.getNickname()+"'}"));
         data.put("keyword2", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
-        data.put("remark", JSON.parse("{'value': '感谢您订阅,快来开启学习成长之旅吧！'}"));
+        data.put("remark", JSON.parse("{'value': '感谢您订阅,点击加入创作者会员群，开启学习成长之旅吧！'}"));
 
         log.info( " request: " +body);
         Object obj = wxMessageService.sendMessage(token,body);
