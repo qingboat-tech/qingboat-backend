@@ -31,6 +31,7 @@ public class CreatorApplyFormEntity implements Serializable {
     public static  class QuestionEntity  implements Serializable{
         private String desc;   //问题内容描述
         private String type;   //问题类型：input（填空）、check（多选），radio（单选）
+        private Boolean required;
         private List<OptionEntity> optionList; //答案可选项
         private List<OptionEntity> answerList; //答案
 
