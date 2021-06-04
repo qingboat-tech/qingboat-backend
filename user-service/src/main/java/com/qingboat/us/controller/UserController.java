@@ -289,9 +289,6 @@ public class UserController extends BaseController  {
 
         creatorApplyFormEntity.setUserId(uid);
         creatorApplyFormEntity= userService.saveCreatorApplyForm(creatorApplyFormEntity);
-        userService.applyCreator(uid);
-
-        //TODO 给氢舟后台管理员发一个审核通知
 
         return creatorApplyFormEntity;
     }

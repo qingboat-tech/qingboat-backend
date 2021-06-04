@@ -26,7 +26,6 @@ public class CreatorApplyFormEntity implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdTime;
 
-
     @Data
     public static  class QuestionEntity  implements Serializable{
         private String desc;   //问题内容描述
@@ -34,6 +33,7 @@ public class CreatorApplyFormEntity implements Serializable {
         private Boolean required;
         private List<OptionEntity> optionList; //答案可选项
         private List<OptionEntity> answerList; //答案
+        private String answerInput;  // input的答案
 
     }
 
