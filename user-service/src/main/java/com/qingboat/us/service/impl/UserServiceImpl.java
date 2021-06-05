@@ -237,16 +237,6 @@ public class UserServiceImpl implements UserService {
             "  \"title\": \"创作者申请表\",\n" +
             "  \"questionEntityList\": [\n" +
             "    {\n" +
-            "      \"desc\": \"您所在的行业是\",\n" +
-            "      \"type\": \"input\",\n" +
-            "      \"required\": true\n" +
-            "    },\n" +
-            "    {\n" +
-            "      \"desc\": \"您所担任的职位是\",\n" +
-            "      \"type\": \"input\",\n" +
-            "      \"required\": true\n" +
-            "    },\n" +
-            "    {\n" +
             "      \"desc\": \"您在内容创领域从事年限是\",\n" +
             "      \"type\": \"radio\",\n" +
             "      \"required\": true,\n" +
