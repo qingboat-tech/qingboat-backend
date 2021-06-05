@@ -59,6 +59,20 @@ public class ArticleController extends BaseController {
     //=======================针对 creator 接口=============================
 
     /**
+     * 根据文章类型返回文章的计数,比如草稿箱中有几篇文章？
+     */
+    @GetMapping(value = "/findArticleCount")
+    @ResponseBody
+    public Object findArticleCount() {
+        String uid = getUIdStr();
+        return articleService.findArticleCountByAuthorId(uid);
+    }
+
+
+
+
+
+    /**
      * 根据作者分页查询草稿的文章列表
      */
     @GetMapping(value = "/findDraftArticleList")

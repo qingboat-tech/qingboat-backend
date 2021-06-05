@@ -19,6 +19,9 @@ public interface ArticleMongoDao extends MongoRepository<ArticleEntity, String> 
             fields = "{title:1,desc:1,imgUrl:1,top:1,authorId:1,createdTime:1,updatedTime:1,starCount:1,commentCount:1,readCount:1,status:1,type:1,scope:1,benefit:1,suggestion:1}")
     Page<ArticleEntity> findByAuthorIdAndStatus(String authorId,Integer status,  Pageable pageable);
 
+    @Query(value = "{'authorId':?0 ,'status':{'$eq':?1} , 'parentId': {'$eq':''} }", count = true)
+    Long countByAuthorIdAndStatus(String authorId,Integer status);
+
     @Query(value = "{'authorId':{$in:?0} ,'scope':{$in:?1} ,'status':{'$eq':?2} , 'parentId': {'$eq':''} }" ,
             fields = "{title:1,desc:1,imgUrl:1,top:1,authorId:1,createdTime:1,updatedTime:1,starCount:1,commentCount:1,readCount:1,status:1,type:1,scope:1}")
     Page<ArticleEntity> findByAuthorIdsAndScopeAndStatus(List<String> authorId,List<Integer> scope, Integer status, Pageable pageable);

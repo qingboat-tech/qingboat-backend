@@ -225,6 +225,21 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public Object findArticleCountByAuthorId(String authorId){
+        List<Map<String,Object>> list = new  ArrayList<Map<String,Object>>();
+        for (int i = 0; i < 8; i++) {
+            Map<String,Object> rstMap = new HashMap<>();
+            rstMap.put("status",i);
+            rstMap.put("count",articleMongoDao.countByAuthorIdAndStatus(authorId,i));;
+            list.add(rstMap);
+        }
+
+        return list;
+    }
+
+
+
+    @Override
     public Page<ArticleEntity> findReviewListByAuthorId(String authorId, Integer pageIndex,Integer pageSize) {
         if (pageIndex ==null || pageIndex<0){
             pageIndex = 0;

@@ -39,6 +39,11 @@ public interface ArticleService {
     Page<ArticleEntity> findDraftListByAuthorId(String authorId,Integer pageIndex,Integer pageSize);
 
     /**
+     * 查询草稿箱计数
+     */
+    Object findArticleCountByAuthorId(String authorId);
+
+    /**
      * 查询审核中列表
      */
     Page<ArticleEntity> findReviewListByAuthorId(String authorId,Integer pageIndex,Integer pageSize);
