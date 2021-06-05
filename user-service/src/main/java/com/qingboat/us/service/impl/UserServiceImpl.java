@@ -237,13 +237,23 @@ public class UserServiceImpl implements UserService {
             "  \"title\": \"创作者申请表\",\n" +
             "  \"questionEntityList\": [\n" +
             "    {\n" +
-            "      \"desc\": \"您的工作年限是\",\n" +
+            "      \"desc\": \"您所在的行业是\",\n" +
+            "      \"type\": \"input\",\n" +
+            "      \"required\": true\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"desc\": \"您所担任的职位是\",\n" +
+            "      \"type\": \"input\",\n" +
+            "      \"required\": true\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"desc\": \"您在内容创领域从事年限是\",\n" +
             "      \"type\": \"radio\",\n" +
             "      \"required\": true,\n" +
             "      \"optionList\": [\n" +
             "        {\n" +
             "          \"key\": \"A\",\n" +
-            "          \"value\": \"0-1年\"\n" +
+            "          \"value\": \"在校学生\"\n" +
             "        },\n" +
             "        {\n" +
             "          \"key\": \"B\",\n" +
@@ -264,42 +274,42 @@ public class UserServiceImpl implements UserService {
             "      ]\n" +
             "    },\n" +
             "    {\n" +
-            "      \"desc\": \"您的真实姓名是（将用于您策展内容资料）\",\n" +
+            "      \"desc\": \"您擅长内容创作的领域是（可填写多个）\",\n" +
             "      \"type\": \"input\",\n" +
             "      \"required\": true\n" +
             "    },\n" +
             "    {\n" +
-            "      \"desc\": \"一句话简单介绍下自己（让我们更好的了解你）\",\n" +
+            "      \"desc\": \"证明您所擅长该领域的作品链接供我们参考\",\n" +
             "      \"type\": \"input\",\n" +
             "      \"required\": true\n" +
             "    },\n" +
             "    {\n" +
-            "      \"desc\": \"您擅长的领域是（可填写多个）\",\n" +
+            "      \"desc\": \"针对已发布过的内容，获得过最大的肯定是怎么样的？\",\n" +
             "      \"type\": \"input\",\n" +
             "      \"required\": true\n" +
             "    },\n" +
             "    {\n" +
-            "      \"desc\": \"证明您所擅长该领域的作品链接供我们参考*(包含但不限于，课程，公众号，书籍，公开演讲等，如没有则填写无)\",\n" +
+            "      \"desc\": \"你持续创造最大的动机是什么？\",\n" +
             "      \"type\": \"input\",\n" +
             "      \"required\": true\n" +
             "    },\n" +
             "    {\n" +
-            "      \"desc\": \"您创作过程中遇到最大的困难是那个环节，请描述说明\",\n" +
+            "      \"desc\": \"你创作过程中遇到最大的困难是那个环节，是如何解决的？\",\n" +
             "      \"type\": \"input\",\n" +
             "      \"required\": true\n" +
             "    },\n" +
             "    {\n" +
-            "      \"desc\": \"您每周预计有多少个小时可以投入到知识策展中(以小时为单位计算)\",\n" +
+            "      \"desc\": \"您是如何获取优质信息源的？（获取的形式有哪几种）\",\n" +
             "      \"type\": \"input\",\n" +
             "      \"required\": true\n" +
             "    },\n" +
             "    {\n" +
-            "      \"desc\": \"对于每个策展的内容您希望获得的酬劳是多少？(以多少元计算)\",\n" +
+            "      \"desc\": \"你认为创作者如何更好的经营自己生产的内容？\",\n" +
             "      \"type\": \"input\",\n" +
             "      \"required\": true\n" +
             "    },\n" +
             "    {\n" +
-            "      \"desc\": \"除酬劳之外您还希望有哪方面的收获\",\n" +
+            "      \"desc\": \"一句话简单介绍下自己* (让我们更好的了解你)\",\n" +
             "      \"type\": \"input\",\n" +
             "      \"required\": true\n" +
             "    },\n" +
@@ -314,6 +324,6 @@ public class UserServiceImpl implements UserService {
             "      \"required\": true\n" +
             "    }\n" +
             "  ],\n" +
-            "  \"createdTime\": \"2021-06-04T04:23:09.000Z\"\n" +
+            "  \"createdTime\": \"2021-06-04 12:23:09\"\n" +
             "}";
 }
