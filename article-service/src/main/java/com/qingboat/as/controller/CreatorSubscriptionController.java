@@ -284,10 +284,10 @@ public class CreatorSubscriptionController extends BaseController {
         if (!hasFreeTier){
             tierEntity = new TierEntity();
             tierEntity.setCreatorId(getUId());
-            tierEntity.setTitle("示例方案一：免费");
+            tierEntity.setTitle("大众会员");
             tierEntity.setMonthPrice(0);
             tierEntity.setMonthDiscount(10.00);
-            tierEntity.setDesc("示例方案一模板");
+            tierEntity.setDesc("大众会员");
             tierEntity.setSubscribeDuration("free");
             tierEntity.setSubscribeCount(0);
 
@@ -306,13 +306,13 @@ public class CreatorSubscriptionController extends BaseController {
         if (!hasPaidTier){
             tierEntity = new TierEntity();
             tierEntity.setCreatorId(getUId());
-            tierEntity.setTitle("示例方案二：付费");
+            tierEntity.setTitle("黄金会员");
             tierEntity.setSubscribeDuration("monthAndYear");
             tierEntity.setMonthPrice(800);
             tierEntity.setMonthDiscount(10.00);
             tierEntity.setYearPrice(9600);
             tierEntity.setYearDiscount(8.00);
-            tierEntity.setDesc("付费订阅模板");
+            tierEntity.setDesc("黄金会员");
             tierEntity.setSubscribeLimit(10000);
             tierEntity.setSubscribeCount(0);
 
