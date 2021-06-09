@@ -262,7 +262,7 @@ public class CreatorSubscriptionController extends BaseController {
             //添加当前订阅的人数
             for (TierEntity tier:list){
                 QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
-                queryWrapper.lambda().eq(UserSubscriptionEntity::getCreatorId, getUId())
+                queryWrapper.lambda().eq(UserSubscriptionEntity::getCreatorId, creatorId)
                                      .eq(UserSubscriptionEntity::getMemberTierId,tier.getId());
                 int count = userSubscriptionService.count(queryWrapper);
                 tier.setSubscribeCount(count);
