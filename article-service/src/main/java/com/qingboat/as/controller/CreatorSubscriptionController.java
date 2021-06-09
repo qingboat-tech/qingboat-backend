@@ -261,11 +261,11 @@ public class CreatorSubscriptionController extends BaseController {
         if (list!=null && !list.isEmpty()){
             //添加当前订阅的人数
             for (TierEntity tier:list){
-//                QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
-//                queryWrapper.lambda().eq(UserSubscriptionEntity::getCreatorId, getUId())
-//                                     .eq(UserSubscriptionEntity::getMemberTierId,tier.getId());
-//                int count = userSubscriptionService.count(queryWrapper);
-//                tier.setSubscribeCount(count);
+                QueryWrapper<UserSubscriptionEntity> queryWrapper = new QueryWrapper<>();
+                queryWrapper.lambda().eq(UserSubscriptionEntity::getCreatorId, getUId())
+                                     .eq(UserSubscriptionEntity::getMemberTierId,tier.getId());
+                int count = userSubscriptionService.count(queryWrapper);
+                tier.setSubscribeCount(count);
 
                 if ("free".equalsIgnoreCase(tier.getSubscribeDuration()) && !hasFreeTier){
                     hasFreeTier = true;
