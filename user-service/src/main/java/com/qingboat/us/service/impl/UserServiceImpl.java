@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qingboat.api.WxMessageService;
 import com.qingboat.api.WxTokenService;
+import com.qingboat.api.vo.TierVo;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
 import com.qingboat.base.utils.DateUtil;
@@ -220,6 +221,22 @@ public class UserServiceImpl implements UserService {
         }else {
             creatorApplyFormEntity.setCreatedTime(LocalDateTime.now());
         }
+        // 给我们发送消息
+        StringBuilder sb = new StringBuilder();
+        sb.append("创作者申请").append("\n");
+
+        for (CreatorApplyFormEntity.QuestionEntity entry:creatorApplyFormEntity.getQuestionEntityList()) {
+            if ("input".equals(entry.getType())) {
+                sb.append("❓问题：" + entry.getDesc()).append("\n   答案：" + entry.getAnswerInput()+"\n");
+            }
+            if ("radio".equals(entry.getType())) {
+                sb.append("❓问题：" + entry.getDesc()).append("\n   答案：" + entry.getAnswerList().get(0).getValue()+"\n");
+            }
+        }
+
+        FeishuService.TextBody textBody = new FeishuService.TextBody(sb.toString());
+        feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
+
         return creatorApplyFormMongoDao.save(creatorApplyFormEntity);
     }
 
