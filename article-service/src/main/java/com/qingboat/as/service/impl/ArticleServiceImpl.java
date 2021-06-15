@@ -282,9 +282,9 @@ public class ArticleServiceImpl implements ArticleService {
         }
         Sort sort = null;
         if (orderByHot!=null && orderByHot){
-            sort = Sort.by(Sort.Direction.DESC, "top","readCount","updatedTime");
+            sort = Sort.by(Sort.Direction.DESC, "top","readCount","createdTime");
         }else {
-            sort = Sort.by(Sort.Direction.DESC, "top","updatedTime");
+            sort = Sort.by(Sort.Direction.DESC, "top","createdTime");
         }
 
         Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
