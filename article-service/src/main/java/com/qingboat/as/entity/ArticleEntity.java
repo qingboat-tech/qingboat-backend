@@ -80,6 +80,11 @@ public class ArticleEntity {
 //    private List<Long> userSubscribeTierIdList;  //会员订阅的套餐Id List
 
     @Transient
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime expireEta ; //定义一篇文章的临时链接失效时间
+
+    @Transient
     private Boolean hasStar ; //判断自己是否点赞
 
     @Transient

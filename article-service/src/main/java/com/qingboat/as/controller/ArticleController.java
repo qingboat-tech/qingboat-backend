@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -173,7 +174,7 @@ public class ArticleController extends BaseController {
             rstMap.put("previewKey",previewKey);
             return rstMap;
         }else {
-            throw new BaseException(500,"System_auth_error");
+            throw new BaseException(500,"文章不存在");
         }
     }
 
@@ -360,6 +361,8 @@ public class ArticleController extends BaseController {
             Object v = redisUtil.get(key);
             if (v != null){
                 articleEntity = articleService.findArticleById(v.toString());
+                LocalDateTime expiredTime = LocalDateTime.now().plusSeconds(redisUtil.getTime(key));
+                articleEntity.setExpireEta(expiredTime);
                 return articleEntity;
             }
         }
