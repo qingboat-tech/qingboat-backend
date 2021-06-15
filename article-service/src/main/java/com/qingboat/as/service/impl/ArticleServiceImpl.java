@@ -905,7 +905,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         log.info("query:"+query.toString());
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "top","updatedTime");
+        Sort sort = Sort.by(Sort.Direction.DESC, "top","createdTime");
         Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
 
         long total = mongoTemplate.count(query, ArticleEntity.class);
