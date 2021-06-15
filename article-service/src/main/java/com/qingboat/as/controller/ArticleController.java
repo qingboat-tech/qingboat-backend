@@ -15,6 +15,7 @@ import com.qingboat.base.exception.BaseException;
 import com.qingboat.base.utils.BASE64Util;
 import com.rometools.rome.io.FeedException;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.util.StringUtils;
@@ -144,6 +145,33 @@ public class ArticleController extends BaseController {
         String userId = getUIdStr();
         if (articleEntity !=null && userId.equals(articleEntity.getAuthorId()) ){
             return articleEntity;
+        }else {
+            throw new BaseException(500,"System_auth_error");
+        }
+    }
+
+
+    /**
+     * 根据文章Id获取可以供外部用户预览的文章临时articleId,临时链接，有效期24小时
+     */
+    @PostMapping(value = "/getPreviewKey")
+    @ResponseBody
+    public Map<String,Object> findByArticleId(@Valid @RequestBody Map<String,Object> param)  {
+        String articleId = (String) param.get("articleId");
+        String userId = getUIdStr();
+
+        ArticleEntity articleEntity = articleService.findArticleById(articleId);
+
+        if (articleEntity !=null && userId.equals(articleEntity.getAuthorId()) ){
+            // 转译一下文章Id，并且用redis缓存一下，有效期24小时
+            String previewKey = ObjectId.get().toString();
+            String key = "preview:" + previewKey;
+            redisUtil.set(key,articleId);
+            redisUtil.expire(key,60*60*24);
+
+            Map<String,Object> rstMap = new HashMap<>();
+            rstMap.put("previewKey",previewKey);
+            return rstMap;
         }else {
             throw new BaseException(500,"System_auth_error");
         }
@@ -323,8 +351,18 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = "/{articleId}")
     @ResponseBody
-    public ArticleEntity viewArticleByArticleId(@PathVariable("articleId") String articleId,@RequestParam(value = "inviteKey",required = false) String inviteKey ) {
+    public ArticleEntity viewArticleByArticleId(@PathVariable("articleId") String articleId,
+                                                @RequestParam(value = "inviteKey",required = false) String inviteKey) {
+        // 首先看一下传进来的文章Id是不是发布前的预览邀请读取
         ArticleEntity articleEntity = articleService.findArticleById(articleId);
+        if (articleEntity==null) {
+            String key = "preview:" + articleId;
+            Object v = redisUtil.get(key);
+            if (v != null){
+                articleEntity = articleService.findArticleById(v.toString());
+            }
+        }
+
         if (articleEntity!=null){
             String readerId = getUIdStr();
             String authorId = articleEntity.getAuthorId();
