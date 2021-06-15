@@ -360,6 +360,7 @@ public class ArticleController extends BaseController {
             Object v = redisUtil.get(key);
             if (v != null){
                 articleEntity = articleService.findArticleById(v.toString());
+                return articleEntity;
             }
         }
 
