@@ -215,7 +215,7 @@ public class ArticleController extends BaseController {
                                                       @RequestParam(value = "pageSize",required = false) Integer pageSize,
                                                       @RequestParam(value = "creatorId") String creatorId ) {
         Long userId = getUId();
-        return articleService.findPublishListByAuthorId(creatorId,pageIndex,pageSize,Boolean.TRUE,userId);
+        return articleService.findPublishListByAuthorId(creatorId,pageIndex,pageSize,Boolean.FALSE,userId);
     }
 
     /**
