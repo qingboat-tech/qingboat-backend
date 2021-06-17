@@ -51,7 +51,7 @@ public class ExceptionFeishuAlarmService {
         textTag.setText("用户Id:");
         FeishuService.PostLinkTag linkTag = new FeishuService.PostLinkTag();
         linkTag.setText(getUId()+"");
-        linkTag.setHref("https://creator.qingboat.com");
+        linkTag.setHref("https://hypper.cn");
 
         FeishuService.PostTextTag textTag1 = new FeishuService.PostTextTag();
         textTag1.setText("请求路径:" +getRequestURI());

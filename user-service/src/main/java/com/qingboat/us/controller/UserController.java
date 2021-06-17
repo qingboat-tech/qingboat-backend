@@ -251,7 +251,7 @@ public class UserController extends BaseController  {
             msg.setMsgType(0);
             msg.setSenderId(0l);
             msg.setSenderName("小鲸");
-            msg.setSenderImgUrl("https://m.qingboat.com/static/admin/img/gis/move_vertex_on.svg");
+            msg.setSenderImgUrl("https://hypper.cn/static/admin/img/gis/move_vertex_on.svg");
             msg.setMsgLink(null); // TODO
             msg.setExtData("dataType","text");
             msg.setExtData("content","恭喜您通过创作者审核，最懂你的粉丝可以订阅会员支持你的创作，让创作更纯粹!");

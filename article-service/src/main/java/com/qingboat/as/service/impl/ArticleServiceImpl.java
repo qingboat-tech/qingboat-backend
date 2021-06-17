@@ -548,7 +548,7 @@ public class ArticleServiceImpl implements ArticleService {
                 msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
                 msg.setSenderId(0l);
                 msg.setSenderName("管理员");
-                msg.setSenderImgUrl("https://m.qingboat.com/static/admin/img/gis/move_vertex_on.svg");
+                msg.setSenderImgUrl("https://hypper.cn/static/admin/img/gis/move_vertex_on.svg");
                 msg.setMsgLink(null); // TODO
 
                 msg.setExtData("refuseReason","标题包含敏感词:"+filterResult.getSensitiveWords());
@@ -617,7 +617,7 @@ public class ArticleServiceImpl implements ArticleService {
                 msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
                 msg.setSenderId(0l);
                 msg.setSenderName("管理员");
-                msg.setSenderImgUrl("https://m.qingboat.com/static/admin/img/gis/move_vertex_on.svg");
+                msg.setSenderImgUrl("https://hypper.cn/static/admin/img/gis/move_vertex_on.svg");
                 msg.setMsgLink(null); // TODO
 
                 msg.setExtData("refuseReason","标题包含敏感词:"+filterResult.getSensitiveWords());
@@ -687,7 +687,7 @@ public class ArticleServiceImpl implements ArticleService {
                 msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
                 msg.setSenderId(0l);
                 msg.setSenderName("管理员");
-                msg.setSenderImgUrl("https://m.qingboat.com/static/admin/img/gis/move_vertex_on.svg");
+                msg.setSenderImgUrl("https://hypper.cn/static/admin/img/gis/move_vertex_on.svg");
                 msg.setMsgLink(null); // TODO
 
                 msg.setExtData("refuseReason","标题包含敏感词:"+filterResult.getSensitiveWords());
