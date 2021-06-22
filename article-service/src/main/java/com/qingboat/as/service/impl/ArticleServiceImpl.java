@@ -740,6 +740,7 @@ public class ArticleServiceImpl implements ArticleService {
             FeishuService.TextBody textBody = new FeishuService.TextBody(
                     new StringBuilder().append("文章审核通过").append("\n")
                             .append("创作者：").append(articleEntity.getAuthorNickName()).append("\n")
+                            .append("链接：").append(this.businessDomain + "/articleDetail/" + articleEntity.getId() +"/"+articleEntity.getAuthorId()).append("\n")
                             .append("文章《").append(title).append("》\n").toString());
             feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
 
