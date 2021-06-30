@@ -214,7 +214,7 @@ public class UserServiceImpl implements UserService {
     public CreatorApplyFormEntity saveCreatorApplyForm(CreatorApplyFormEntity creatorApplyFormEntity) {
 
         Long userId = creatorApplyFormEntity.getUserId();
-
+        //?为什么 在保存申请表的时候 会存在已有申请表的情况？
         CreatorApplyFormEntity form = creatorApplyFormMongoDao.findFirstByUserId(userId);
         if (form!=null){
             creatorApplyFormEntity.setId(form.getId());
@@ -327,6 +327,11 @@ public class UserServiceImpl implements UserService {
             "    },\n" +
             "    {\n" +
             "      \"desc\": \"您的手机号码为(邀请制注册，将会是策展师的登录账号)\",\n" +
+            "      \"type\": \"input\",\n" +
+            "      \"required\": true\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"desc\": \"你目前拥有粉丝的数量大约是多少个（例如：1000个）\",\n" +
             "      \"type\": \"input\",\n" +
             "      \"required\": true\n" +
             "    }\n" +
