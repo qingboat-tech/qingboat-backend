@@ -24,7 +24,7 @@ echo "=============git pull done=============="
 sleep 1
 EOF
 
-echo "=========build service=========="
+echo "=========build service==========="
 # cd /srv/qingboat-backend
 # sudo mvn clean install
 
