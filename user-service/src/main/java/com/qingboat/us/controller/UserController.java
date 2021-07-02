@@ -22,8 +22,10 @@ import com.qingboat.us.redis.mq.RedisMessage;
 import com.qingboat.us.redis.mq.RedisQueue;
 import com.qingboat.us.service.AuthUserService;
 import com.qingboat.us.service.UserService;
+import com.qingboat.us.vo.SubscribersProfile;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestAttributes;
@@ -310,10 +312,28 @@ public class UserController extends BaseController  {
         return Boolean.TRUE;
     }
 
+    /**
+     *  订阅newsletter的和购买pathway的总人数  （去重）
+     * @param param
+     * @return
+     */
     @GetMapping("/subscribe_Number")
     @ResponseBody
     public Integer getNumberOfSubscribe(@RequestBody Map<String,Object> param){
         return userService.getCount_UserIdsByCreatorOnNewslettersAndPathway((Integer) param.get("creatorId"));
+    }
+
+    /**
+     *  列出所有 订阅newsletter 和购买pathway的人的 信息（包括id，头像，position）
+     * @param param
+     * @return
+     */
+    @GetMapping("/subscribersProfile")
+    @ResponseBody
+    public Page<SubscribersProfile> getSubscribersProfile(@RequestBody Map<String,Object> param){
+        return userService.getUserProfileByCreatorOnNewslettersAndPathway((Integer) param.get("creatorId"),
+                (Integer) param.get("page"),
+                (Integer) param.get("pageSize"));
     }
 
 

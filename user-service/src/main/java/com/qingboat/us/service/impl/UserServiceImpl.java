@@ -22,9 +22,12 @@ import com.qingboat.us.entity.UserWechatEntity;
 import com.qingboat.us.filter.AuthFilter;
 import com.qingboat.us.service.UserService;
 import com.qingboat.us.service.UserWechatService;
+import com.qingboat.us.vo.SubscribersProfile;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
@@ -266,6 +269,12 @@ public class UserServiceImpl implements UserService {
         // newsletter 中一个创作者 不能 创作两个？一个创作者只能维护一个期刊？
     }
 
+    @Override
+    public Page<SubscribersProfile> getUserProfileByCreatorOnNewslettersAndPathway(Integer creatorId,Integer page,Integer pageSize) {
+        Integer start = (page - 1) * pageSize;
+        Page<SubscribersProfile> subscribersProfileList = userSubscriptionDao.getUserIdsByCreatorIdWithStartAndEnd(creatorId,start,pageSize);
+        return subscribersProfileList;
+    }
 
 
     final private String applyFormJson ="{\n" +

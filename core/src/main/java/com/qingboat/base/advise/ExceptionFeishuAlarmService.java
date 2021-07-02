@@ -14,6 +14,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Properties;
 
 @Component
 @Slf4j
@@ -32,7 +33,12 @@ public class ExceptionFeishuAlarmService {
     public void alarmSystemException(Exception e){
         FeishuService.PostBody postBody = create(e);
         postBody.setTitle("系统异常");
-        feishuService.sendTextMsg(globExceptionHookKey,postBody);
+        Properties properties = System.getProperties();
+        if (!properties.get("os.name").equals("Mac OS X")){
+            feishuService.sendTextMsg(globExceptionHookKey,postBody);
+
+        }
+//        feishuService.sendTextMsg(globExceptionHookKey,postBody)
     }
 
 
