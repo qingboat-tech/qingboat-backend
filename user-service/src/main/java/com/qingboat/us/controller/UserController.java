@@ -66,6 +66,9 @@ public class UserController extends BaseController  {
     private AuthUserService authUserService;
 
 
+
+
+
     @PostMapping("/adminProxyLogin")
     @ResponseBody
     public Map<String,Object> adminProxyLogin(@Valid @RequestBody Map<String,Object> param){
@@ -292,7 +295,6 @@ public class UserController extends BaseController  {
 
         return creatorApplyFormEntity;
     }
-
     @GetMapping("/getGuideFlag")
     @ResponseBody
     public Boolean getGuideFlag(){
@@ -306,6 +308,12 @@ public class UserController extends BaseController  {
         String uid = getUIdStr();
         redisUtil.set("GuideFlagUser:"+uid,"1");
         return Boolean.TRUE;
+    }
+
+    @GetMapping("/subscribe_Number")
+    @ResponseBody
+    public Integer getNumberOfSubscribe(@RequestBody Map<String,Object> param){
+        return userService.getCount_UserIdsByCreatorOnNewslettersAndPathway((Integer) param.get("creatorId"));
     }
 
 

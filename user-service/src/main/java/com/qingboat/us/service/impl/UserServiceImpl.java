@@ -11,10 +11,13 @@ import com.qingboat.base.exception.BaseException;
 import com.qingboat.base.utils.DateUtil;
 import com.qingboat.api.MessageService;
 import com.qingboat.api.vo.MessageVo;
+import com.qingboat.us.DTO.SubscriptionAndFollowDTO;
 import com.qingboat.us.dao.CreatorApplyFormMongoDao;
 import com.qingboat.us.dao.UserProfileDao;
+import com.qingboat.us.dao.UserSubscriptionDao;
 import com.qingboat.us.entity.CreatorApplyFormEntity;
 import com.qingboat.us.entity.UserProfileEntity;
+import com.qingboat.us.entity.UserSubscriptionEntity;
 import com.qingboat.us.entity.UserWechatEntity;
 import com.qingboat.us.filter.AuthFilter;
 import com.qingboat.us.service.UserService;
@@ -27,10 +30,14 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
+
+    @Autowired
+    private UserSubscriptionDao userSubscriptionDao;
 
     @Autowired
     private UserProfileDao userProfileDao;
@@ -249,6 +256,17 @@ public class UserServiceImpl implements UserService {
         }
         return form;
     }
+
+    @Override
+    public Integer getCount_UserIdsByCreatorOnNewslettersAndPathway(Integer creatorId) {
+        List<SubscriptionAndFollowDTO> userIdsByCreatorId = userSubscriptionDao.getUserIdsByCreatorId(creatorId);
+        return userIdsByCreatorId.size();
+        //apps_likepathway 是什么表
+        //apps_followpathway 的create 和update
+        // newsletter 中一个创作者 不能 创作两个？一个创作者只能维护一个期刊？
+    }
+
+
 
     final private String applyFormJson ="{\n" +
             "  \"title\": \"创作者申请表\",\n" +
