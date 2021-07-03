@@ -36,7 +36,6 @@ public class ExceptionFeishuAlarmService {
         Properties properties = System.getProperties();
         if (!properties.get("os.name").equals("Mac OS X")){
             feishuService.sendTextMsg(globExceptionHookKey,postBody);
-
         }
 //        feishuService.sendTextMsg(globExceptionHookKey,postBody)
     }

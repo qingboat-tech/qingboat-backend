@@ -29,7 +29,7 @@ public interface UserService {
 
     Integer getCount_UserIdsByCreatorOnNewslettersAndPathway(Integer creatorId);
 
-    Page<SubscribersProfile> getUserProfileByCreatorOnNewslettersAndPathway(Integer creatorId,Integer page,Integer pageSize);
+    List<SubscribersProfile> getUserProfileByCreatorOnNewslettersAndPathway(Integer creatorId,Integer page,Integer pageSize);
 
 
 

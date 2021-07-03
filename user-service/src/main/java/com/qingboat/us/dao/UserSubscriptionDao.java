@@ -12,7 +12,7 @@ import java.util.List;
 public interface UserSubscriptionDao {
     public List<SubscriptionAndFollowDTO> getUserIdsByCreatorId(@Param("creatorId")Integer creatorId);
 
-    public Page<SubscribersProfile> getUserIdsByCreatorIdWithStartAndEnd(@Param("creatorId")Integer creatorId,
+    public List<SubscribersProfile> getUserIdsByCreatorIdWithStartAndEnd(@Param("creatorId")Integer creatorId,
                                                                          @Param("start") Integer start,
                                                                          @Param("end") Integer end);
 }

@@ -270,9 +270,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<SubscribersProfile> getUserProfileByCreatorOnNewslettersAndPathway(Integer creatorId,Integer page,Integer pageSize) {
+    public List<SubscribersProfile> getUserProfileByCreatorOnNewslettersAndPathway(Integer creatorId,Integer page,Integer pageSize) {
         Integer start = (page - 1) * pageSize;
-        Page<SubscribersProfile> subscribersProfileList = userSubscriptionDao.getUserIdsByCreatorIdWithStartAndEnd(creatorId,start,pageSize);
+        List<SubscribersProfile> subscribersProfileList = userSubscriptionDao.getUserIdsByCreatorIdWithStartAndEnd(creatorId,start,pageSize);
         return subscribersProfileList;
     }
 

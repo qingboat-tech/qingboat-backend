@@ -1,10 +1,13 @@
 package com.qingboat.us.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.qingboat.api.TierService;
 import com.qingboat.api.vo.TierVo;
+import com.qingboat.base.api.ApiResponse;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
 import com.qingboat.base.task.DelayQueueManager;
@@ -330,10 +333,14 @@ public class UserController extends BaseController  {
      */
     @GetMapping("/subscribersProfile")
     @ResponseBody
-    public Page<SubscribersProfile> getSubscribersProfile(@RequestBody Map<String,Object> param){
-        return userService.getUserProfileByCreatorOnNewslettersAndPathway((Integer) param.get("creatorId"),
+    public String getSubscribersProfile(@RequestBody Map<String,Object> param){
+
+        ApiResponse apiResponse = new ApiResponse();
+        List<SubscribersProfile> list = userService.getUserProfileByCreatorOnNewslettersAndPathway((Integer) param.get("creatorId"),
                 (Integer) param.get("page"),
                 (Integer) param.get("pageSize"));
+        apiResponse.setData(list);
+        return JSON.toJSONString(apiResponse,SerializerFeature.WriteNullStringAsEmpty);
     }
 
 
