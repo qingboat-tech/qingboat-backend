@@ -11,8 +11,26 @@ public class SubscribersProfile {
 
     private Integer id;
     private String headImgUrl;
-    private String position;
+    private String position;//职业
     private String nickname;
+    private String industry; //行业
+    private String description;//描述
+
+    public String getIndustry() {
+        return industry;
+    }
+
+    public void setIndustry(String industry) {
+        this.industry = industry;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public Integer getId() {
         return id;
