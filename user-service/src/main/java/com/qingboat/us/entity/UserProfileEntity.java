@@ -6,12 +6,15 @@ import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
 @Data
 @TableName(value="apps_userprofile", autoResultMap = true)// 映射数据库表名
-public class UserProfileEntity {
+public class UserProfileEntity implements Serializable {
+
+    
 
     private Long id;
     private Long userId;

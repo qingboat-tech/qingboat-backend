@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,8 @@ public class RedisUtil {
 
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
     //- - - - - - - - - - - - - - - - - - - - -  公共方法 - - - - - - - - - - - - - - - - - - - -
 
     /**
@@ -268,6 +271,15 @@ public class RedisUtil {
     public Boolean zAdd(String key,String value,double v){
         return redisTemplate.opsForZSet().add(key,value,v);
     }
+
+    public Boolean zAdd_object(String key,Object value,double v){
+        return redisTemplate.opsForZSet().add(key,value,v);
+    }
+
+
+    public Boolean zAdd_string(String key,String value,double v){
+        return stringRedisTemplate.opsForZSet().add(key,value,v);
+    }
     /**
      * 有序集合获取
      * @param key
@@ -277,6 +289,12 @@ public class RedisUtil {
      */
     public Set<Object> zRangeByScore(String key,double scoure,double scoure1){
         return redisTemplate.opsForZSet().rangeByScore(key, scoure, scoure1);
+    }
+
+    public List<Object> zRevRangeByScoreWithLength(String key,Integer length){
+        Set<Object> set = redisTemplate.opsForZSet().reverseRange(key,0,1000);
+        Object[] objects = set.toArray();
+        return Arrays.asList(objects).subList(0, length > objects.length ? objects.length : length);
     }
 
     public Set<ZSetOperations.TypedTuple<Object>>  zRangeByScoreWithScores(String key, double scoure, double scoure1){
@@ -297,6 +315,12 @@ public class RedisUtil {
          */
     public Set<Object> zRange(String key,long scoure,long scoure1){
         return redisTemplate.opsForZSet().range(key, scoure, scoure1);
+    }
+    public Set<String> zRange_string(String key, long scoure, long scoure1){
+        return stringRedisTemplate.opsForZSet().range(key, scoure, scoure1);
+    }
+    public Set<String> zRevRange_string(String key, long scoure, long scoure1){
+        return stringRedisTemplate.opsForZSet().reverseRange(key, scoure, scoure1);
     }
 
     /**
@@ -680,5 +704,6 @@ public class RedisUtil {
     public void rightPop(String key, long timeout, TimeUnit unit) {
         redisTemplate.opsForList().rightPop(key, timeout, unit);
     }
+
 
 }

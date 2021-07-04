@@ -2,7 +2,7 @@ package com.qingboat.us.service;
 
 import com.qingboat.us.entity.CreatorApplyFormEntity;
 import com.qingboat.us.entity.UserProfileEntity;
-import com.qingboat.us.vo.SubscribersProfile;
+import com.qingboat.us.vo.UserProfileVO1;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -29,9 +29,9 @@ public interface UserService {
 
     Integer getCount_UserIdsByCreatorOnNewslettersAndPathway(Integer creatorId);
 
-    List<SubscribersProfile> getUserProfileByCreatorOnNewslettersAndPathway(Integer creatorId,Integer page,Integer pageSize);
-
-
+    List<UserProfileVO1> getUserProfileByCreatorOnNewslettersAndPathway(Integer creatorId, Integer page, Integer pageSize);
+    //获取所有的创作者Id
+    List<Integer> getCreatorIds();
 
 
 }

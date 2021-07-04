@@ -25,22 +25,14 @@ import com.qingboat.us.redis.mq.RedisMessage;
 import com.qingboat.us.redis.mq.RedisQueue;
 import com.qingboat.us.service.AuthUserService;
 import com.qingboat.us.service.UserService;
-import com.qingboat.us.vo.SubscribersProfile;
+import com.qingboat.us.vo.UserProfileVO1;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @Slf4j
@@ -69,6 +61,7 @@ public class UserController extends BaseController  {
 
     @Autowired
     private AuthUserService authUserService;
+
 
 
 
@@ -334,14 +327,30 @@ public class UserController extends BaseController  {
     @GetMapping("/subscribersProfile")
     @ResponseBody
     public String getSubscribersProfile(@RequestBody Map<String,Object> param){
-
         ApiResponse apiResponse = new ApiResponse();
-        List<SubscribersProfile> list = userService.getUserProfileByCreatorOnNewslettersAndPathway((Integer) param.get("creatorId"),
+        List<UserProfileVO1> list = userService.getUserProfileByCreatorOnNewslettersAndPathway((Integer) param.get("creatorId"),
                 (Integer) param.get("page"),
                 (Integer) param.get("pageSize"));
         apiResponse.setData(list);
         return JSON.toJSONString(apiResponse,SerializerFeature.WriteNullStringAsEmpty);
     }
+
+    @GetMapping("/hotCreatorProfile")
+    @ResponseBody
+    public List getHotCreatorsProfile(@RequestBody Map<String,Object> param){
+        Integer length = (Integer) param.get("length");
+        System.out.println("需要" + length + "个");
+        Set<String> hotCreator = redisUtil.zRevRange_string("hotCreator", Long.MIN_VALUE, Long.MAX_VALUE);
+        List<Object> objects = Arrays.asList(hotCreator.toArray()).subList(0, length > hotCreator.size() ? hotCreator.size() : length);
+        List<UserProfileVO1> list = new ArrayList<UserProfileVO1>(length << 1);
+        for (Object o: objects) {
+            String str = (String)o;
+            UserProfileVO1 userProfileVO1 = JSON.parseObject(str, UserProfileVO1.class);
+            list.add(userProfileVO1);
+        }
+        return list;
+    }
+
 
 
 }

@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import java.util.Date;
 
 
-public class SubscribersProfile {
+public class UserProfileVO1 {
 
     private Integer id;
     private String headImgUrl;

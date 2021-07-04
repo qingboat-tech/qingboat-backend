@@ -22,7 +22,7 @@ import com.qingboat.us.entity.UserWechatEntity;
 import com.qingboat.us.filter.AuthFilter;
 import com.qingboat.us.service.UserService;
 import com.qingboat.us.service.UserWechatService;
-import com.qingboat.us.vo.SubscribersProfile;
+import com.qingboat.us.vo.UserProfileVO1;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -270,10 +270,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<SubscribersProfile> getUserProfileByCreatorOnNewslettersAndPathway(Integer creatorId,Integer page,Integer pageSize) {
+    public List<UserProfileVO1> getUserProfileByCreatorOnNewslettersAndPathway(Integer creatorId, Integer page, Integer pageSize) {
         Integer start = (page - 1) * pageSize;
-        List<SubscribersProfile> subscribersProfileList = userSubscriptionDao.getUserIdsByCreatorIdWithStartAndEnd(creatorId,start,pageSize);
-        return subscribersProfileList;
+        List<UserProfileVO1> userProfileVO1List = userSubscriptionDao.getUserIdsByCreatorIdWithStartAndEnd(creatorId,start,pageSize);
+        return userProfileVO1List;
+    }
+
+    @Override
+    public List<Integer> getCreatorIds() {
+        return userProfileDao.getCreatorIds();
     }
 
 
