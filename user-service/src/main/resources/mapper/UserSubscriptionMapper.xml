@@ -23,4 +23,10 @@
         order by createTime desc
         ) temp) t1,apps_industry where apps_userprofile.user_id = t1.id and apps_industry.id = apps_userprofile.industry_id  order by t1.createTime desc limit #{start},#{end}
     </select>
+
+    <select id="getCreatorIdsByUserIdWithStartAndEnd" resultType="Integer">
+        select * from (select apps_pathway.author_id creatorId
+                       from apps_followpathway,apps_pathway where apps_followpathway.user_id = #{userId} and apps_pathway.id = apps_followpathway.pathway_id union
+                       select creator_id creatorId from apps_usersubscription where subscriber_id = #{userId}) t limit #{start},#{end}
+    </select>
 </mapper>

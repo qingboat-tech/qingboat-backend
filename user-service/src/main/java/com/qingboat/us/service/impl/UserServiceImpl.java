@@ -277,9 +277,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Integer> getCreatorIds() {
-        return userProfileDao.getCreatorIds();
+    public List<Integer> getCreatorsIdsByUserOnNewslettersAndPathwayWithStartAndEnd(Integer userId, Integer start, Integer length) {
+        return userSubscriptionDao.getCreatorIdsByUserIdWithStartAndEnd(userId, start, length);
     }
+
+    @Override
+    public List<UserProfileVO1> getUserProfileByIds(List<Integer> ids) {
+        return userProfileDao.getUserProfileByIds(ids);
+    }
+
+//    @Override
+//    public List<Integer> getCreatorIds() {
+//        return userProfileDao.getCreatorIds();
+//    }
 
 
     final private String applyFormJson ="{\n" +

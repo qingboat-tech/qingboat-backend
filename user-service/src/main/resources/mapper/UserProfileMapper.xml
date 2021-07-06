@@ -7,4 +7,10 @@
     <select id="findByUserId" parameterType="long" resultType="com.qingboat.us.entity.UserProfileEntity">
         select * from apps_userprofile where user_id = #{userId}
     </select>
+    <select id="getUserProfileByIds" parameterType="java.util.List" resultType="com.qingboat.us.vo.UserProfileVO1">
+        select * from apps_userprofile where user_id in
+        <foreach collection="ids" open="(" separator="," close=")" item="id">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

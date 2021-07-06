@@ -335,11 +335,14 @@ public class UserController extends BaseController  {
         return JSON.toJSONString(apiResponse,SerializerFeature.WriteNullStringAsEmpty);
     }
 
+
+
+
+
     @GetMapping("/hotCreatorProfile")
     @ResponseBody
     public List getHotCreatorsProfile(@RequestBody Map<String,Object> param){
         Integer length = (Integer) param.get("length");
-        System.out.println("需要" + length + "个");
         Set<String> hotCreator = redisUtil.zRevRange_string("hotCreator", Long.MIN_VALUE, Long.MAX_VALUE);
         List<Object> objects = Arrays.asList(hotCreator.toArray()).subList(0, length > hotCreator.size() ? hotCreator.size() : length);
         List<UserProfileVO1> list = new ArrayList<UserProfileVO1>(length << 1);
@@ -349,6 +352,23 @@ public class UserController extends BaseController  {
             list.add(userProfileVO1);
         }
         return list;
+    }
+
+    /**
+     * 通过用户的ID 查询他所购买的（订阅的）创作者
+     * @return
+     */
+    @GetMapping("/creatorsInfoByUser")
+    @ResponseBody
+    public String mySubscriptionCreators(@RequestBody Map<String,Object> param){
+        Integer page = (Integer) param.get("page");
+        Integer pageSize = (Integer) param.get("pageSize");
+        Integer start = (page - 1) * pageSize;
+        List<Integer> creatorIds = userService.getCreatorsIdsByUserOnNewslettersAndPathwayWithStartAndEnd((Integer) param.get("userId"), start, pageSize);
+        List<UserProfileVO1> userProfileByIds = userService.getUserProfileByIds(creatorIds);
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(userProfileByIds);
+        return JSON.toJSONString(apiResponse,SerializerFeature.WriteNullStringAsEmpty);
     }
 
 
