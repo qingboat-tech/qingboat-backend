@@ -365,6 +365,12 @@ public class UserController extends BaseController  {
         Integer pageSize = (Integer) param.get("pageSize");
         Integer start = (page - 1) * pageSize;
         List<Integer> creatorIds = userService.getCreatorsIdsByUserOnNewslettersAndPathwayWithStartAndEnd((Integer) param.get("userId"), start, pageSize);
+        if (creatorIds.size() == 0){
+            ApiResponse apiResponse = new ApiResponse();
+            Object[] objects = new Object[]{};
+            apiResponse.setData(objects);
+            return JSON.toJSONString(apiResponse,SerializerFeature.WriteNullStringAsEmpty);
+        }
         List<UserProfileVO1> userProfileByIds = userService.getUserProfileByIds(creatorIds);
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setData(userProfileByIds);
