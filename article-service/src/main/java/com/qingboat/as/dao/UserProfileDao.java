@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface UserProfileDao extends BaseMapper<UserEntity> {
 
 
-    @Select("select role from apps_userprofile where userId = #{userId}")
+    @Select("select role from apps_userprofile where user_id = #{userId}")
     public byte getRoleByUserId(Integer userId);
 
 }
