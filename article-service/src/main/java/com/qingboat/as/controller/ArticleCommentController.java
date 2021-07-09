@@ -90,7 +90,8 @@ public class ArticleCommentController extends BaseController {
                     if (replyList != null && replyList.size() > 0){
                         for (ReplyCommentEntity replyCommentEntity: replyList) {
                             Long userId = replyCommentEntity.getUserId();
-                            userService.getRoleByUserId(Integer.parseInt(commentEntity.getUserId() + ""));
+                            byte roleByUserId1 = userService.getRoleByUserId(Integer.parseInt(userId + ""));
+                            replyCommentEntity.setRole(roleByUserId1);
                         }
                     }
                     commentEntity.setReplyCommentEntityList(replyList);
