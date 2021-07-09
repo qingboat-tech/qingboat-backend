@@ -83,8 +83,16 @@ public class ArticleCommentController extends BaseController {
         IPage<ArticleCommentEntity> commentEntityPage =  articleCommentService.findArticleComment(articleId,pageIndex,pageSize);
         if (commentEntityPage!=null && commentEntityPage.getRecords()!=null){
             for (ArticleCommentEntity commentEntity :commentEntityPage.getRecords()){
+                byte roleByUserId = userService.getRoleByUserId(Integer.parseInt(commentEntity.getUserId() + ""));
+                commentEntity.setRole(roleByUserId);
                 if (commentEntity.getReplyCount()>0){
                     List<ReplyCommentEntity> replyList = articleCommentService.findLastReplyCommentList(articleId,commentEntity.getId(),3);
+                    if (replyList != null && replyList.size() > 0){
+                        for (ReplyCommentEntity replyCommentEntity: replyList) {
+                            Long userId = replyCommentEntity.getUserId();
+                            userService.getRoleByUserId(Integer.parseInt(commentEntity.getUserId() + ""));
+                        }
+                    }
                     commentEntity.setReplyCommentEntityList(replyList);
                 }
             }

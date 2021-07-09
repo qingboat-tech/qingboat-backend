@@ -19,6 +19,9 @@ import java.util.Set;
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserProfileDao, UserEntity> implements UserService {
 
+    @Autowired
+    UserProfileDao userProfilaDao;
+
 
     @Override
     public UserEntity findByUserId(Long userId) {
@@ -32,5 +35,10 @@ public class UserServiceImpl extends ServiceImpl<UserProfileDao, UserEntity> imp
         QueryWrapper<UserEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("user_id",userIdSet);
         return this.list(queryWrapper);
+    }
+
+    @Override
+    public byte getRoleByUserId(Integer userId) {
+        return userProfilaDao.getRoleByUserId(userId);
     }
 }

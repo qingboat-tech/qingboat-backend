@@ -1,6 +1,7 @@
 package com.qingboat.as.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -30,6 +31,12 @@ public class ReplyCommentEntity implements Serializable {
     private String headImgUrl;
 
     private Long replyCount;
+
+
+    @TableField(exist = false)
+    private byte role;
+
+
 
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdAt;

@@ -1,23 +1,15 @@
-package com.qingboat.as.entity;
+package com.qingboat.as.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.qingboat.as.entity.ReplyCommentEntity;
 import lombok.Data;
 
-
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-
 @Data
-@TableName("apps_article_comment")// 映射数据库表名
-public class ArticleCommentEntity implements Serializable {
-
-    @TableId(type = IdType.AUTO)
+public class ArticleCommentListVo {
     private Long id;
 
     private String articleId;
@@ -32,13 +24,11 @@ public class ArticleCommentEntity implements Serializable {
 
     private Long replyCount;
 
+    private byte role;
+
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdAt;
 
     @TableField(exist = false)
     private List<ReplyCommentEntity> replyCommentEntityList;
-
-    @TableField(exist = false)
-    private byte role;
-
 }
