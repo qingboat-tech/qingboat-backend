@@ -13,4 +13,11 @@
             #{id}
         </foreach>
     </select>
+
+    <select id="getTaSubscriptionNewsletters" parameterType="java.util.List" resultType="com.qingboat.us.vo.TaSubscriptionNewslettersVO">
+        select * from apps_userprofile where user_id in
+        <foreach collection="ids" open="(" separator="," close=")" item="id">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

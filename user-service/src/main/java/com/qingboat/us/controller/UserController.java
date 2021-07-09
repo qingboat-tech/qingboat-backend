@@ -25,12 +25,15 @@ import com.qingboat.us.redis.mq.RedisMessage;
 import com.qingboat.us.redis.mq.RedisQueue;
 import com.qingboat.us.service.AuthUserService;
 import com.qingboat.us.service.UserService;
+import com.qingboat.us.vo.TaSubscriptionNewslettersVO;
 import com.qingboat.us.vo.UserProfileVO1;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
 
@@ -309,7 +312,7 @@ public class UserController extends BaseController  {
     }
 
     /**
-     *  订阅newsletter的和购买pathway的总人数  （去重）
+     *  订阅newsletter的和购买pathway的总人数  （去重）(通过创作者查询 总订阅的人数)
      * @param param
      * @return
      */
@@ -355,7 +358,7 @@ public class UserController extends BaseController  {
     }
 
     /**
-     * 通过用户的ID 查询他所购买的（订阅的）创作者
+     * 通过用户的ID 查询他所购买的（订阅的）创作者  （通过读者 查询创作者 ）
      * @return
      */
     @GetMapping("/creatorsInfoByUser")
@@ -376,6 +379,27 @@ public class UserController extends BaseController  {
         apiResponse.setData(userProfileByIds);
         return JSON.toJSONString(apiResponse,SerializerFeature.WriteNullStringAsEmpty);
     }
+
+    /**
+     *      通过userId 查询 这个用户的订阅的所有newsletters （简介）
+     */
+    @GetMapping("taSubscription-newsletters")
+    @ResponseBody
+    public List<TaSubscriptionNewslettersVO> taSubscription_newsletters(@RequestBody Map<String,Object> param, HttpServletRequest httpServletRequest){
+        Object authorization = httpServletRequest.getHeader("Authorization");
+        Integer loginId = -1;
+        if (authorization != null){
+            loginId =  getUId().intValue();
+        }
+        System.out.println("loginId : " + loginId);
+        Integer userId = Integer.parseInt(param.get("userId").toString());
+        Integer page = Integer.parseInt(param.get("page").toString());
+        Integer pageSize = Integer.parseInt(param.get("pageSize").toString());
+        List<TaSubscriptionNewslettersVO> taSubscriptionNewslettersVO = userService.getTaSubscriptionNewslettersVO(loginId, userId, page, pageSize);
+        return taSubscriptionNewslettersVO;
+    }
+
+
 
 
 

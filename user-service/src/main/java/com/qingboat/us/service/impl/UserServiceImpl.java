@@ -13,6 +13,7 @@ import com.qingboat.api.MessageService;
 import com.qingboat.api.vo.MessageVo;
 import com.qingboat.us.DTO.SubscriptionAndFollowDTO;
 import com.qingboat.us.dao.CreatorApplyFormMongoDao;
+import com.qingboat.us.dao.IndustryDao;
 import com.qingboat.us.dao.UserProfileDao;
 import com.qingboat.us.dao.UserSubscriptionDao;
 import com.qingboat.us.entity.CreatorApplyFormEntity;
@@ -22,6 +23,7 @@ import com.qingboat.us.entity.UserWechatEntity;
 import com.qingboat.us.filter.AuthFilter;
 import com.qingboat.us.service.UserService;
 import com.qingboat.us.service.UserWechatService;
+import com.qingboat.us.vo.TaSubscriptionNewslettersVO;
 import com.qingboat.us.vo.UserProfileVO1;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,9 @@ import java.util.List;
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
+
+    @Autowired
+    private IndustryDao industryDao;
 
     @Autowired
     private UserSubscriptionDao userSubscriptionDao;
@@ -284,6 +289,36 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserProfileVO1> getUserProfileByIds(List<Integer> ids) {
         return userProfileDao.getUserProfileByIds(ids);
+    }
+
+    @Override
+    public List<TaSubscriptionNewslettersVO> getTaSubscriptionNewslettersVO(Integer loginId, Integer userId, Integer page, Integer pageSize) {
+        Integer start = (page - 1) * pageSize;
+        List<Integer> creatorIds = userSubscriptionDao.getCreatorIdsByUserIdWithStartAndEnd_newsletters(userId, start, pageSize);
+        List<TaSubscriptionNewslettersVO> taSubscriptionNewsletters = null;
+        if (creatorIds != null && creatorIds.size() != 0){
+            taSubscriptionNewsletters = userProfileDao.getTaSubscriptionNewsletters(creatorIds);
+        }
+        if (taSubscriptionNewsletters == null){
+            return null;
+        }
+        for (TaSubscriptionNewslettersVO taSubscriptionNewslettersVO: taSubscriptionNewsletters) {
+            Integer targetUserId = taSubscriptionNewslettersVO.getUserId();//创作者id
+            //填充该作者的信息
+            taSubscriptionNewslettersVO.setIndustry(industryDao.getIndustryByUserId(targetUserId));
+            List<Integer> userIds = userSubscriptionDao.getUserIdsByCreatorIdWithStartAndEnd_newsletters(targetUserId, 0, 5);
+            List<UserProfileVO1> userProfileByIds = userProfileDao.getUserProfileByIds(userIds);
+            taSubscriptionNewslettersVO.setUserProfileVO1List(userProfileByIds);
+            taSubscriptionNewslettersVO.setSubscriptionCount(userSubscriptionDao.getUserCountByCreatorId_newsletters(targetUserId));
+            if (loginId == -1){
+                taSubscriptionNewslettersVO.setSubscriptionRelationshipForMe(false);
+            }else {
+                taSubscriptionNewslettersVO.setSubscriptionRelationshipForMe(
+                        userSubscriptionDao.isSubscriptionRelationship(loginId,targetUserId) == 0 ? false:true
+                );
+            }
+        }
+        return taSubscriptionNewsletters;
     }
 
 //    @Override
