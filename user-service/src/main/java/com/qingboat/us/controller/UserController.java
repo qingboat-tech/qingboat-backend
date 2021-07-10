@@ -3,14 +3,13 @@ package com.qingboat.us.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.api.R;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.qingboat.api.TierService;
 import com.qingboat.api.vo.TierVo;
 import com.qingboat.base.api.ApiResponse;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
-import com.qingboat.base.task.DelayQueueManager;
+
 import com.qingboat.api.MessageService;
 import com.qingboat.api.vo.MessageVo;
 import com.qingboat.api.UserSubscriptionService;
@@ -24,6 +23,7 @@ import com.qingboat.us.redis.RedisUtil;
 import com.qingboat.us.redis.mq.RedisMessage;
 import com.qingboat.us.redis.mq.RedisQueue;
 import com.qingboat.us.service.AuthUserService;
+import com.qingboat.us.service.LastAccessRecordService;
 import com.qingboat.us.service.UserService;
 import com.qingboat.us.vo.TaSubscriptionNewslettersVO;
 import com.qingboat.us.vo.UserProfileVO1;
@@ -64,6 +64,9 @@ public class UserController extends BaseController  {
 
     @Autowired
     private AuthUserService authUserService;
+
+    @Autowired
+    private LastAccessRecordService lastAccessRecordService;
 
 
 
@@ -383,7 +386,7 @@ public class UserController extends BaseController  {
     /**
      *      通过userId 查询 这个用户的订阅的所有newsletters （简介）
      */
-    @GetMapping("taSubscription-newsletters")
+    @GetMapping("/taSubscription-newsletters")
     @ResponseBody
     public List<TaSubscriptionNewslettersVO> taSubscription_newsletters(@RequestBody Map<String,Object> param, HttpServletRequest httpServletRequest){
         Object authorization = httpServletRequest.getHeader("Authorization");
@@ -397,6 +400,18 @@ public class UserController extends BaseController  {
         Integer pageSize = Integer.parseInt(param.get("pageSize").toString());
         List<TaSubscriptionNewslettersVO> taSubscriptionNewslettersVO = userService.getTaSubscriptionNewslettersVO(loginId, userId, page, pageSize);
         return taSubscriptionNewslettersVO;
+    }
+
+    /**
+     *  用户最新访问接口
+     *  用于记录用户访问的内容时间
+     */
+    @PostMapping("/lastAccess")
+    @ResponseBody
+    public ApiResponse lastAccess(@RequestBody Map<String,Object> param){
+        Integer userId = getUId().intValue();
+        Integer type = Integer.parseInt(param.get("type").toString());
+        return lastAccessRecordService.lastAccessRecord(userId,type,param.get("targetId").toString());
     }
 
 
