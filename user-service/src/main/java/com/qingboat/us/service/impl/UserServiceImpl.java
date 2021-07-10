@@ -296,11 +296,14 @@ public class UserServiceImpl implements UserService {
     public TaSubscriptionNewslettersWithTotalVO getTaSubscriptionNewslettersVO(Integer loginId, Integer userId, Integer page, Integer pageSize) {
         //获取总数
         List<Integer> allCreatorIds = userSubscriptionDao.getAllCreatorIdsByUserIdWithStartAndEnd_newsletters(userId);
-        List<TaSubscriptionNewslettersVO> taSubscriptionNewsletters1 = userProfileDao.getTaSubscriptionNewsletters(allCreatorIds);
         Integer total = 0;
-        if (taSubscriptionNewsletters1 != null){
-            total = taSubscriptionNewsletters1.size();
+        if (allCreatorIds != null && allCreatorIds.size() > 0){
+            List<TaSubscriptionNewslettersVO> taSubscriptionNewsletters1 = userProfileDao.getTaSubscriptionNewsletters(allCreatorIds);
+            if (taSubscriptionNewsletters1 != null){
+                total = taSubscriptionNewsletters1.size();
+            }
         }
+
         Integer start = (page - 1) * pageSize;
         List<Integer> creatorIds = userSubscriptionDao.getCreatorIdsByUserIdWithStartAndEnd_newsletters(userId, start, pageSize);
         List<TaSubscriptionNewslettersVO> taSubscriptionNewsletters = null;
