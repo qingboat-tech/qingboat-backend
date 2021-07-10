@@ -388,16 +388,17 @@ public class UserController extends BaseController  {
      */
     @GetMapping("/taSubscription-newsletters")
     @ResponseBody
-    public List<TaSubscriptionNewslettersVO> taSubscription_newsletters(@RequestBody Map<String,Object> param, HttpServletRequest httpServletRequest){
+    public List<TaSubscriptionNewslettersVO> taSubscription_newsletters(@RequestParam("userId") Integer userId, @RequestParam("page") Integer page
+            ,@RequestParam("pageSize") Integer pageSize , HttpServletRequest httpServletRequest){
         Object authorization = httpServletRequest.getHeader("Authorization");
         Integer loginId = -1;
         if (authorization != null){
             loginId =  getUId().intValue();
         }
         System.out.println("loginId : " + loginId);
-        Integer userId = Integer.parseInt(param.get("userId").toString());
-        Integer page = Integer.parseInt(param.get("page").toString());
-        Integer pageSize = Integer.parseInt(param.get("pageSize").toString());
+//        Integer userId = Integer.parseInt(param.get("userId").toString());
+//        Integer page = Integer.parseInt(param.get("page").toString());
+//        Integer pageSize = Integer.parseInt(param.get("pageSize").toString());
         List<TaSubscriptionNewslettersVO> taSubscriptionNewslettersVO = userService.getTaSubscriptionNewslettersVO(loginId, userId, page, pageSize);
         return taSubscriptionNewslettersVO;
     }
@@ -412,6 +413,18 @@ public class UserController extends BaseController  {
         Integer userId = getUId().intValue();
         Integer type = Integer.parseInt(param.get("type").toString());
         return lastAccessRecordService.lastAccessRecord(userId,type,param.get("targetId").toString());
+    }
+
+    /**
+     *  最新动态列表 (根据用户订阅的作者)
+     */
+    @GetMapping("/newUpdate")
+    @ResponseBody
+    public List newUpdate(@RequestBody Map<String,Object> param){
+        Integer userId = getUId().intValue();
+
+        return null;
+
     }
 
 
