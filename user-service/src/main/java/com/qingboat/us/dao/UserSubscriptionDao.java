@@ -62,6 +62,14 @@ public interface UserSubscriptionDao {
                                                                           @Param("length") Integer length);
 
     /**
+     *  根据user 查询ta订阅的所有创作者 ids  （newsletters）
+     * @param userId
+     * @return
+     */
+    @Select("select creator_id from apps_usersubscription where subscriber_id = #{userId}")
+    public List<Integer> getAllCreatorIdsByUserIdWithStartAndEnd_newsletters(@Param("userId") Integer userId);
+
+    /**
      *  根据创作者 分页查询 订阅 此创作者的userIds  （newsletters）
      */
     @Select("select subscriber_id from apps_usersubscription where creator_id = #{creatorId} limit #{start},#{length}")

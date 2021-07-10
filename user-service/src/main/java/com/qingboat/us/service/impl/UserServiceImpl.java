@@ -24,6 +24,7 @@ import com.qingboat.us.filter.AuthFilter;
 import com.qingboat.us.service.UserService;
 import com.qingboat.us.service.UserWechatService;
 import com.qingboat.us.vo.TaSubscriptionNewslettersVO;
+import com.qingboat.us.vo.TaSubscriptionNewslettersWithTotalVO;
 import com.qingboat.us.vo.UserProfileVO1;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -292,7 +293,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<TaSubscriptionNewslettersVO> getTaSubscriptionNewslettersVO(Integer loginId, Integer userId, Integer page, Integer pageSize) {
+    public TaSubscriptionNewslettersWithTotalVO getTaSubscriptionNewslettersVO(Integer loginId, Integer userId, Integer page, Integer pageSize) {
+        //获取总数
+        List<Integer> allCreatorIds = userSubscriptionDao.getAllCreatorIdsByUserIdWithStartAndEnd_newsletters(userId);
+        List<TaSubscriptionNewslettersVO> taSubscriptionNewsletters1 = userProfileDao.getTaSubscriptionNewsletters(allCreatorIds);
+        Integer total = 0;
+        if (taSubscriptionNewsletters1 != null){
+            total = taSubscriptionNewsletters1.size();
+        }
         Integer start = (page - 1) * pageSize;
         List<Integer> creatorIds = userSubscriptionDao.getCreatorIdsByUserIdWithStartAndEnd_newsletters(userId, start, pageSize);
         List<TaSubscriptionNewslettersVO> taSubscriptionNewsletters = null;
@@ -318,7 +326,10 @@ public class UserServiceImpl implements UserService {
                 );
             }
         }
-        return taSubscriptionNewsletters;
+        TaSubscriptionNewslettersWithTotalVO result = new TaSubscriptionNewslettersWithTotalVO();
+        result.setList(taSubscriptionNewsletters);
+        result.setTotal(total);
+        return result;
     }
 
 //    @Override

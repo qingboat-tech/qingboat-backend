@@ -26,6 +26,7 @@ import com.qingboat.us.service.AuthUserService;
 import com.qingboat.us.service.LastAccessRecordService;
 import com.qingboat.us.service.UserService;
 import com.qingboat.us.vo.TaSubscriptionNewslettersVO;
+import com.qingboat.us.vo.TaSubscriptionNewslettersWithTotalVO;
 import com.qingboat.us.vo.UserProfileVO1;
 import lombok.extern.slf4j.Slf4j;
 
@@ -388,20 +389,27 @@ public class UserController extends BaseController  {
      */
     @GetMapping("/taSubscription-newsletters")
     @ResponseBody
-    public List<TaSubscriptionNewslettersVO> taSubscription_newsletters(@RequestParam("userId") Integer userId, @RequestParam("page") Integer page
+    public TaSubscriptionNewslettersWithTotalVO taSubscription_newsletters(@RequestParam("userId") Integer userId, @RequestParam("page") Integer page
             ,@RequestParam("pageSize") Integer pageSize , HttpServletRequest httpServletRequest){
         Object authorization = httpServletRequest.getHeader("Authorization");
         Integer loginId = -1;
         if (authorization != null){
             loginId =  getUId().intValue();
         }
-        System.out.println("loginId : " + loginId);
-//        Integer userId = Integer.parseInt(param.get("userId").toString());
-//        Integer page = Integer.parseInt(param.get("page").toString());
-//        Integer pageSize = Integer.parseInt(param.get("pageSize").toString());
-        List<TaSubscriptionNewslettersVO> taSubscriptionNewslettersVO = userService.getTaSubscriptionNewslettersVO(loginId, userId, page, pageSize);
-        return taSubscriptionNewslettersVO;
+        TaSubscriptionNewslettersWithTotalVO returnList = userService.getTaSubscriptionNewslettersVO(loginId, userId, page, pageSize);
+        return returnList;
     }
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      *  用户最新访问接口
@@ -416,11 +424,11 @@ public class UserController extends BaseController  {
     }
 
     /**
-     *  最新动态列表 (根据用户订阅的作者)
+     *  最新动态列表 (根据用户订阅的作者  (pathway + newsletter))
      */
     @GetMapping("/newUpdate")
     @ResponseBody
-    public List newUpdate(@RequestBody Map<String,Object> param){
+    public List newUpdate(@RequestParam("page") Integer page,@RequestParam("pageSize") Integer pageSize){
         Integer userId = getUId().intValue();
 
         return null;

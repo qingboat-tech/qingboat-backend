@@ -3,6 +3,7 @@ package com.qingboat.us.service;
 import com.qingboat.us.entity.CreatorApplyFormEntity;
 import com.qingboat.us.entity.UserProfileEntity;
 import com.qingboat.us.vo.TaSubscriptionNewslettersVO;
+import com.qingboat.us.vo.TaSubscriptionNewslettersWithTotalVO;
 import com.qingboat.us.vo.UserProfileVO1;
 import org.springframework.data.domain.Page;
 
@@ -35,6 +36,6 @@ public interface UserService {
     List<Integer> getCreatorsIdsByUserOnNewslettersAndPathwayWithStartAndEnd(Integer userId, Integer start, Integer length);
     List<UserProfileVO1> getUserProfileByIds(List<Integer> ids);
 
-    List<TaSubscriptionNewslettersVO> getTaSubscriptionNewslettersVO(Integer loginId,Integer userId,Integer page,Integer pageSize);
+    TaSubscriptionNewslettersWithTotalVO getTaSubscriptionNewslettersVO(Integer loginId, Integer userId, Integer page, Integer pageSize);
 
 }
