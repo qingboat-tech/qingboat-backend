@@ -15,7 +15,7 @@
     </select>
 
     <select id="getUserProfileByIdsForNewsUpdateCardVO" parameterType="java.util.List" resultType="com.qingboat.us.vo.NewsUpdateCardVO">
-        select user_id as creatorId,profile_name as profileName,creator_img_url as creatorImgUrl  from apps_userprofile where user_id in
+        select user_id as creatorId,profile_name as profileName,creator_img_url as creatorImgUrl,nickname,headimg_url  from apps_userprofile where user_id in
         <foreach collection="ids" open="(" separator="," close=")" item="id">
             #{id}
         </foreach>

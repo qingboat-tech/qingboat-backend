@@ -25,6 +25,8 @@ import com.qingboat.us.redis.mq.RedisQueue;
 import com.qingboat.us.service.AuthUserService;
 import com.qingboat.us.service.LastAccessRecordService;
 import com.qingboat.us.service.UserService;
+import com.qingboat.us.service.impl.NewsUpdateServiceImpl;
+import com.qingboat.us.vo.NewsUpdateCardVOList;
 import com.qingboat.us.vo.TaSubscriptionNewslettersVO;
 import com.qingboat.us.vo.TaSubscriptionNewslettersWithTotalVO;
 import com.qingboat.us.vo.UserProfileVO1;
@@ -69,7 +71,8 @@ public class UserController extends BaseController  {
     @Autowired
     private LastAccessRecordService lastAccessRecordService;
 
-
+    @Autowired
+    private NewsUpdateServiceImpl newsUpdateService;
 
 
 
@@ -413,10 +416,10 @@ public class UserController extends BaseController  {
      */
     @PostMapping("/lastAccess")
     @ResponseBody
-    public ApiResponse lastAccess(@RequestBody Map<String,Object> param){
+    public ApiResponse lastAccess(@RequestParam("type") Integer type,@RequestParam("targetId") String targetId){
         Integer userId = getUId().intValue();
-        Integer type = Integer.parseInt(param.get("type").toString());
-        return lastAccessRecordService.lastAccessRecord(userId,type,param.get("targetId").toString());
+//        Integer type = Integer.parseInt(param.get("type").toString());
+        return lastAccessRecordService.lastAccessRecord(userId,type,targetId);
     }
 
     /**
@@ -424,11 +427,9 @@ public class UserController extends BaseController  {
      */
     @GetMapping("/newUpdate")
     @ResponseBody
-    public List newUpdate(@RequestParam("page") Integer page,@RequestParam("pageSize") Integer pageSize){
+    public NewsUpdateCardVOList newUpdate(@RequestParam("page") Integer page, @RequestParam("pageSize") Integer pageSize){
         Integer userId = getUId().intValue();
-
-        return null;
-
+        return newsUpdateService.getNewsUpdateCardVOList(userId,page,pageSize);
     }
 
 
