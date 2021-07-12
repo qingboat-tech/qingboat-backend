@@ -416,10 +416,10 @@ public class UserController extends BaseController  {
      */
     @PostMapping("/lastAccess")
     @ResponseBody
-    public ApiResponse lastAccess(@RequestParam("type") Integer type,@RequestParam("targetId") String targetId){
+    public ApiResponse lastAccess(@RequestBody Map<String,Object> param){
         Integer userId = getUId().intValue();
-//        Integer type = Integer.parseInt(param.get("type").toString());
-        return lastAccessRecordService.lastAccessRecord(userId,type,targetId);
+        Integer type = Integer.parseInt(param.get("type").toString());
+        return lastAccessRecordService.lastAccessRecord(userId,type,param.get("targetId").toString());
     }
 
     /**
