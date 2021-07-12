@@ -40,7 +40,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
         List<NewsUpdateCardVO> pathwayInfoByCreatorIds = pathwayDao.pathwayInfoByCreatorIds(allCreatorIdsByUserId);
 
 
-        List<ArticleEntity> articleEntitiesByAuthorIds = articleMongoDao.findArticleProfileInfoByAuthorIds(allCreatorIdsByUserId);
+//        List<ArticleEntity> articleEntitiesByAuthorIds = articleMongoDao.findArticleProfileInfoByAuthorIds(allCreatorIdsByUserId);
 
 
         return null;
