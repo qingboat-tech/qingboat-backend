@@ -2,6 +2,7 @@ package com.qingboat.us.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.qingboat.us.entity.UserProfileEntity;
+import com.qingboat.us.vo.NewsUpdateCardVO;
 import com.qingboat.us.vo.TaSubscriptionNewslettersVO;
 import com.qingboat.us.vo.UserProfileVO1;
 import org.apache.ibatis.annotations.Mapper;
@@ -26,6 +27,9 @@ public interface UserProfileDao extends BaseMapper<UserProfileEntity> {
 
 
     List<UserProfileVO1> getUserProfileByIds(@Param("ids")List<Integer> ids);
+
+
+    List<NewsUpdateCardVO> getUserProfileByIdsForNewsUpdateCardVO(@Param("ids")List<Integer> ids);
 
 //    @Select("select * from apps_userprofile where user_id = #{userId}")
     List<TaSubscriptionNewslettersVO> getTaSubscriptionNewsletters(@Param("ids")List<Integer> ids);

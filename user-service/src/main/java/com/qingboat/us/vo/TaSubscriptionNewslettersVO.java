@@ -7,7 +7,7 @@ import java.util.List;
  *
  */
 public class TaSubscriptionNewslettersVO {
-    private String headImgUrl;  //creator 头像
+    private String headimgUrl;  //creator 头像
     private String profileImgUrl;
     private String creatorImgUrl;
     private String position;
@@ -45,12 +45,12 @@ public class TaSubscriptionNewslettersVO {
         this.userProfileVO1List = userProfileVO1List;
     }
 
-    public String getHeadImgUrl() {
-        return headImgUrl;
+    public String getHeadimgUrl() {
+        return headimgUrl;
     }
 
-    public void setHeadImgUrl(String headImgUrl) {
-        this.headImgUrl = headImgUrl;
+    public void setHeadimgUrl(String headimgUrl) {
+        this.headimgUrl = headimgUrl;
     }
 
     public String getProfileImgUrl() {

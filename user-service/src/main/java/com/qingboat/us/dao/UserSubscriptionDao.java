@@ -48,6 +48,19 @@ public interface UserSubscriptionDao {
                                                                      @Param("start") Integer start,
                                                                      @Param("length") Integer length );
 
+    /**
+     *  pathway + newsletters  根据用户id查询所有的 ta所订阅/购买的所有创作者id （pathway + newsletter）
+     * @param userId
+     * @return
+     */
+    public List<Integer> getAllCreatorIdsByUserId(@Param("userId") Integer userId);
+
+
+
+
+
+
+
 
     /**
      *  根据user 查询ta订阅的所有创作者 ids  （newsletters）

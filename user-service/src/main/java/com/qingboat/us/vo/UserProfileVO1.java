@@ -10,7 +10,7 @@ import java.util.Date;
 public class UserProfileVO1 {
 
     private Integer id;
-    private String headImgUrl;
+    private String headimgUrl;
     private String position;//职业
     private String nickname;
     private String industry; //行业
@@ -40,12 +40,12 @@ public class UserProfileVO1 {
         this.id = id;
     }
 
-    public String getHeadImgUrl() {
-        return headImgUrl;
+    public String getHeadimgUrl() {
+        return headimgUrl;
     }
 
-    public void setHeadImgUrl(String headImgUrl) {
-        this.headImgUrl = headImgUrl;
+    public void setHeadimgUrl(String headimgUrl) {
+        this.headimgUrl = headimgUrl;
     }
 
     public String getPosition() {

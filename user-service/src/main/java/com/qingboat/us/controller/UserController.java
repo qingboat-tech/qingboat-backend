@@ -317,27 +317,25 @@ public class UserController extends BaseController  {
 
     /**
      *  订阅newsletter的和购买pathway的总人数  （去重）(通过创作者查询 总订阅的人数)
-     * @param param
      * @return
      */
     @GetMapping("/subscribe_Number")
     @ResponseBody
-    public Integer getNumberOfSubscribe(@RequestBody Map<String,Object> param){
-        return userService.getCount_UserIdsByCreatorOnNewslettersAndPathway((Integer) param.get("creatorId"));
+    public Integer getNumberOfSubscribe(@RequestParam("creatorId") Integer creatorId){
+        return userService.getCount_UserIdsByCreatorOnNewslettersAndPathway(creatorId);
     }
 
     /**
      *  列出所有 订阅newsletter 和购买pathway的人的 信息（包括id，头像，position）
-     * @param param
      * @return
      */
     @GetMapping("/subscribersProfile")
     @ResponseBody
-    public String getSubscribersProfile(@RequestBody Map<String,Object> param){
+    public String getSubscribersProfile(@RequestParam("creatorId") Integer creatorId,
+                                        @RequestParam("page") Integer page,
+                                        @RequestParam("pageSize") Integer pageSize){
         ApiResponse apiResponse = new ApiResponse();
-        List<UserProfileVO1> list = userService.getUserProfileByCreatorOnNewslettersAndPathway((Integer) param.get("creatorId"),
-                (Integer) param.get("page"),
-                (Integer) param.get("pageSize"));
+        List<UserProfileVO1> list = userService.getUserProfileByCreatorOnNewslettersAndPathway(creatorId, page, pageSize);
         apiResponse.setData(list);
         return JSON.toJSONString(apiResponse,SerializerFeature.WriteNullStringAsEmpty);
     }
@@ -348,8 +346,7 @@ public class UserController extends BaseController  {
 
     @GetMapping("/hotCreatorProfile")
     @ResponseBody
-    public List getHotCreatorsProfile(@RequestBody Map<String,Object> param){
-        Integer length = (Integer) param.get("length");
+    public List getHotCreatorsProfile(@RequestParam("length") Integer length){
         Set<String> hotCreator = redisUtil.zRevRange_string("hotCreator", Long.MIN_VALUE, Long.MAX_VALUE);
         List<Object> objects = Arrays.asList(hotCreator.toArray()).subList(0, length > hotCreator.size() ? hotCreator.size() : length);
         List<UserProfileVO1> list = new ArrayList<UserProfileVO1>(length << 1);
@@ -367,11 +364,10 @@ public class UserController extends BaseController  {
      */
     @GetMapping("/creatorsInfoByUser")
     @ResponseBody
-    public String mySubscriptionCreators(@RequestBody Map<String,Object> param){
-        Integer page = (Integer) param.get("page");
-        Integer pageSize = (Integer) param.get("pageSize");
+    public String mySubscriptionCreators(@RequestParam("page") Integer page,@RequestParam("page") Integer pageSize,@RequestParam("userId") Integer userId){
+
         Integer start = (page - 1) * pageSize;
-        List<Integer> creatorIds = userService.getCreatorsIdsByUserOnNewslettersAndPathwayWithStartAndEnd((Integer) param.get("userId"), start, pageSize);
+        List<Integer> creatorIds = userService.getCreatorsIdsByUserOnNewslettersAndPathwayWithStartAndEnd(userId, start, pageSize);
         if (creatorIds.size() == 0){
             ApiResponse apiResponse = new ApiResponse();
             Object[] objects = new Object[]{};

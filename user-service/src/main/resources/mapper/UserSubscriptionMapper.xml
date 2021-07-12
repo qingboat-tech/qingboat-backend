@@ -26,7 +26,8 @@
 
     <select id="getCreatorIdsByUserIdWithStartAndEnd" resultType="Integer">
         select * from (select apps_pathway.author_id creatorId
-                       from apps_followpathway,apps_pathway where apps_followpathway.user_id = #{userId} and apps_pathway.id = apps_followpathway.pathway_id union
+                       from apps_followpathway,apps_pathway where apps_followpathway.user_id = #{userId} and apps_pathway.id = apps_followpathway.pathway_id
+                        union
                        select creator_id creatorId from apps_usersubscription where subscriber_id = #{userId}) t limit #{start},#{length}
     </select>
 </mapper>

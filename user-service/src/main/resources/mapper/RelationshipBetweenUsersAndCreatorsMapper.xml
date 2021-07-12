@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qingboat.us.dao.RelationshipBetweenUsersAndCreatorsDao">
+    <select id="getAllCreatorIdsByUserId" resultType="Integer">
+       select apps_pathway.author_id creatorId
+                       from apps_followpathway,apps_pathway where apps_followpathway.user_id = #{userId} and apps_pathway.id = apps_followpathway.pathway_id
+                       union
+                       select creator_id creatorId from apps_usersubscription where subscriber_id = #{userId}
+    </select>
+</mapper>

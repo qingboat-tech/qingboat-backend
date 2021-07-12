@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qingboat.us.dao.PathwayDao">
+    <select id="pathwayInfoByCreatorIds" resultType="com.qingboat.us.vo.NewsUpdateCardVO">
+        select id as contentId, author_id as creatorId,image_url as coverImgUrlfrom,updated_at as updateTime, apps_pathway where author_id in
+        <foreach collection="creatorIds" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
+</mapper>
