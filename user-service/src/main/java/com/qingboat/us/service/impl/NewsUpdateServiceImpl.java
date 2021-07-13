@@ -10,6 +10,7 @@ import com.qingboat.us.vo.UserProfileVO1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Stream;
@@ -30,6 +31,9 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
     LikePathwayDao likePathwayDao;
     @Autowired
     FollowPathwayDao followPathwayDao;
+    @Autowired
+    LastAccessRecordsDao lastAccessRecordsDao;
+
 
     @Autowired
     private RedisUtil redisUtil;
@@ -130,4 +134,41 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
         result.setTotal(returnList.size());
         return result;
     }
+
+    /**
+     *
+     * @param userId
+     * @param list
+     * @return
+     */
+    @Override
+    public List<UserProfileVO1> haveUpdate(Integer userId, List<UserProfileVO1> list) {
+        for (UserProfileVO1 userProfileVO1: list) {
+            Integer creatorId = userProfileVO1.getId();
+            Date lastUpdateTimeByCreator = pathwayDao.getLastUpdateTimeByCreator(creatorId);
+            userProfileVO1.setHaveUpdate(false);
+            if (lastUpdateTimeByCreator != null){
+                Date lastAccessTimeByUserIdAndCreatorId = lastAccessRecordsDao.findLastRecordTimeWithCreatorId(userId,creatorId);
+                if (lastAccessTimeByUserIdAndCreatorId == null || lastUpdateTimeByCreator.compareTo(lastAccessTimeByUserIdAndCreatorId) == 1 ){
+                    userProfileVO1.setHaveUpdate(true);
+                    continue;
+                }
+            }
+            List<ArticleEntity> articleEntities = articleMongoDao.findPublishArticleProfileInfoByAuthorId(creatorId);
+            if (articleEntities != null && articleEntities.size() != 0){
+                LocalDateTime updatedTime = articleEntities.get(0).getUpdatedTime();
+                for (ArticleEntity temp:articleEntities) {
+                    updatedTime = temp.getUpdatedTime().compareTo(updatedTime) > 0 ? temp.getUpdatedTime() : updatedTime;
+                }
+                Date lastAccessTimeByUserIdAndCreatorId = lastAccessRecordsDao.findLastRecordTimeWithCreatorId(userId,creatorId);
+                Date date = Date.from(updatedTime.atZone(ZoneId.systemDefault()).toInstant());
+                if (lastAccessTimeByUserIdAndCreatorId == null || date.compareTo(lastAccessTimeByUserIdAndCreatorId) == 1 ){
+                    userProfileVO1.setHaveUpdate(true);
+                }
+            }
+        }
+        return list;
+    }
+
+
 }

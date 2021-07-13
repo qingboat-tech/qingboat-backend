@@ -368,7 +368,6 @@ public class UserController extends BaseController  {
     @GetMapping("/creatorsInfoByUser")
     @ResponseBody
     public String mySubscriptionCreators(@RequestParam("page") Integer page,@RequestParam("pageSize") Integer pageSize,@RequestParam("userId") Integer userId){
-
         Integer start = (page - 1) * pageSize;
         List<Integer> creatorIds = userService.getCreatorsIdsByUserOnNewslettersAndPathwayWithStartAndEnd(userId, start, pageSize);
         if (creatorIds.size() == 0){
@@ -378,8 +377,10 @@ public class UserController extends BaseController  {
             return JSON.toJSONString(apiResponse,SerializerFeature.WriteNullStringAsEmpty);
         }
         List<UserProfileVO1> userProfileByIds = userService.getUserProfileByIds(creatorIds);
+        //判断是否有更新
+        List<UserProfileVO1> resultList = newsUpdateService.haveUpdate(userId, userProfileByIds);
         ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setData(userProfileByIds);
+        apiResponse.setData(resultList);
         return JSON.toJSONString(apiResponse,SerializerFeature.WriteNullStringAsEmpty);
     }
 
