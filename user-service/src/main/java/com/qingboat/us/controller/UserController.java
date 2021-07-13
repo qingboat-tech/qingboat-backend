@@ -367,7 +367,7 @@ public class UserController extends BaseController  {
      */
     @GetMapping("/creatorsInfoByUser")
     @ResponseBody
-    public String mySubscriptionCreators(@RequestParam("page") Integer page,@RequestParam("page") Integer pageSize,@RequestParam("userId") Integer userId){
+    public String mySubscriptionCreators(@RequestParam("page") Integer page,@RequestParam("pageSize") Integer pageSize,@RequestParam("userId") Integer userId){
 
         Integer start = (page - 1) * pageSize;
         List<Integer> creatorIds = userService.getCreatorsIdsByUserOnNewslettersAndPathwayWithStartAndEnd(userId, start, pageSize);
@@ -432,9 +432,6 @@ public class UserController extends BaseController  {
         Integer userId = getUId().intValue();
         return newsUpdateService.getNewsUpdateCardVOList(userId,page,pageSize);
     }
-
-
-
 
 
 }

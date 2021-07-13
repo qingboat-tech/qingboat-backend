@@ -15,6 +15,16 @@ public class UserProfileVO1 {
     private String nickname;
     private String industry; //行业
     private String description;//描述
+    private Boolean haveUpdate; //是否有更新
+
+
+    public Boolean getHaveUpdate() {
+        return haveUpdate;
+    }
+
+    public void setHaveUpdate(Boolean haveUpdate) {
+        this.haveUpdate = haveUpdate;
+    }
 
     public String getIndustry() {
         return industry;
