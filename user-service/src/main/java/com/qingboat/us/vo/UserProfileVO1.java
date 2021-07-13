@@ -16,7 +16,24 @@ public class UserProfileVO1 {
     private String industry; //行业
     private String description;//描述
     private Boolean haveUpdate; //是否有更新
+    private String creatorImgUrl;  //店铺头像
+    private String profileName;   //店铺名称
 
+    public String getCreatorImgUrl() {
+        return creatorImgUrl;
+    }
+
+    public void setCreatorImgUrl(String creatorImgUrl) {
+        this.creatorImgUrl = creatorImgUrl;
+    }
+
+    public String getProfileName() {
+        return profileName;
+    }
+
+    public void setProfileName(String profileName) {
+        this.profileName = profileName;
+    }
 
     public Boolean getHaveUpdate() {
         return haveUpdate;
