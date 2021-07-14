@@ -18,6 +18,15 @@ public class UserProfileVO1 {
     private Boolean haveUpdate; //是否有更新
     private String creatorImgUrl;  //店铺头像
     private String profileName;   //店铺名称
+    private Integer userId;     //这个才是
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
 
     public String getCreatorImgUrl() {
         return creatorImgUrl;

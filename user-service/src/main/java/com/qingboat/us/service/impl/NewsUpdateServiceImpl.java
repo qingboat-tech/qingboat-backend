@@ -144,7 +144,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
     @Override
     public List<UserProfileVO1> haveUpdate(Integer userId, List<UserProfileVO1> list) {
         for (UserProfileVO1 userProfileVO1: list) {
-            Integer creatorId = userProfileVO1.getId();
+            Integer creatorId = userProfileVO1.getUserId();  //注意  这里是getUserId  不是getId  id 没什么毛用
             Date lastUpdateTimeByCreator = pathwayDao.getLastUpdateTimeByCreator(creatorId);
             userProfileVO1.setHaveUpdate(false);
             if (lastUpdateTimeByCreator != null){
@@ -156,7 +156,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
             }
             List<ArticleEntity> articleEntities = articleMongoDao.findPublishArticleProfileInfoByAuthorId(creatorId);
             if (articleEntities != null && articleEntities.size() != 0){
-                LocalDateTime updatedTime = articleEntities.get(0).getUpdatedTime();
+                LocalDateTime updatedTime = articleEntities.get(0).getUpdatedTime();   //取第一个值当作初始值  循环 获取到最新的时间  比较并交换
                 for (ArticleEntity temp:articleEntities) {
                     updatedTime = temp.getUpdatedTime().compareTo(updatedTime) > 0 ? temp.getUpdatedTime() : updatedTime;
                 }

@@ -356,6 +356,7 @@ public class UserController extends BaseController  {
         for (Object o: objects) {
             String str = (String)o;
             UserProfileVO1 userProfileVO1 = JSON.parseObject(str, UserProfileVO1.class);
+            //这里注意 UserProfileVO1 的ID 不是userId
             list.add(userProfileVO1);
         }
         return list;
@@ -376,7 +377,7 @@ public class UserController extends BaseController  {
             apiResponse.setData(objects);
             return JSON.toJSONString(apiResponse,SerializerFeature.WriteNullStringAsEmpty);
         }
-        List<UserProfileVO1> userProfileByIds = userService.getUserProfileByIds(creatorIds);
+        List<UserProfileVO1> userProfileByIds = userService.getUserProfileByIds(creatorIds);  // 这里也需要注意  UserProfileVO1的id 是不是userId
         //判断是否有更新
         List<UserProfileVO1> resultList = newsUpdateService.haveUpdate(userId, userProfileByIds);
         ApiResponse apiResponse = new ApiResponse();

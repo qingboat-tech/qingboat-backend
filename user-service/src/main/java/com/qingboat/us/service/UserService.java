@@ -34,6 +34,7 @@ public interface UserService {
     List<UserProfileVO1> getUserProfileByCreatorOnNewslettersAndPathway(Integer creatorId, Integer page, Integer pageSize);
     //获取用户订阅的所有的创作者Id
     List<Integer> getCreatorsIdsByUserOnNewslettersAndPathwayWithStartAndEnd(Integer userId, Integer start, Integer length);
+
     List<UserProfileVO1> getUserProfileByIds(List<Integer> ids);
 
     TaSubscriptionNewslettersWithTotalVO getTaSubscriptionNewslettersVO(Integer loginId, Integer userId, Integer page, Integer pageSize);
