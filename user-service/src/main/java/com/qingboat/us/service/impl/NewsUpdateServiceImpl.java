@@ -131,7 +131,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
         }
         List<NewsUpdateCardVO> returnList = pathwayInfoByCreatorIds.subList(start, start + length > pathwayInfoByCreatorIds.size() ? pathwayInfoByCreatorIds.size() : start + length  );
         result.setNewsUpdateCardVOList(returnList);
-        result.setTotal(returnList.size());
+        result.setTotal(pathwayInfoByCreatorIds.size());
         return result;
     }
 

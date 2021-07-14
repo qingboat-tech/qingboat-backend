@@ -371,6 +371,7 @@ public class UserController extends BaseController  {
     public String mySubscriptionCreators(@RequestParam("page") Integer page,@RequestParam("pageSize") Integer pageSize,@RequestParam("userId") Integer userId){
         Integer start = (page - 1) * pageSize;
         List<Integer> creatorIds = userService.getCreatorsIdsByUserOnNewslettersAndPathwayWithStartAndEnd(userId, start, pageSize);
+        System.out.println(userId + "所有关注的作者id" + creatorIds.toString());
         if (creatorIds.size() == 0){
             ApiResponse apiResponse = new ApiResponse();
             Object[] objects = new Object[]{};
@@ -378,6 +379,7 @@ public class UserController extends BaseController  {
             return JSON.toJSONString(apiResponse,SerializerFeature.WriteNullStringAsEmpty);
         }
         List<UserProfileVO1> userProfileByIds = userService.getUserProfileByIds(creatorIds);  // 这里也需要注意  UserProfileVO1的id 是不是userId
+        System.out.println("所有关注的作者的基本信息");
         //判断是否有更新
         List<UserProfileVO1> resultList = newsUpdateService.haveUpdate(userId, userProfileByIds);
         ApiResponse apiResponse = new ApiResponse();
@@ -426,7 +428,6 @@ public class UserController extends BaseController  {
 
     /**
      *  最新动态列表 (根据用户订阅的作者  (pathway + newsletter))
-     *  111
      */
     @GetMapping("/newUpdate")
     @ResponseBody
