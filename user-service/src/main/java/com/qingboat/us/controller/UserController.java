@@ -404,16 +404,6 @@ public class UserController extends BaseController  {
     }
 
 
-
-
-
-
-
-
-
-
-
-
     /**
      *  用户最新访问接口
      *  用于记录用户访问的内容时间
