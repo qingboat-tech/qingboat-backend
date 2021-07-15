@@ -5,7 +5,7 @@ import com.qingboat.base.api.ApiResponse;
 
 public interface ReadOnSaveService {
 
-    public ApiResponse readOnSave(Integer userId,Integer contentType,String contentId,Integer height);
+    public ApiResponse readOnSave(Integer userId,Integer contentType,String contentId,Integer height,Integer pathwayId);
 
     public ReadOnListVo readOnList(Integer userId,Integer page,Integer pageSize);
 

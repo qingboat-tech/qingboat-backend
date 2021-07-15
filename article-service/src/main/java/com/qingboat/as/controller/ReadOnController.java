@@ -26,7 +26,11 @@ public class ReadOnController extends BaseController {
         Integer contentType = Integer.parseInt(param.get("contentType").toString());  // 1 表示pathway  2 表示newsletter
         String contentId = param.get("contentId").toString();
         Integer height = Integer.parseInt(param.get("height").toString());
-        readOnSaveService.readOnSave(userId,contentType,contentId,height);
+        Integer pathwayId = 0;
+        if (param.get("pathwayId") != null){
+            pathwayId =  Integer.parseInt(param.get("pathwayId").toString());
+        }
+        readOnSaveService.readOnSave(userId,contentType,contentId,height,pathwayId);
         return null;
     }
 
