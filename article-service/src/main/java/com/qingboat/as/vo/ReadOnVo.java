@@ -1,6 +1,8 @@
 package com.qingboat.as.vo;
 
+import lombok.Data;
 
+@Data
 public class ReadOnVo {
     private Integer creatorId;
     private String title;
@@ -11,5 +13,6 @@ public class ReadOnVo {
     private String nickname;
     private String profileName;
     private String pathwayName;
+    private Integer height;
 
 }

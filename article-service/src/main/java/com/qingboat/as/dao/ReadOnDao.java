@@ -18,8 +18,8 @@ public interface ReadOnDao {
     @Update("update apps_readon set height = #{readEntity.height} , updated_at = NOW() where user_id = #{readEntity.userId} and content_type = #{readEntity.contentType} and content_id = #{readEntity.contentId}")
     public Integer updateRecord(@Param("readEntity")ReadonEntity readonEntity);
 
-//    @Select("select * from apps_readon where user ")
-//    public List<ReadOnVo> selectReadOnListByUserId(@Param("userId")Integer userId);
+    @Select("select * from apps_readon where user_id = #{userId} and height != 100 order by updated_at desc")
+    public List<ReadonEntity> selectAllReadOnListByUserId(@Param("userId")Integer userId);
 
 
 }

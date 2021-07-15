@@ -2,11 +2,14 @@ package com.qingboat.as.controller;
 
 import com.qingboat.as.service.ReadOnSaveService;
 import com.qingboat.as.vo.ReadOnListVo;
+import com.qingboat.as.vo.ReadOnVo;
 import com.qingboat.base.api.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -29,7 +32,23 @@ public class ReadOnController extends BaseController {
 
     @GetMapping("/readOnList")
     public ReadOnListVo readOnList(@RequestParam("page")Integer page,@RequestParam("pageSize")Integer pageSize){
-        Integer userId = getUId().intValue();
-        return readOnSaveService.readOnList(userId,page,pageSize);
+        ReadOnListVo readOnListVo = new ReadOnListVo();
+        readOnListVo.setTotal(1);
+        List<ReadOnVo> list = new ArrayList<>();
+        ReadOnVo readOnVo = new ReadOnVo();
+        readOnVo.setCreatorId(1);
+        readOnVo.setContentType(1);
+        readOnVo.setHeight(10);
+        readOnVo.setDesc("1十大");
+        readOnVo.setDesc("desccc");
+        readOnVo.setNickname("nickname");
+        readOnVo.setCreatorimgUrl("url");
+        readOnVo.setHeadimgUrl("headurl");
+        readOnVo.setPathwayName("pathwayname");
+        readOnVo.setTitle("titles");
+        list.add(readOnVo);
+        return readOnListVo;
+//        Integer userId = getUId().intValue();
+//        return readOnSaveService.readOnList(userId,page,pageSize);
     }
 }
