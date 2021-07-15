@@ -15,14 +15,14 @@ echo "SVAR set to: $SVAR"
 
 # 开始执行打包命令
 ssh qingboat@39.105.29.208<< soff
-sudo su - deploy<<EOF
+
 cd /srv/qingboat-backend
 
 echo "=============git pull begin============="
 git pull git@github.com:qingboat-tech/qingboat-backend.git
 echo "=============git pull done=============="
 sleep 1
-EOF
+
 
 echo "=========build service=========="
 cd /srv/qingboat-backend

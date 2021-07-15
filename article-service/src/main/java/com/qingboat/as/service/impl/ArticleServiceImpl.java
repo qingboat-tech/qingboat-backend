@@ -832,7 +832,7 @@ public class ArticleServiceImpl implements ArticleService {
 //                Object obj = wxMessageService.sendMessage(sendToken,body);
 //                log.info( " response: " +obj);
 //
-//            }
+//            }  微信推送暂时关闭
 
         }
 
