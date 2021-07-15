@@ -30,6 +30,7 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
             ReadonEntity record = readOnDao.findRecord(userId, contentType, contentId);
             if (record != null){
                 // 存在记录 说明访问过  走update方式
+                record.setHeight(height);
                 Integer integer = readOnDao.updateRecord(record);
                 if (integer == 1){
                     return result;
@@ -50,6 +51,7 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
             ReadonEntity record = readOnDao.findRecord(userId, contentType, contentId);
             if (record != null){
                 // 存在记录 说明访问过  走update方式
+                record.setHeight(height);
                 Integer integer = readOnDao.updateRecord(record);
                 if (integer == 1){
                     return result;
