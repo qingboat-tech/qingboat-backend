@@ -802,37 +802,37 @@ public class ArticleServiceImpl implements ArticleService {
                 return;
             }
             //TODO  这里有点小问题，发送付费文章，免费订阅用户也能收到消息
-            for (UserSubscriptionEntity userSubscriptionEntity: subscriptionEntityList){
-                String subscribeIdStr = String.valueOf(userSubscriptionEntity.getSubscriberId());
-                String  secret = AuthFilter.getSecret(subscribeIdStr);
-                String sendToken =  wxTokenService.getWxUserToken(sec, subscribeIdStr);
-                JSONObject body = new JSONObject();
-                JSONObject bodyData = new JSONObject();
-
-                // 找到发送者的微信openId
-                QueryWrapper<UserWechatEntity> queryWrapper = new QueryWrapper<>();
-                queryWrapper.lambda().eq(UserWechatEntity::getUserId,userSubscriptionEntity.getSubscriberId());
-                UserWechatEntity userWechatEntity = userWechatService.getOne(queryWrapper);
-                if (userWechatEntity == null){
-                    log.warn("订阅者没有微信openId,没法发消息");
-                    continue;
-                }
-
-                body.put("touser",userWechatEntity.getOpenId());                    // 发给谁
-                body.put("template_id",this.dataUpdateTemplate);                // 那个模板
-                body.put("url",this.businessDomain+"/mysubscription");             // 打开地址 TODO
-                body.put("data",bodyData);
-
-                bodyData.put("first", JSON.parse("{'value': '您订阅的套餐有新的文章啦！'}"));
-                bodyData.put("keyword1", JSON.parse("{'value': '"+articleEntity.getAuthorNickName()+"'}"));
-                bodyData.put("keyword2", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
-                bodyData.put("remark", JSON.parse("{'value': '"+articleEntity.getTitle()+"'}"));
-
-                log.info( " request: " +body);
-                Object obj = wxMessageService.sendMessage(sendToken,body);
-                log.info( " response: " +obj);
-
-            }
+//            for (UserSubscriptionEntity userSubscriptionEntity: subscriptionEntityList){
+//                String subscribeIdStr = String.valueOf(userSubscriptionEntity.getSubscriberId());
+//                String  secret = AuthFilter.getSecret(subscribeIdStr);
+//                String sendToken =  wxTokenService.getWxUserToken(sec, subscribeIdStr);
+//                JSONObject body = new JSONObject();
+//                JSONObject bodyData = new JSONObject();
+//
+//                // 找到发送者的微信openId
+//                QueryWrapper<UserWechatEntity> queryWrapper = new QueryWrapper<>();
+//                queryWrapper.lambda().eq(UserWechatEntity::getUserId,userSubscriptionEntity.getSubscriberId());
+//                UserWechatEntity userWechatEntity = userWechatService.getOne(queryWrapper);
+//                if (userWechatEntity == null){
+//                    log.warn("订阅者没有微信openId,没法发消息");
+//                    continue;
+//                }
+//
+//                body.put("touser",userWechatEntity.getOpenId());                    // 发给谁
+//                body.put("template_id",this.dataUpdateTemplate);                // 那个模板
+//                body.put("url",this.businessDomain+"/mysubscription");             // 打开地址 TODO
+//                body.put("data",bodyData);
+//
+//                bodyData.put("first", JSON.parse("{'value': '您订阅的套餐有新的文章啦！'}"));
+//                bodyData.put("keyword1", JSON.parse("{'value': '"+articleEntity.getAuthorNickName()+"'}"));
+//                bodyData.put("keyword2", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
+//                bodyData.put("remark", JSON.parse("{'value': '"+articleEntity.getTitle()+"'}"));
+//
+//                log.info( " request: " +body);
+//                Object obj = wxMessageService.sendMessage(sendToken,body);
+//                log.info( " response: " +obj);
+//
+//            }
 
         }
 

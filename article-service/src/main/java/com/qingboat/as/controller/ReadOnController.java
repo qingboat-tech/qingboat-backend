@@ -4,10 +4,7 @@ import com.qingboat.as.service.ReadOnSaveService;
 import com.qingboat.base.api.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -28,4 +25,7 @@ public class ReadOnController extends BaseController {
         readOnSaveService.readOnSave(userId,contentType,contentId,height);
         return null;
     }
+
+//    @GetMapping("/readOnList")
+//    public
 }
