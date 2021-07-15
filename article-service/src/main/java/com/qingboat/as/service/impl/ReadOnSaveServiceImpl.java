@@ -6,6 +6,7 @@ import com.qingboat.as.dao.ReadOnDao;
 import com.qingboat.as.entity.ArticleEntity;
 import com.qingboat.as.entity.ReadonEntity;
 import com.qingboat.as.service.ReadOnSaveService;
+import com.qingboat.as.vo.ReadOnListVo;
 import com.qingboat.base.api.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,5 +67,11 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
         ApiResponse<Object> result = new ApiResponse<>();
         result.setData("异常数据");
         return result;
+    }
+
+    @Override
+    public ReadOnListVo readOnList(Integer userId,Integer page,Integer pageSize) {
+//        readOnDao.
+        return null;
     }
 }

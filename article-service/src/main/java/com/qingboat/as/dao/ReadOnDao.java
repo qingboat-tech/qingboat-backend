@@ -15,10 +15,11 @@ public interface ReadOnDao {
     @Select("select * from apps_readon where user_id = #{userId} and content_type = #{contentType} and content_id = #{contentId}")
     public ReadonEntity findRecord(@Param("userId")Integer userId,@Param("contentType")Integer contentType,@Param("contentId")String contentId);
 
-    @Update("update apps_readon set height = #{readEntity.height} , updated_at = NOW() where user_id = #{userId} and content_type = #{contentType} and content_id = #{contentId}")
+    @Update("update apps_readon set height = #{readEntity.height} , updated_at = NOW() where user_id = #{readEntity.userId} and content_type = #{readEntity.contentType} and content_id = #{readEntity.contentId}")
     public Integer updateRecord(@Param("readEntity")ReadonEntity readonEntity);
 
-//    @Select("select * from apps_readon,user where user")
+//    @Select("select * from apps_readon where user ")
 //    public List<ReadOnVo> selectReadOnListByUserId(@Param("userId")Integer userId);
+
 
 }

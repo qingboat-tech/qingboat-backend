@@ -1,6 +1,7 @@
 package com.qingboat.as.controller;
 
 import com.qingboat.as.service.ReadOnSaveService;
+import com.qingboat.as.vo.ReadOnListVo;
 import com.qingboat.base.api.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class ReadOnController extends BaseController {
         return null;
     }
 
-//    @GetMapping("/readOnList")
-//    public
+    @GetMapping("/readOnList")
+    public ReadOnListVo readOnList(@RequestParam("page")Integer page,@RequestParam("pageSize")Integer pageSize){
+        Integer userId = getUId().intValue();
+        return readOnSaveService.readOnList(userId,page,pageSize);
+    }
 }
