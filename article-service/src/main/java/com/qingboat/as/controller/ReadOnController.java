@@ -47,6 +47,7 @@ public class ReadOnController extends BaseController {
         readOnVo.setPathwayName("pathwayname");
         readOnVo.setTitle("titles");
         list.add(readOnVo);
+        readOnListVo.setList(list);
         return readOnListVo;
 //        Integer userId = getUId().intValue();
 //        return readOnSaveService.readOnList(userId,page,pageSize);

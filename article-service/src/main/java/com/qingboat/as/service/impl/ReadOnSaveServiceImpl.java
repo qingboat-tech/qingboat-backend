@@ -84,7 +84,7 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
             ReadOnVo readOnVo = new ReadOnVo();
             if (type == 1){  //填充pathway信息
                 Integer contentId = Integer.parseInt(readonEntity.getContentId());
-//                readOnVo.
+//                readOnVo.setTitle();
             }else if (type == 2){
                 //填充newsletter 信息
                 String contentId = readonEntity.getContentId();
