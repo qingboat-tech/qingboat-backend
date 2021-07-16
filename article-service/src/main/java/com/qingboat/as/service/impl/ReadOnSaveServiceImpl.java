@@ -133,7 +133,7 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
             result.setList(null);
             return result;
         }
-        list.subList(start,end > total ? total : end);
+        result.setList(list.subList(start,end > total ? total : end));
         result.setTotal(total);
         return result;
     }
