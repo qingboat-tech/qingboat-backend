@@ -129,6 +129,10 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
         int start = (page - 1) * pageSize;
         int end = start + pageSize;
         int total = list.size();
+        if (start > total){
+            result.setList(null);
+            return result;
+        }
         list.subList(start,end > total ? total : end);
         result.setTotal(total);
         return result;
