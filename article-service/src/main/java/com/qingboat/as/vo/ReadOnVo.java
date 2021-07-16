@@ -2,6 +2,8 @@ package com.qingboat.as.vo;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class ReadOnVo {
     private Integer creatorId;
@@ -16,5 +18,6 @@ public class ReadOnVo {
     private Integer height;
     private Integer pathwayId;
     private String contentId;
+    private Date lastReadTime;
 
 }
