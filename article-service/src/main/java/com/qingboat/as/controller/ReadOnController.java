@@ -16,7 +16,6 @@ import java.util.Map;
 @Slf4j
 public class ReadOnController extends BaseController {
 
-
     @Autowired
     ReadOnSaveService readOnSaveService;
     //使用redis缓存
