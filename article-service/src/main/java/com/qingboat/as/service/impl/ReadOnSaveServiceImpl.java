@@ -1,13 +1,14 @@
 package com.qingboat.as.service.impl;
 
-import com.qingboat.as.dao.ArticleMongoDao;
-import com.qingboat.as.dao.PathwayDao;
-import com.qingboat.as.dao.ReadOnDao;
+import com.qingboat.api.vo.UserProfileVo;
+import com.qingboat.as.dao.*;
 import com.qingboat.as.entity.ArticleEntity;
 import com.qingboat.as.entity.ReadonEntity;
 import com.qingboat.as.service.ReadOnSaveService;
 import com.qingboat.as.vo.ReadOnListVo;
 import com.qingboat.as.vo.ReadOnVo;
+import com.qingboat.as.vo.UserProfileAndPathwayInfoVo;
+import com.qingboat.as.vo.UserProfileInfoVo;
 import com.qingboat.base.api.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,12 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
     ReadOnDao readOnDao;
     @Autowired
     ArticleMongoDao articleMongoDao;
+    @Autowired
+    ArticleDao articleDao;
+    @Autowired
+    ArticleMarkCompletedDao articleMarkCompletedDao;
+    @Autowired
+    UserProfileDao userProfileDao;
 
     @Override
     public ApiResponse readOnSave(Integer userId, Integer contentType, String contentId, Integer height,Integer pathwayId) {
@@ -75,25 +82,55 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
         return result;
     }
 
+    //继续阅读卡片list
     @Override
     public ReadOnListVo readOnList(Integer userId,Integer page,Integer pageSize) {
-        List<ReadonEntity> readonEntities = readOnDao.selectAllReadOnListByUserId(userId);
+        List<ReadonEntity> readonEntities = readOnDao.selectAllReadOnListByUserId(userId);  //
         List<ReadOnVo> list = new ArrayList(readonEntities.size() << 1);
         for (ReadonEntity readonEntity: readonEntities) {
             int type = readonEntity.getContentType();
             ReadOnVo readOnVo = new ReadOnVo();
+            readOnVo.setContentType(type);
+            readOnVo.setCreatorId(readonEntity.getCreatorId());
             if (type == 1){  //填充pathway信息
-                Integer contentId = Integer.parseInt(readonEntity.getContentId());
-//                readOnVo.setTitle();
+                Integer contentId = Integer.parseInt(readonEntity.getContentId());  //去掉 pathway中标记已完成的
+                Integer integer = articleMarkCompletedDao.judgeMarkCompleted(userId, contentId);
+                if (integer == 1){
+                    // 表示已标记完成  那么就在继续阅读list中删除(不显示)
+                    continue;
+                }
+                ArticleEntity articleEntity = articleDao.selectArticleById(contentId);
+                readOnVo.setTitle(articleEntity.getTitle());
+                readOnVo.setDesc(articleEntity.getDesc());
+                UserProfileAndPathwayInfoVo temp = pathwayDao.getUserProfileInfoAndPathwayInfoByPathwayId(readonEntity.getPathwayId());
+                readOnVo.setProfileName(temp.getProfileName());
+                readOnVo.setNickname(temp.getNickname());
+                readOnVo.setHeadimgUrl(temp.getHeadimgUrl());
+                readOnVo.setPathwayName(temp.getPathwayName());
+                readOnVo.setHeight(readonEntity.getHeight());
+                readOnVo.setCreatorimgUrl(temp.getCreatorImgUrl());
             }else if (type == 2){
                 //填充newsletter 信息
                 String contentId = readonEntity.getContentId();
-
-
-
+                ArticleEntity articleEntity = articleMongoDao.findArticleEntityById(contentId);
+                readOnVo.setTitle(articleEntity.getTitle());
+                Integer authorId = Integer.parseInt(articleEntity.getAuthorId());
+                readOnVo.setDesc(articleEntity.getDesc());
+                readOnVo.setHeight(readonEntity.getHeight());
+                UserProfileInfoVo userProfileInfoById = userProfileDao.getUserProfileInfoById(authorId);
+                readOnVo.setNickname(userProfileInfoById.getNickname());
+                readOnVo.setProfileName(userProfileInfoById.getProfileName());
+                readOnVo.setCreatorimgUrl(userProfileInfoById.getCreatorImgUrl());
+                readOnVo.setHeadimgUrl(userProfileInfoById.getHeadimgUrl());
             }
+            list.add(readOnVo);
         }
-
-        return null;
+        ReadOnListVo result = new ReadOnListVo();
+        int start = (page - 1) * pageSize;
+        int end = start + pageSize;
+        int total = list.size();
+        list.subList(start,end > total ? total : end);
+        result.setTotal(total);
+        return result;
     }
 }

@@ -18,7 +18,7 @@ public class ReadOnController extends BaseController {
 
     @Autowired
     ReadOnSaveService readOnSaveService;
-    //使用redis缓存
+    //这里可以使用redis缓存
     @PostMapping("/readOnSave")
     public ApiResponse readOnSave(@RequestBody Map<String,Object> param){
         Integer userId = getUId().intValue();
@@ -29,30 +29,29 @@ public class ReadOnController extends BaseController {
         if (param.get("pathwayId") != null){
             pathwayId =  Integer.parseInt(param.get("pathwayId").toString());
         }
-        readOnSaveService.readOnSave(userId,contentType,contentId,height,pathwayId);
-        return null;
+        return readOnSaveService.readOnSave(userId,contentType,contentId,height,pathwayId);
     }
 
     @GetMapping("/readOnList")
     public ReadOnListVo readOnList(@RequestParam("page")Integer page,@RequestParam("pageSize")Integer pageSize){
-        ReadOnListVo readOnListVo = new ReadOnListVo();
-        readOnListVo.setTotal(1);
-        List<ReadOnVo> list = new ArrayList<>();
-        ReadOnVo readOnVo = new ReadOnVo();
-        readOnVo.setCreatorId(1);
-        readOnVo.setContentType(1);
-        readOnVo.setHeight(10);
-        readOnVo.setDesc("1十大");
-        readOnVo.setDesc("desccc");
-        readOnVo.setNickname("nickname");
-        readOnVo.setCreatorimgUrl("url");
-        readOnVo.setHeadimgUrl("headurl");
-        readOnVo.setPathwayName("pathwayname");
-        readOnVo.setTitle("titles");
-        list.add(readOnVo);
-        readOnListVo.setList(list);
-        return readOnListVo;
-//        Integer userId = getUId().intValue();
-//        return readOnSaveService.readOnList(userId,page,pageSize);
+//        ReadOnListVo readOnListVo = new ReadOnListVo();
+//        readOnListVo.setTotal(1);
+//        List<ReadOnVo> list = new ArrayList<>();
+//        ReadOnVo readOnVo = new ReadOnVo();
+//        readOnVo.setCreatorId(1);
+//        readOnVo.setContentType(1);
+//        readOnVo.setHeight(10);
+//        readOnVo.setDesc("1十大");
+//        readOnVo.setDesc("desccc");
+//        readOnVo.setNickname("nickname");
+//        readOnVo.setCreatorimgUrl("url");
+//        readOnVo.setHeadimgUrl("headurl");
+//        readOnVo.setPathwayName("pathwayname");
+//        readOnVo.setTitle("titles");
+//        list.add(readOnVo);
+//        readOnListVo.setList(list);
+//        return readOnListVo;
+        Integer userId = getUId().intValue();
+        return readOnSaveService.readOnList(userId,page,pageSize);
     }
 }
