@@ -14,5 +14,7 @@ public class ReadOnVo {
     private String profileName;
     private String pathwayName;
     private Integer height;
+    private Integer pathwayId;
+    private String contentId;
 
 }

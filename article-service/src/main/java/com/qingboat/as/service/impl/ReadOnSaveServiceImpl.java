@@ -92,6 +92,8 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
             ReadOnVo readOnVo = new ReadOnVo();
             readOnVo.setContentType(type);
             readOnVo.setCreatorId(readonEntity.getCreatorId());
+            readOnVo.setContentId(readonEntity.getContentId());
+            readOnVo.setPathwayId(readonEntity.getPathwayId());
             if (type == 1){  //填充pathway信息
                 Integer contentId = Integer.parseInt(readonEntity.getContentId());  //去掉 pathway中标记已完成的
                 Integer integer = articleMarkCompletedDao.judgeMarkCompleted(userId, contentId);
