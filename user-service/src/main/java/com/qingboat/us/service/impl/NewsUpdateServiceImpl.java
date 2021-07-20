@@ -72,6 +72,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
             String creatorImgUrl = "" ; //店铺头像
             String nickname = "";
             String headimgUrl = "";
+            String title = "";
             Integer creatorId = newsUpdateCardVO.getCreatorId();
             for (NewsUpdateCardVO temp :userProfileByIdsForNewsUpdateCardVO) {
                 if (temp.getCreatorId() == creatorId){
@@ -79,12 +80,16 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
                     creatorImgUrl = temp.getCreatorImgUrl();
                     nickname = temp.getNickname();
                     headimgUrl = temp.getHeadimgUrl();
+                    title = temp.getTitle();
                 }
             }
             newsUpdateCardVO.setProfileName(profileName);
             newsUpdateCardVO.setCreatorImgUrl(creatorImgUrl);
             newsUpdateCardVO.setNickname(nickname);
             newsUpdateCardVO.setHeadimgUrl(headimgUrl);
+            newsUpdateCardVO.setTitle(title);
+
+
         }
         //获取newsletter的信息
         List<ArticleEntity> articleEntitiesByAuthorIds = articleMongoDao.findPublishArticleProfileInfoByAuthorIds(allCreatorIdsByUserId);
@@ -105,6 +110,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
                     headimgUrl = temp.getHeadimgUrl();
                 }
             }
+            newsUpdateCardVO.setTitle(articleEntity.getTitle());
             newsUpdateCardVO.setNickname(nickname);
             newsUpdateCardVO.setHeadimgUrl(headimgUrl);
             newsUpdateCardVO.setProfileName(profileName);

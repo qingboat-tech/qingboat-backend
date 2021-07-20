@@ -22,6 +22,7 @@ public class NewsUpdateCardVO implements Comparable<NewsUpdateCardVO>{
     private String nickname;           //昵称
     private String headimgUrl;         //用户头像
     private Boolean isPurchase;        //是否已购买
+    private String title;              //标题
 
 
 
