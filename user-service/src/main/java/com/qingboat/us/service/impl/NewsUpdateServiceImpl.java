@@ -1,7 +1,7 @@
 package com.qingboat.us.service.impl;
 
 import com.qingboat.us.dao.*;
-import com.qingboat.us.entity.ArticleEntity;
+import com.qingboat.us.entity.*;
 import com.qingboat.us.redis.RedisUtil;
 import com.qingboat.us.service.NewsUpdateService;
 import com.qingboat.us.vo.NewsUpdateCardVO;
@@ -33,6 +33,18 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
     FollowPathwayDao followPathwayDao;
     @Autowired
     LastAccessRecordsDao lastAccessRecordsDao;
+    @Autowired
+    ArticlePrefaceDao articlePrefaceDao;
+    @Autowired
+    ArticlesummaryDao articlesummaryDao;
+    @Autowired
+    NodeDao nodeDao;
+    @Autowired
+    ArticletodocellDao articletodocellDao;
+    @Autowired
+    HighlightDao highlightDao;
+    @Autowired
+    HighlightnoteDao highlightnoteDao;
 
 
     @Autowired
@@ -68,7 +80,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
             newsUpdateCardVO.setLikeCount(likePathwayDao.likeCountByPathwayId(pathwayId));
             newsUpdateCardVO.setIsPurchase(followPathwayDao.judgeUserIsFollowSomePathway(pathwayId,userId) >= 1 ? true : false);
             newsUpdateCardVO.setIsLiked(likePathwayDao.judgeSomeUserIsLiked(userId,Integer.parseInt(newsUpdateCardVO.getContentId())) == 0 ? false : true );
-            String profileName = "";  //店铺名称
+            String profileName = "";    //店铺名称
             String creatorImgUrl = "" ; //店铺头像
             String nickname = "";
             String headimgUrl = "";
@@ -88,6 +100,89 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
             newsUpdateCardVO.setNickname(nickname);
             newsUpdateCardVO.setHeadimgUrl(headimgUrl);
             newsUpdateCardVO.setTitle(title);
+            //填充 更新动作信息
+            Date pathwayUpdateTime = newsUpdateCardVO.getUpdateTime();   //如果这个最大就代表是添加内容(添加章节，添加课次，添加内容)
+            //先判断该pathway中是否有article
+            List<Integer> articleIds = nodeDao.getAllArticleIdByPathwayId(pathwayId);
+            if (articleIds ==  null || articleIds.size() == 0){
+                newsUpdateCardVO.setAction("发布主题策展");
+            }else {
+                Date defaultDate = new Date(newsUpdateCardVO.getUpdateTime().getTime());
+                Date prefaceTime = new Date(0l);    //推荐
+                Date summaryTime = new Date(0l);    //总结
+                Date articlecellTime = new Date(0l); //行动建议
+                Date highlightTime = new Date(0l);  //划重点
+                Date ideaTime = new Date(0l);       //想法
+                //推荐语
+                ArticlePrefaceEntity newestArticlePrefaceByPathwayId = articlePrefaceDao.getNewestArticlePrefaceByPathwayId(pathwayId);
+                if (newestArticlePrefaceByPathwayId != null){
+                    prefaceTime = newestArticlePrefaceByPathwayId.getUpdatedAt();
+                }
+                //总结  (根据userId 和 pathwayId 找寻 最新的总结)
+                ArticlesummaryEntity articlesummaryEntity = articlesummaryDao.getNewestArticleSummaryByUserIdAndPathwayId(creatorId, pathwayId);
+                if (articlesummaryEntity != null){
+                    summaryTime = articlesummaryEntity.getUpdatedAt();
+                }
+                //行动建议
+                ArticletodocellEntity articlecellEntity = articletodocellDao.getNewestArticletodocellEntityByArticlesAndUserId(articleIds, creatorId);
+                if (articlecellEntity != null){
+                    articlecellTime = articlecellEntity.getUpdatedAt();
+                }
+
+                //重点
+                HighlightEntity highlightEntity = highlightDao.getNewestHighlightEntity(articleIds, creatorId);
+                if (highlightEntity != null){
+                    highlightTime = highlightEntity.getUpdatedAt();
+                }
+                //想法
+                List<Integer> allHighlightIds = highlightDao.getAllHighlightIds(articleIds, creatorId); //得到本pathyway的本用户的所有重点id。从着里面找最新想法
+                HighlightnoteEntity highlightnoteEntity = null;
+                if (allHighlightIds != null && allHighlightIds.size() != 0 ){
+                    highlightnoteEntity  = highlightnoteDao.getNewestHighlightnoteEntityByHighlightIdsAndUserId(allHighlightIds,creatorId);
+                    if (highlightnoteEntity != null){
+                        ideaTime = highlightnoteEntity.getUpdatedAt();
+                    }
+                }
+                List<Date> dateList = new ArrayList<>();
+                dateList.add(prefaceTime);
+                dateList.add(summaryTime);
+                dateList.add(articlecellTime);
+                dateList.add(highlightTime);
+                dateList.add(ideaTime);
+                dateList.add(defaultDate);
+                Date newestDate = dateComparison(dateList);
+                if (newestDate == prefaceTime){
+                    //推荐语
+                    if (isEqual(newestArticlePrefaceByPathwayId.getCreatedAt(),newestArticlePrefaceByPathwayId.getUpdatedAt())){
+                        newsUpdateCardVO.setAction("新增推荐语");
+                    }else {
+                        newsUpdateCardVO.setAction("更新推荐语");
+                    }
+                    newsUpdateCardVO.setActionContent(newestArticlePrefaceByPathwayId.getPrefaceText());
+                    newsUpdateCardVO.setUpdateTime(newestArticlePrefaceByPathwayId.getUpdatedAt());
+                }else if (newestDate == summaryTime){
+                    newsUpdateCardVO.setAction("新增总结");
+                    newsUpdateCardVO.setUpdateTime(articlesummaryEntity.getUpdatedAt());
+                    newsUpdateCardVO.setActionContent(articlesummaryEntity.getSummaryText());
+                }else if (newestDate == articlecellTime){
+                    newsUpdateCardVO.setAction("新增行动建议");
+                    newsUpdateCardVO.setUpdateTime(articlecellEntity.getUpdatedAt());
+                    newsUpdateCardVO.setActionContent(articlecellEntity.getTodoText());
+                }else if (newestDate == highlightTime){
+                    newsUpdateCardVO.setAction("新增重点");
+                    newsUpdateCardVO.setUpdateTime(highlightEntity.getUpdatedAt());
+                    newsUpdateCardVO.setActionContent(highlightEntity.getText());
+                }else if (newestDate == ideaTime){
+                    newsUpdateCardVO.setAction("新增想法");
+                    newsUpdateCardVO.setUpdateTime(highlightnoteEntity.getUpdatedAt());
+                    newsUpdateCardVO.setActionContent(highlightnoteEntity.getNoteText());
+                }else if (newestDate == defaultDate ){
+                    newsUpdateCardVO.setAction("发布主题策展");
+                    newsUpdateCardVO.setActionContent("");
+                }
+            }
+
+            //
 
 
         }
@@ -175,6 +270,29 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
         }
         return list;
     }
+
+    public Date dateComparison(List<Date> list){
+        if (list == null || list.size() == 0){
+            return null;
+        }
+        Date maxDate = list.get(0);
+        for (Date temp:list) {
+            if (temp.compareTo(maxDate) > 0){
+                maxDate = temp;
+            }
+        }
+        return maxDate;
+    }
+
+    public boolean isEqual(Date d1,Date d2){
+        long time = d1.getTime();
+        long time1 = d2.getTime();
+        if (Math.abs(time - time1) < 1000){
+            return true;
+        }
+        return false;
+    }
+
 
 
 }

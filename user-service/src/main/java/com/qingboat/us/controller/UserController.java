@@ -344,9 +344,6 @@ public class UserController extends BaseController  {
     }
 
 
-
-
-
     @GetMapping("/hotCreatorProfile")
     @ResponseBody
     public List getHotCreatorsProfile(@RequestParam("length") Integer length){

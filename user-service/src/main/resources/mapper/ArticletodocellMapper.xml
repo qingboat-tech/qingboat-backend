@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qingboat.us.dao.ArticletodocellDao">
+    <select id="getNewestArticletodocellEntityByArticlesAndUserId" resultType="com.qingboat.us.entity.ArticletodocellEntity">
+        select * from apps_articletodocell where todo_owner_id = #{userId} and todoblock_id in
+        (
+           select id from apps_articletodoblock where article_id in
+        <foreach collection="articleIds" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+        )
+        order by updated_at desc limit 0,1
+    </select>
+</mapper>
