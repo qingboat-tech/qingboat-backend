@@ -69,6 +69,10 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
                 }
             }else {
                 ArticleEntity articleEntity = articleMongoDao.findArticleEntityById(contentId);
+                if (articleEntity == null){
+                    result.setData("异常数据");
+                    return result;
+                }
                 Integer authorId = Integer.parseInt(articleEntity.getAuthorId());
                 ReadonEntity readonEntity = new ReadonEntity(userId,contentType,contentId,authorId,height);
                 int i = readOnDao.insertRecord(readonEntity);

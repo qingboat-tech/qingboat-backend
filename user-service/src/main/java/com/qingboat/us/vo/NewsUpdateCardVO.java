@@ -23,8 +23,13 @@ public class NewsUpdateCardVO implements Comparable<NewsUpdateCardVO>{
     private String headimgUrl;         //用户头像
     private Boolean isPurchase;        //是否已购买
     private String title;              //标题
-    private String action;             //更新pathway的动作
+    private Integer action;             //更新pathway的动作
     private String actionContent;      //动作内容
+    private Integer sectionCnt;        //这个应该是章节数量
+    private Integer lessonCnt;         //课次数量
+    private Integer itemCnt;           //项，应该是里面包含的article
+    private Double durationUnits;      //阅读时间
+    private String durationType;       //阅读时间单位
 
 
 
