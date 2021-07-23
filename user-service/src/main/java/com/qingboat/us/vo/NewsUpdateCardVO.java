@@ -29,6 +29,7 @@ public class NewsUpdateCardVO implements Comparable<NewsUpdateCardVO>{
 
 
 
+
     @Override
     public int compareTo(NewsUpdateCardVO o) {
         return this.updateTime.compareTo(o.updateTime) >= 0 ? -1 : 1;

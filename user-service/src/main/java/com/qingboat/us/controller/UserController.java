@@ -210,6 +210,7 @@ public class UserController extends BaseController  {
             UserProfileEntity userProfile =  userService.getUserProfile(userId);
 
             if (userProfile!=null && (userProfile.getExpertiseArea() == null || userProfile.getExpertiseArea().length == 0)){
+                //这个逻辑是 有一个默认专长领域
                 String[] value= {"创投","增长","职场","产品"};
                 Map<String,String>[] maps = new HashMap[value.length];
                 for(int i=0 ;i<value.length;i++){
@@ -219,9 +220,9 @@ public class UserController extends BaseController  {
                 userProfile.setExpertiseArea(maps);
             }
             return userProfile;
-
         }
         if (!StringUtils.isEmpty(profileKey)){
+            //profilekey 应该是创作者在本站的空间
             return userService.getUserProfileByProfileKey(profileKey);
         }
 
