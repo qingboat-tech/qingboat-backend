@@ -182,7 +182,6 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
 
             //
 
-
         }
         //获取newsletter的信息
         List<ArticleEntity> articleEntitiesByAuthorIds = articleMongoDao.findPublishArticleProfileInfoByAuthorIds(allCreatorIdsByUserId);
