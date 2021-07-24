@@ -185,6 +185,16 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
         }
         //获取newsletter的信息
         List<ArticleEntity> articleEntitiesByAuthorIds = articleMongoDao.findPublishArticleProfileInfoByAuthorIds(allCreatorIdsByUserId);
+        System.out.println("===========================");
+        System.out.println("查找的作者id");
+        for (int i = 0; i < allCreatorIdsByUserId.size(); i++) {
+            System.out.println(allCreatorIdsByUserId.get(i));
+        }
+        System.out.println("搜索结果");
+        for (int i = 0; i < articleEntitiesByAuthorIds.size(); i++) {
+            System.out.println(articleEntitiesByAuthorIds.get(i).getTitle());
+        }
+        System.out.println("===========================");
         List<NewsUpdateCardVO> newsletterInfoByCreatorIds = new ArrayList<>();
         for (ArticleEntity articleEntity: articleEntitiesByAuthorIds) {
             Integer creatorId = Integer.parseInt(articleEntity.getAuthorId());
