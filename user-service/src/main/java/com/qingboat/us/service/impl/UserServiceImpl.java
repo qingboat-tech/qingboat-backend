@@ -12,17 +12,18 @@ import com.qingboat.base.utils.DateUtil;
 import com.qingboat.api.MessageService;
 import com.qingboat.api.vo.MessageVo;
 import com.qingboat.us.DTO.SubscriptionAndFollowDTO;
-import com.qingboat.us.dao.CreatorApplyFormMongoDao;
-import com.qingboat.us.dao.IndustryDao;
-import com.qingboat.us.dao.UserProfileDao;
-import com.qingboat.us.dao.UserSubscriptionDao;
+import com.qingboat.us.controller.SendEmailController;
+import com.qingboat.us.dao.*;
 import com.qingboat.us.entity.CreatorApplyFormEntity;
 import com.qingboat.us.entity.UserProfileEntity;
 import com.qingboat.us.entity.UserSubscriptionEntity;
 import com.qingboat.us.entity.UserWechatEntity;
 import com.qingboat.us.filter.AuthFilter;
+import com.qingboat.us.redis.RedisUtil;
 import com.qingboat.us.service.UserService;
 import com.qingboat.us.service.UserWechatService;
+import com.qingboat.us.utils.handler.VerificationCode;
+import com.qingboat.us.vo.AccountInfoVO;
 import com.qingboat.us.vo.TaSubscriptionNewslettersVO;
 import com.qingboat.us.vo.TaSubscriptionNewslettersWithTotalVO;
 import com.qingboat.us.vo.UserProfileVO1;
@@ -41,9 +42,13 @@ import java.util.List;
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
+    @Autowired
+    SendEmailController sendEmailController;
 
     @Autowired
     private IndustryDao industryDao;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Autowired
     private UserSubscriptionDao userSubscriptionDao;
@@ -74,12 +79,17 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private FeishuService feishuService;
+    @Autowired
+    private UserWechatDao userWechatDao;
 
     @Value("${business-domain-pathway-backend}")
     private String businessDomainPathwayBackend;
 
     @Value("${wx-msg-template.review2}")
     private String reviewTemplate2;
+
+    private static final String EMAIL_VERIFICATION ="EMAIL_VERIFICATION_CODE_";
+
 
     @Override
     public UserProfileEntity applyCreator(Long userId) {
@@ -334,6 +344,51 @@ public class UserServiceImpl implements UserService {
         result.setTotal(total);
         return result;
     }
+
+    @Override
+    public AccountInfoVO getAccountInfo(Integer userId) {
+        AccountInfoVO accountInfoVO = new AccountInfoVO();
+        UserProfileEntity userProfileEntity = userProfileDao.findByUserId(Long.parseLong(userId + ""));
+        if (userProfileEntity != null){
+            accountInfoVO.setPhone(userProfileEntity.getPhone());
+            accountInfoVO.setEmail(userProfileEntity.getEmail());
+            QueryWrapper<UserWechatEntity> queryWrapper = new QueryWrapper<>();
+            UserWechatEntity userWechatEntity = new UserWechatEntity();
+            userWechatEntity.setUserId(Long.parseLong(userId + ""));
+            queryWrapper.setEntity(userWechatEntity);
+            UserWechatEntity userWechatEntity1 = userWechatDao.selectOne(queryWrapper);
+            if (userWechatEntity1 != null){
+                boolean b = userWechatEntity1.getOpenId() != null && !userWechatEntity1.getOpenId().equals("");
+                accountInfoVO.setWechat(b);
+            }
+            return accountInfoVO;
+        }
+        return null;
+    }
+
+    @Override
+    public Boolean sendEmailVerificationCode(Integer userId, String email) {
+        String verificationCode = VerificationCode.getVerificationCode();
+        redisUtil.set(EMAIL_VERIFICATION + userId,verificationCode);
+        sendEmailController.send(email,verificationCode);
+        return Boolean.TRUE;
+    }
+
+    @Override
+    public Boolean verificationCodeWhitEmail(Integer userId, String email, String code) {
+        Object o = redisUtil.get(EMAIL_VERIFICATION + userId);
+        String s = o.toString();
+        if (s != null && s.equals(code)){
+            userProfileDao.updateEmailUserprofile(email,userId);
+            redisUtil.remove(EMAIL_VERIFICATION + userId);
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
+
+
+
+
 
 //    @Override
 //    public List<Integer> getCreatorIds() {

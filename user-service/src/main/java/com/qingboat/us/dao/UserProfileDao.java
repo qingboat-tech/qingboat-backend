@@ -8,6 +8,7 @@ import com.qingboat.us.vo.UserProfileVO1;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,6 +34,9 @@ public interface UserProfileDao extends BaseMapper<UserProfileEntity> {
 
 //    @Select("select * from apps_userprofile where user_id = #{userId}")
     List<TaSubscriptionNewslettersVO> getTaSubscriptionNewsletters(@Param("ids")List<Integer> ids);
+
+    @Update("update apps_userprofile set email = #{email} where user_id = #{userId}")
+    Integer updateEmailUserprofile(@Param("email")String email,@Param("userId")Integer userId);
 
 
 

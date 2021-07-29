@@ -2,6 +2,7 @@ package com.qingboat.us.service;
 
 import com.qingboat.us.entity.CreatorApplyFormEntity;
 import com.qingboat.us.entity.UserProfileEntity;
+import com.qingboat.us.vo.AccountInfoVO;
 import com.qingboat.us.vo.TaSubscriptionNewslettersVO;
 import com.qingboat.us.vo.TaSubscriptionNewslettersWithTotalVO;
 import com.qingboat.us.vo.UserProfileVO1;
@@ -38,5 +39,13 @@ public interface UserService {
     List<UserProfileVO1> getUserProfileByIds(List<Integer> ids);
 
     TaSubscriptionNewslettersWithTotalVO getTaSubscriptionNewslettersVO(Integer loginId, Integer userId, Integer page, Integer pageSize);
+
+    AccountInfoVO getAccountInfo(Integer userId);
+
+    Boolean sendEmailVerificationCode(Integer userId,String email);
+
+    Boolean verificationCodeWhitEmail(Integer userId,String email,String code);
+
+
 
 }

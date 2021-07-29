@@ -4,6 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.qingboat.us.dao.UserProfileDao">
+
     <select id="findByUserId" parameterType="long" resultType="com.qingboat.us.entity.UserProfileEntity">
         select * from apps_userprofile where user_id = #{userId}
     </select>

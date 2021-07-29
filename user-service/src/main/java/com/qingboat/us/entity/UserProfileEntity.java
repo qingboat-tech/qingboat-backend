@@ -59,5 +59,6 @@ public class UserProfileEntity implements Serializable {
     private String socialInformationWb;
     private String socialInformationZh;
     private String socialInformationWxgzh;
+    private String email;
 
 }

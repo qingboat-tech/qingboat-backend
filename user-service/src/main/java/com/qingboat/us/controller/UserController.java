@@ -26,10 +26,7 @@ import com.qingboat.us.service.AuthUserService;
 import com.qingboat.us.service.LastAccessRecordService;
 import com.qingboat.us.service.UserService;
 import com.qingboat.us.service.impl.NewsUpdateServiceImpl;
-import com.qingboat.us.vo.NewsUpdateCardVOList;
-import com.qingboat.us.vo.TaSubscriptionNewslettersVO;
-import com.qingboat.us.vo.TaSubscriptionNewslettersWithTotalVO;
-import com.qingboat.us.vo.UserProfileVO1;
+import com.qingboat.us.vo.*;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -423,6 +420,39 @@ public class UserController extends BaseController  {
         Integer userId = getUId().intValue();
         return newsUpdateService.getNewsUpdateCardVOList(userId,page,pageSize);
     }
+
+    /**
+     *  账号信息
+     */
+    @GetMapping("/accountInfo")
+    @ResponseBody
+    public AccountInfoVO getAccountInfo(){
+        Integer userId = getUId().intValue();
+        return userService.getAccountInfo(userId);
+    }
+    /**
+     * 邮箱绑定(生成/保存/发送验证码)
+     */
+    @PostMapping("/sendEmailVerificationCode")
+    @ResponseBody
+    public Boolean emailBind(@RequestBody Map<String,Object> param){
+        Integer userId = getUId().intValue();
+        String email = param.get("email").toString();
+        return userService.sendEmailVerificationCode(userId,email);
+    }
+    /**
+     * 绑定邮箱（验证验证码）
+     */
+    @PostMapping("/verificationCode")
+    @ResponseBody
+    public Boolean verificationCode_email(@RequestBody Map<String,Object> param){
+        Integer userId = getUId().intValue();
+        String email = param.get("email").toString();
+        String code = param.get("code").toString();
+        return userService.verificationCodeWhitEmail(userId,email,code);
+    }
+
+
 
 
 }

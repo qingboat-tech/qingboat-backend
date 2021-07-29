@@ -6,6 +6,21 @@ server:
 spring:
   application:
     name: user-service
+  mail:
+    default-encoding: utf-8
+    #  主机地址
+    host: smtp.feishu.cn
+    username: hello@qingboat.com
+    password: dY8vgwbwQX0CZuYN
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+
 
   main:
     allow-bean-definition-overriding: true
