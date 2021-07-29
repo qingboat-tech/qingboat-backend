@@ -27,7 +27,7 @@ public interface UserSubscriptionDao {
                                                                      @Param("start") Integer start,
                                                                      @Param("end") Integer end);
 
-    public Integer countUsersByCreatorId(@Param("creatorId")Integer creatorId);
+    public int countUsersByCreatorId(@Param("creatorId")Integer creatorId);
 
     /**
      *  用于判断 某一userId 是否订阅了某一creator  (newsletters)
