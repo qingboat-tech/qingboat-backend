@@ -23,10 +23,7 @@ import com.qingboat.us.redis.RedisUtil;
 import com.qingboat.us.service.UserService;
 import com.qingboat.us.service.UserWechatService;
 import com.qingboat.us.utils.handler.VerificationCode;
-import com.qingboat.us.vo.AccountInfoVO;
-import com.qingboat.us.vo.TaSubscriptionNewslettersVO;
-import com.qingboat.us.vo.TaSubscriptionNewslettersWithTotalVO;
-import com.qingboat.us.vo.UserProfileVO1;
+import com.qingboat.us.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -286,10 +283,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserProfileVO1> getUserProfileByCreatorOnNewslettersAndPathway(Integer creatorId, Integer page, Integer pageSize) {
+    public UserProfileVO1List getUserProfileByCreatorOnNewslettersAndPathway(Integer creatorId, Integer page, Integer pageSize) {
         Integer start = (page - 1) * pageSize;
+        UserProfileVO1List userProfileVO1List1 = new UserProfileVO1List();
         List<UserProfileVO1> userProfileVO1List = userSubscriptionDao.getUserIdsByCreatorIdWithStartAndEnd(creatorId,start,pageSize);
-        return userProfileVO1List;
+        userProfileVO1List1.setList(userProfileVO1List);
+        userProfileVO1List1.setTotal(userSubscriptionDao.countUsersByCreatorId(creatorId));;
+        return userProfileVO1List1;
     }
 
     @Override

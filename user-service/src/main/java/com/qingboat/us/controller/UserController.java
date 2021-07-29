@@ -336,7 +336,7 @@ public class UserController extends BaseController  {
                                         @RequestParam("page") Integer page,
                                         @RequestParam("pageSize") Integer pageSize){
         ApiResponse apiResponse = new ApiResponse();
-        List<UserProfileVO1> list = userService.getUserProfileByCreatorOnNewslettersAndPathway(creatorId, page, pageSize);
+        UserProfileVO1List list = userService.getUserProfileByCreatorOnNewslettersAndPathway(creatorId, page, pageSize);
         apiResponse.setData(list);
         return JSON.toJSONString(apiResponse,SerializerFeature.WriteNullStringAsEmpty);
     }
@@ -440,6 +440,7 @@ public class UserController extends BaseController  {
         String email = param.get("email").toString();
         return userService.sendEmailVerificationCode(userId,email);
     }
+
     /**
      * 绑定邮箱（验证验证码）
      */
@@ -451,6 +452,12 @@ public class UserController extends BaseController  {
         String code = param.get("code").toString();
         return userService.verificationCodeWhitEmail(userId,email,code);
     }
+    @GetMapping("/countByUser")
+    @ResponseBody
+    public CountVO countByUser(@RequestParam("userId") Integer userId){
+        return null;
+    }
+
 
 
 
