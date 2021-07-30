@@ -14,10 +14,7 @@ import com.qingboat.api.vo.MessageVo;
 import com.qingboat.us.DTO.SubscriptionAndFollowDTO;
 import com.qingboat.us.controller.SendEmailController;
 import com.qingboat.us.dao.*;
-import com.qingboat.us.entity.CreatorApplyFormEntity;
-import com.qingboat.us.entity.UserProfileEntity;
-import com.qingboat.us.entity.UserSubscriptionEntity;
-import com.qingboat.us.entity.UserWechatEntity;
+import com.qingboat.us.entity.*;
 import com.qingboat.us.filter.AuthFilter;
 import com.qingboat.us.redis.RedisUtil;
 import com.qingboat.us.service.UserService;
@@ -28,6 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
@@ -41,6 +40,18 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     @Autowired
     SendEmailController sendEmailController;
+    @Autowired
+    PathwayDao pathwayDao;
+    @Autowired
+    BenefitDao benefitDao;
+    @Autowired
+    FollowPathwayDao followPathwayDao;
+
+    @Autowired
+    HighlightDao highlightDao;
+
+    @Autowired
+    ArticleMongoDao articleMongoDao;
 
     @Autowired
     private IndustryDao industryDao;
@@ -289,6 +300,7 @@ public class UserServiceImpl implements UserService {
         List<UserProfileVO1> userProfileVO1List = userSubscriptionDao.getUserIdsByCreatorIdWithStartAndEnd(creatorId,start,pageSize);
         userProfileVO1List1.setList(userProfileVO1List);
         userProfileVO1List1.setTotal(userSubscriptionDao.countUsersByCreatorId(creatorId));;
+
         return userProfileVO1List1;
     }
 
@@ -387,7 +399,32 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    /**
+     *
+     * @param userId
+     * @param type 为1时候返回 creator的内容  为2时返回 普通用户内容
+     * @return
+     */
+    @Override
+    public CountVO countCreateContent(Integer userId,Integer type) {
+        CountVO countVO = new CountVO();
+       if (type == 1){
+           countVO.setPathwayCount(pathwayDao.countPathwayByUserId(userId));
+           List<ArticleEntity> publishArticleProfileInfoByAuthorId = articleMongoDao.findPublishArticleProfileInfoByAuthorId(userId);
+           int size = 0;
+           if (publishArticleProfileInfoByAuthorId != null){
+               size = publishArticleProfileInfoByAuthorId.size();
+           }
+           countVO.setNewsletterCount(size);
+           countVO.setBenefitCount(benefitDao.countBenefitByCreator(userId));
 
+           return countVO;
+       } else if (type == 2) {
+           countVO.setSubscribeCount(followPathwayDao.countSubscriptionPathwayNum(userId) + userSubscriptionDao.countAllNewsletterByUserId(userId));
+           countVO.setKeyCount(highlightDao.countHighlight(userId));
+       }
+       return countVO;
+    }
 
 
 //    @Override

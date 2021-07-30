@@ -43,6 +43,10 @@ public interface UserService {
 
     Boolean verificationCodeWhitEmail(Integer userId,String email,String code);
 
+    CountVO countCreateContent(Integer userId,Integer type);
+
+
+
 
 
 }

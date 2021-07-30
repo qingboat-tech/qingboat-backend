@@ -100,6 +100,8 @@ public interface UserSubscriptionDao {
     @Select("select count(subscriber_id) from apps_usersubscription where creator_id = #{creatorId}")
     public Integer getUserCountByCreatorId_newsletters(@Param("creatorId") Integer creatorId);
 
+    @Select("select count(*) from apps_usersubscription where subscriber_id = #{userId} and TIMESTAMPDIFF(second,cast(NOW() as datetime),expire_date) > 0 and TIMESTAMPDIFF(second,cast(NOW() as datetime),start_date) < 0")
+    public Integer countAllNewsletterByUserId(@Param("userId") Integer userId);
 
 
 

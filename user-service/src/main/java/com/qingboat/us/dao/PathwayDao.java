@@ -20,4 +20,9 @@ public interface PathwayDao {
     // 根据creator 获取 此creator的最新的pathway的时间
     @Select("select updated_at from apps_pathway where author_id = #{authorId} order by updated_at desc limit 0,1 ")
     public Date getLastUpdateTimeByCreator(@Param("authorId") Integer authorId);
+
+    @Select("select count(*) from apps_pathway where author_id = #{userId}")
+    public Integer countPathwayByUserId(@Param("userId") Integer userId);
+
+
 }

@@ -452,10 +452,12 @@ public class UserController extends BaseController  {
         String code = param.get("code").toString();
         return userService.verificationCodeWhitEmail(userId,email,code);
     }
+
+
     @GetMapping("/countByUser")
     @ResponseBody
-    public CountVO countByUser(@RequestParam("userId") Integer userId){
-        return null;
+    public CountVO countByUser(@RequestParam("userId") Integer userId,@RequestParam("type") Integer type){
+        return userService.countCreateContent(userId,type);
     }
 
 
