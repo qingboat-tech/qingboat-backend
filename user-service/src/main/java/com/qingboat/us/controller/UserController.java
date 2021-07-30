@@ -200,7 +200,7 @@ public class UserController extends BaseController  {
 
     @GetMapping("/getUserProfile")
     @ResponseBody
-    public UserProfileEntity getUserProfile(@RequestParam(value = "userId",required = false) Long userId,
+    public UserProfileEntityVO getUserProfile(@RequestParam(value = "userId",required = false) Long userId,
                                             @RequestParam(value = "profileKey",required = false) String profileKey){
         if (userId!=null && userId>0){
             //创投，增长，职场，产品
@@ -216,11 +216,19 @@ public class UserController extends BaseController  {
                 }
                 userProfile.setExpertiseArea(maps);
             }
-            return userProfile;
+            UserProfileEntityVO userProfileEntityVO = new UserProfileEntityVO();
+            userProfileEntityVO.setSocialInformation(new ArrayList<>());
+            userProfileEntityVO.userProfileEntityToVo(userProfile);
+
+            return userProfileEntityVO;
         }
         if (!StringUtils.isEmpty(profileKey)){
             //profilekey 应该是创作者在本站的空间
-            return userService.getUserProfileByProfileKey(profileKey);
+            UserProfileEntity userProfileByProfileKey = userService.getUserProfileByProfileKey(profileKey);
+            UserProfileEntityVO userProfileEntityVO = new UserProfileEntityVO();
+            userProfileEntityVO.setSocialInformation(new ArrayList<>());
+            userProfileEntityVO.userProfileEntityToVo(userProfileByProfileKey);
+            return userProfileEntityVO;
         }
 
         return null;
