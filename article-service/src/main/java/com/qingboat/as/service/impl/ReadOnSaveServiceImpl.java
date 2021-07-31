@@ -110,15 +110,18 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
                 readOnVo.setTitle(articleEntity.getTitle());
                 readOnVo.setDesc(articleEntity.getDesc());
                 //地址添加
+                System.out.println("查找pathway信息");
+                System.out.println("articleEntity.getEntryUrl()" + articleEntity.getEntryUrl());
                 readOnVo.setArticleAddress(articleEntity.getEntryUrl());
                 UserProfileAndPathwayInfoVo temp = pathwayDao.getUserProfileInfoAndPathwayInfoByPathwayId(readonEntity.getPathwayId());
+
+
                 readOnVo.setProfileName(temp.getProfileName());
                 readOnVo.setNickname(temp.getNickname());
                 readOnVo.setHeadimgUrl(temp.getHeadimgUrl());
                 readOnVo.setPathwayName(temp.getPathwayName());
                 readOnVo.setHeight(readonEntity.getHeight());
                 readOnVo.setCreatorimgUrl(temp.getCreatorImgUrl());
-
             }else if (type == 2){
                 //填充newsletter 信息
                 String contentId = readonEntity.getContentId();

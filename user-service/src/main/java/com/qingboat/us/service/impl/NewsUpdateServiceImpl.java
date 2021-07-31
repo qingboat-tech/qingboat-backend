@@ -233,6 +233,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
 //        Collections.addAll(pathwayInfoByCreatorIds,newsletterInfoByCreatorIds)
 
         Collections.sort(pathwayInfoByCreatorIds);
+
         if (start >= pathwayInfoByCreatorIds.size()){
             result.setTotal(0);
             result.setNewsUpdateCardVOList(null);
