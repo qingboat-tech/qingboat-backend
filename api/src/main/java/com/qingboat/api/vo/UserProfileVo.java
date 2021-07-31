@@ -46,36 +46,7 @@ public class UserProfileVo {
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedAt;
 
-    private List<SocialInformationKeyValue> socialInformation;
 
-    class SocialInformationKeyValue{
-        private String key;
-        private String value;
-
-        public SocialInformationKeyValue() {
-        }
-
-        public SocialInformationKeyValue(String key, String value) {
-            this.key = key;
-            this.value = value;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public void setKey(String key) {
-            this.key = key;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-    }
 
 }
 

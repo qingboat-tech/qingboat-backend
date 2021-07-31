@@ -49,6 +49,7 @@ public class UserProfileEntityVO {
     private Date updatedAt;
 
     private List<SocialInformationKeyValue> socialInformation;
+
     private String email;
 
     public Long getId() {
@@ -227,7 +228,7 @@ public class UserProfileEntityVO {
         this.email = email;
     }
 
-    public synchronized void userProfileEntityToVo(UserProfileEntity userProfileEntity){
+    public  synchronized void userProfileEntityToVo(UserProfileEntity userProfileEntity){
         this.id = userProfileEntity.getId();
         this.userId = userProfileEntity.getUserId();
         this.nickname = userProfileEntity.getNickname();
