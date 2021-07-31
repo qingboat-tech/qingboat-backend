@@ -415,7 +415,7 @@ public class UserController extends BaseController  {
     @ResponseBody
     public ApiResponse lastAccess(@RequestBody Map<String,Object> param){
         Integer userId = getUId().intValue();
-        Integer type = Integer.parseInt(param.get("type").toString() );
+        Integer type = Integer.parseInt(param.get("type").toString());
         return lastAccessRecordService.lastAccessRecord(userId,type,param.get("targetId").toString());
     }
 

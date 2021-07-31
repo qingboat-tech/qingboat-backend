@@ -39,6 +39,9 @@ public class LastAccessRecordServiceImpl implements LastAccessRecordService {
             ArticleEntity articleEntity = articleMongoDao.findArticleEntityById(targetId);
             String authorId = articleEntity.getAuthorId();
             creatorId = Integer.parseInt(authorId);
+        }else if (type == 3){
+            creatorId = Integer.parseInt(targetId);
+            targetId = "";
         }
         LastAccessRecordsEntity lastAccessRecordsEntity = new LastAccessRecordsEntity(userId,type,targetId);
         lastAccessRecordsEntity.setCreatorId(creatorId);

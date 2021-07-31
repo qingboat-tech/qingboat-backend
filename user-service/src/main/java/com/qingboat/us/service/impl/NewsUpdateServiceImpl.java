@@ -246,7 +246,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
     }
 
     /**
-     *
+     *   用于 我的订阅 列表  红点显示
      * @param userId
      * @param list
      * @return
