@@ -50,6 +50,7 @@ public class UserProfileVo {
     private String socialInformationWb;
     private String socialInformationZh;
     private String socialInformationWxgzh;
+    private String email;
 
 
 
