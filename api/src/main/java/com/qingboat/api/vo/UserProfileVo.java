@@ -46,11 +46,11 @@ public class UserProfileVo {
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedAt;
 
-    private String socialInformationJk;
-    private String socialInformationWb;
-    private String socialInformationZh;
-    private String socialInformationWxgzh;
-    private String email;
+//    private String socialInformationJk;
+//    private String socialInformationWb;
+//    private String socialInformationZh;
+//    private String socialInformationWxgzh;
+//    private String email;
 
 
 

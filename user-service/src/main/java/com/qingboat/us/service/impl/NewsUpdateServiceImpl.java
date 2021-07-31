@@ -226,7 +226,12 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
             newsUpdateCardVO.setIsLiked(redisUtil.sHasKey(USER_STAR_PRE+userId,articleEntity.getId())); // 判断是否已经点赞
             newsUpdateCardVO.setLikeCount(Long.valueOf(redisUtil.size(USER_STAR_PRE+userId)).intValue());
             newsUpdateCardVO.setCreatorId(creatorId);
-            newsUpdateCardVO.setIsPurchase(userSubscriptionDao.isSubscriptionRelationship(userId,creatorId) == 0 ? false : true);
+            //这里判断的逻辑有问题。 不能是订阅关系就判定已购买，因为中间还有一层 会员权益层
+            if (userSubscriptionDao.isSubscriptionRelationship(userId,creatorId) == 0 ? false : true){
+                //是订阅关系 ，判断已购买
+
+//                newsUpdateCardVO.setIsPurchase();
+            }
             newsletterInfoByCreatorIds.add(newsUpdateCardVO);
         }
         boolean b = pathwayInfoByCreatorIds.addAll(newsletterInfoByCreatorIds);
