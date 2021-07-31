@@ -288,9 +288,9 @@ public class UserServiceImpl implements UserService {
     public Integer getCount_UserIdsByCreatorOnNewslettersAndPathway(Integer creatorId) {
         List<SubscriptionAndFollowDTO> userIdsByCreatorId = userSubscriptionDao.getUserIdsByCreatorId(creatorId);
         return userIdsByCreatorId.size();
-        //apps_likepathway 是什么表
+        //apps_likepathway 是什么表     pathway点赞表
         //apps_followpathway 的create 和update
-        // newsletter 中一个创作者 不能 创作两个？一个创作者只能维护一个期刊？
+        // newsletter 中一个创作者 不能 创作两个？一个创作者只能维护一个期刊？     目前一个创作者只能有一个newsletter
     }
 
     @Override

@@ -219,7 +219,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
             newsUpdateCardVO.setProfileName(profileName);
             newsUpdateCardVO.setCreatorImgUrl(creatorImgUrl);
             newsUpdateCardVO.setContentType(2);
-            newsUpdateCardVO.setUpdateTime( Date.from(articleEntity.getUpdatedTime().minusMonths(8).atZone(ZoneId.systemDefault()).toInstant()));  //这里的时间可能会有问题，有可能会进行两次 +8 处理
+            newsUpdateCardVO.setUpdateTime( Date.from(articleEntity.getUpdatedTime().minusHours(8).atZone(ZoneId.systemDefault()).toInstant()));  //这里的时间可能会有问题，有可能会进行两次 +8 处理
             newsUpdateCardVO.setContentId(articleEntity.getId());
             newsUpdateCardVO.setCoverImgUrl(articleEntity.getImgUrl());
             newsUpdateCardVO.setDescription(articleEntity.getDesc());
