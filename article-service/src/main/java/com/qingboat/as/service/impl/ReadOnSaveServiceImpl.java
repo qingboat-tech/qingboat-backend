@@ -109,6 +109,7 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
                 ArticleEntity articleEntity = articleDao.selectArticleById(contentId);
                 readOnVo.setTitle(articleEntity.getTitle());
                 readOnVo.setDesc(articleEntity.getDesc());
+                //地址添加
                 readOnVo.setArticleAddress(articleEntity.getEntryUrl());
                 UserProfileAndPathwayInfoVo temp = pathwayDao.getUserProfileInfoAndPathwayInfoByPathwayId(readonEntity.getPathwayId());
                 readOnVo.setProfileName(temp.getProfileName());
