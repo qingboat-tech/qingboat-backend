@@ -249,19 +249,19 @@ public class UserProfileEntityVO {
         this.status = userProfileEntity.getStatus();
         this.createdAt = userProfileEntity.getCreatedAt();
         this.updatedAt = userProfileEntity.getUpdatedAt();
-        this.email = userProfileEntity.getEmail();
-        if (userProfileEntity.getSocialInformationJk() != null){
-            this.socialInformation.add(new SocialInformationKeyValue("即刻",userProfileEntity.getSocialInformationJk()));
-        }
-        if (userProfileEntity.getSocialInformationWb() != null){
-            this.socialInformation.add(new SocialInformationKeyValue("微博",userProfileEntity.getSocialInformationWb()));
-        }
-        if ( userProfileEntity.getSocialInformationZh() != null){
-            this.socialInformation.add(new SocialInformationKeyValue("知乎",userProfileEntity.getSocialInformationZh()));
-        }
-        if (userProfileEntity.getSocialInformationWxgzh() != null){
-            this.socialInformation.add(new SocialInformationKeyValue("微信公众号",userProfileEntity.getSocialInformationWxgzh()));
-        }
+//        this.email = userProfileEntity.getEmail();
+//        if (userProfileEntity.getSocialInformationJk() != null){
+//            this.socialInformation.add(new SocialInformationKeyValue("即刻",userProfileEntity.getSocialInformationJk()));
+//        }
+//        if (userProfileEntity.getSocialInformationWb() != null){
+//            this.socialInformation.add(new SocialInformationKeyValue("微博",userProfileEntity.getSocialInformationWb()));
+//        }
+//        if ( userProfileEntity.getSocialInformationZh() != null){
+//            this.socialInformation.add(new SocialInformationKeyValue("知乎",userProfileEntity.getSocialInformationZh()));
+//        }
+//        if (userProfileEntity.getSocialInformationWxgzh() != null){
+//            this.socialInformation.add(new SocialInformationKeyValue("微信公众号",userProfileEntity.getSocialInformationWxgzh()));
+//        }
     }
 
     class SocialInformationKeyValue{

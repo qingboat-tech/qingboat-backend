@@ -363,7 +363,7 @@ public class UserServiceImpl implements UserService {
         UserProfileEntity userProfileEntity = userProfileDao.findByUserId(Long.parseLong(userId + ""));
         if (userProfileEntity != null){
             accountInfoVO.setPhone(userProfileEntity.getPhone());
-            accountInfoVO.setEmail(userProfileEntity.getEmail());
+//            accountInfoVO.setEmail(userProfileEntity.getEmail());
             QueryWrapper<UserWechatEntity> queryWrapper = new QueryWrapper<>();
             UserWechatEntity userWechatEntity = new UserWechatEntity();
             userWechatEntity.setUserId(Long.parseLong(userId + ""));
