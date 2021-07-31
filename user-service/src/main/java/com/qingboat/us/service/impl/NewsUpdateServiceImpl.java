@@ -263,7 +263,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
                     continue;
                 }
             }
-            List<ArticleEntity> articleEntities = articleMongoDao.findPublishArticleProfileInfoByAuthorId(creatorId);
+            List<ArticleEntity> articleEntities = articleMongoDao.findPublishArticleProfileInfoByAuthorId(creatorId + "");
             if (articleEntities != null && articleEntities.size() != 0){
                 LocalDateTime updatedTime = articleEntities.get(0).getUpdatedTime();   //取第一个值当作初始值  循环 获取到最新的时间  比较并交换
                 for (ArticleEntity temp:articleEntities) {

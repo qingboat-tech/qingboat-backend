@@ -21,7 +21,7 @@ public interface PathwayDao {
     @Select("select updated_at from apps_pathway where author_id = #{authorId} order by updated_at desc limit 0,1 ")
     public Date getLastUpdateTimeByCreator(@Param("authorId") Integer authorId);
 
-    @Select("select count(*) from apps_pathway where author_id = #{userId}")
+    @Select("select count(*) from apps_pathway where author_id = #{userId} and audit_status = 2 and is_draft = 0")
     public Integer countPathwayByUserId(@Param("userId") Integer userId);
 
 

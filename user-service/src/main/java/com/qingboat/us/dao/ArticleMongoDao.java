@@ -43,7 +43,7 @@ public interface ArticleMongoDao extends MongoRepository<ArticleEntity, String> 
     List<ArticleEntity> findPublishArticleProfileInfoByAuthorIds(List<String> authorIds);
 
     @Query(value = "{'authorId':?0,'status':4}",fields = "{title:1,desc:1,imgUrl:1,authorId:1,starCount:1,createdTime:1,updatedTime:1}")
-    List<ArticleEntity> findPublishArticleProfileInfoByAuthorId(Integer authorIds);
+    List<ArticleEntity> findPublishArticleProfileInfoByAuthorId(String authorIds);
 
 
 

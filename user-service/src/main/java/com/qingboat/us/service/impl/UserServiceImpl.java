@@ -410,7 +410,7 @@ public class UserServiceImpl implements UserService {
         CountVO countVO = new CountVO();
        if (type == 1){
            countVO.setPathwayCount(pathwayDao.countPathwayByUserId(userId));
-           List<ArticleEntity> publishArticleProfileInfoByAuthorId = articleMongoDao.findPublishArticleProfileInfoByAuthorId(userId);
+           List<ArticleEntity> publishArticleProfileInfoByAuthorId = articleMongoDao.findPublishArticleProfileInfoByAuthorId(userId + "");
            int size = 0;
            if (publishArticleProfileInfoByAuthorId != null){
                size = publishArticleProfileInfoByAuthorId.size();
