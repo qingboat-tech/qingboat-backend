@@ -72,7 +72,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
         List<NewsUpdateCardVO> userProfileByIdsForNewsUpdateCardVO = userProfileDao.getUserProfileByIdsForNewsUpdateCardVO(allCreatorIdsByUserId);
 
         //获取这些创作着的 所有的 内容，按时间倒序
-        //首先 获取pathway 的 内容
+        //首先 获取pathway 的 内容   audit_status = 2 and is_draft = 0
         List<NewsUpdateCardVO> pathwayInfoByCreatorIds = pathwayDao.pathwayInfoByCreatorIds(allCreatorIdsByUserId);
         for (NewsUpdateCardVO newsUpdateCardVO: pathwayInfoByCreatorIds) {
             // contentType 1 表示 pathway
@@ -188,7 +188,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
         for (Integer i: allCreatorIdsByUserId) {
             list.add(i+ "");
         }
-        //这里做了一步转换，把原来的int 类型转换成了String  因为int类型 查不到数据
+        //这里做了一步转换，把原来的int 类型转换成了String  因为int类型 查不到数据      status = 4 表示已发布
         List<ArticleEntity> articleEntitiesByAuthorIds = articleMongoDao.findPublishArticleProfileInfoByAuthorIds(list);
         for (int i = 0; i < allCreatorIdsByUserId.size(); i++) {
             System.out.println(allCreatorIdsByUserId.get(i));

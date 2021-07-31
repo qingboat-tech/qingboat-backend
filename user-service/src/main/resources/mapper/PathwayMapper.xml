@@ -6,7 +6,7 @@
 <mapper namespace="com.qingboat.us.dao.PathwayDao">
     <select id="pathwayInfoByCreatorIds" resultType="com.qingboat.us.vo.NewsUpdateCardVO">
         select id as contentId, author_id as creatorId,image_url as coverImgUrl,updated_at as updateTime,description,title
-             ,section_cnt,lesson_cnt,item_cnt,duration_units,duration_type   from apps_pathway where author_id in
+             ,section_cnt,lesson_cnt,item_cnt,duration_units,duration_type   from apps_pathway where audit_status = 2 and is_draft = 0 and  author_id in
         <foreach collection="creatorIds" open="(" close=")" separator="," item="id">
             #{id}
         </foreach>
