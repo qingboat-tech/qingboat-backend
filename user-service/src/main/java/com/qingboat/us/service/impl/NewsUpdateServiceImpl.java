@@ -57,7 +57,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
         int start =  (page - 1) * pageSize;
         int length = pageSize;
         NewsUpdateCardVOList result = new NewsUpdateCardVOList();
-        //这里的逻辑是  需要获取所订阅/购买的 所有的作者 包括 pathway和newsletter 根据这些creator 展示这些creator的最新动态。
+        //这里的逻辑是  需要获取所订阅/购买的 所有的作者 包括 pathway和newsletter 根据这些creator 展示这些creator的最新动态。´
         List<Integer> allCreatorIdsByUserId = rbuac.getAllCreatorIdsByUserId(userId);
         if (allCreatorIdsByUserId.contains(userId)){
             allCreatorIdsByUserId.remove(userId);
@@ -87,7 +87,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
             String headimgUrl = "";
             Integer creatorId = newsUpdateCardVO.getCreatorId();
             for (NewsUpdateCardVO temp :userProfileByIdsForNewsUpdateCardVO) {
-                if (temp.getCreatorId() == creatorId){
+                if (temp.getCreatorId().equals(creatorId)){
                     profileName = temp.getProfileName();
                     creatorImgUrl = temp.getCreatorImgUrl();
                     nickname = temp.getNickname();
@@ -206,7 +206,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
             String nickname = "";
             String headimgUrl = "";
             for (NewsUpdateCardVO temp :userProfileByIdsForNewsUpdateCardVO) {
-                if (temp.getCreatorId() == creatorId){
+                if (temp.getCreatorId().equals(creatorId)){
                     profileName = temp.getProfileName();
                     creatorImgUrl = temp.getCreatorImgUrl();
                     nickname = temp.getNickname();
