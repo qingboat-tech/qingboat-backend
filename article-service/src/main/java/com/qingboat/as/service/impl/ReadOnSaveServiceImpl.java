@@ -109,6 +109,7 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
                 ArticleEntity articleEntity = articleDao.selectArticleById(contentId);
                 readOnVo.setTitle(articleEntity.getTitle());
                 readOnVo.setDesc(articleEntity.getDesc());
+                readOnVo.setArticleAddress(articleEntity.getEntryUrl());
                 UserProfileAndPathwayInfoVo temp = pathwayDao.getUserProfileInfoAndPathwayInfoByPathwayId(readonEntity.getPathwayId());
                 readOnVo.setProfileName(temp.getProfileName());
                 readOnVo.setNickname(temp.getNickname());
@@ -116,6 +117,7 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
                 readOnVo.setPathwayName(temp.getPathwayName());
                 readOnVo.setHeight(readonEntity.getHeight());
                 readOnVo.setCreatorimgUrl(temp.getCreatorImgUrl());
+
             }else if (type == 2){
                 //填充newsletter 信息
                 String contentId = readonEntity.getContentId();

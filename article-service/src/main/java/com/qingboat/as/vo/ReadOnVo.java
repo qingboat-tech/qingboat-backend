@@ -19,5 +19,6 @@ public class ReadOnVo {
     private Integer pathwayId;
     private String contentId;
     private Date lastReadTime;
+    private String articleAddress; // 如果是pathway 需要给出地址
 
 }

@@ -25,6 +25,8 @@ public class ArticleEntity {
 
     private String title = "";   //文章标题
 
+    private String entryUrl;
+
     private String desc = "";    //文章描述
 
     private Integer top = 0 ; //是否置顶，1：表示置顶
