@@ -261,6 +261,8 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
                 Date lastAccessTimeByUserIdAndCreatorId = lastAccessRecordsDao.findLastRecordTimeWithCreatorId(userId,creatorId);
                 if (lastAccessTimeByUserIdAndCreatorId == null || lastUpdateTimeByCreator.compareTo(lastAccessTimeByUserIdAndCreatorId) == 1 ){
                     userProfileVO1.setHaveUpdate(true);
+                    System.out.println("最后更新时间为：" + lastUpdateTimeByCreator.toString());
+                    System.out.println("最后访问时间为：" + lastAccessTimeByUserIdAndCreatorId.toString());
                     continue;
                 }
             }
@@ -273,6 +275,9 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
                 Date lastAccessTimeByUserIdAndCreatorId = lastAccessRecordsDao.findLastRecordTimeWithCreatorId(userId,creatorId);
                 Date date = Date.from(updatedTime.atZone(ZoneId.systemDefault()).toInstant());
                 if (lastAccessTimeByUserIdAndCreatorId == null || date.compareTo(lastAccessTimeByUserIdAndCreatorId) == 1 ){
+                    System.out.println("最后更新时间为：" + date.toString());
+                    System.out.println("最后updatedTime时间为：" + updatedTime.toString());
+                    System.out.println("最后访问时间为：" + lastAccessTimeByUserIdAndCreatorId.toString());
                     userProfileVO1.setHaveUpdate(true);
                 }
             }
