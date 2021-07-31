@@ -1,5 +1,6 @@
 package com.qingboat.as.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
@@ -18,6 +19,7 @@ public class ReadOnVo {
     private Integer height;
     private Integer pathwayId;
     private String contentId;
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date lastReadTime;
     private String articleAddress; // 如果是pathway 需要给出地址
 
