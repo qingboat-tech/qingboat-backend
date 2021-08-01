@@ -54,6 +54,9 @@ public class UserServiceImpl implements UserService {
     ArticleMongoDao articleMongoDao;
 
     @Autowired
+    TierDao tierDao;
+
+    @Autowired
     private IndustryDao industryDao;
     @Autowired
     private RedisUtil redisUtil;
@@ -343,6 +346,18 @@ public class UserServiceImpl implements UserService {
             List<UserProfileVO1> userProfileByIds = userProfileDao.getUserProfileByIds(userIds);
             taSubscriptionNewslettersVO.setUserProfileVO1List(userProfileByIds);
             taSubscriptionNewslettersVO.setSubscriptionCount(userSubscriptionDao.getUserCountByCreatorId_newsletters(targetUserId));
+            taSubscriptionNewslettersVO.setContentCount(Integer.parseInt(articleMongoDao.countByAuthorIdAndStatus(targetUserId + "",4) + ""));
+            List<TierEntity> tierEntities = tierDao.listTierEntitiesByCreatorId(targetUserId);
+            int maxBenefitCount = 0;
+            if (tierEntities != null && tierEntities.size() > 0){
+                for (TierEntity temp: tierEntities) {
+                    List<BenefitEntity> benefitList = temp.getBenefitList();
+                    if(benefitList != null){
+                        maxBenefitCount = benefitList.size() > maxBenefitCount ? benefitList.size() : maxBenefitCount;
+                    }
+                }
+            }
+            taSubscriptionNewslettersVO.setBenefitCount(maxBenefitCount);
             if (loginId == -1){
                 taSubscriptionNewslettersVO.setSubscriptionRelationshipForMe(false);
             }else {

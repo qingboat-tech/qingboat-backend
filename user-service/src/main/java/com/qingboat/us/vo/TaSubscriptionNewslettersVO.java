@@ -20,6 +20,24 @@ public class TaSubscriptionNewslettersVO {
     private Integer subscriptionCount;
     private List<UserProfileVO1>  userProfileVO1List;
     private Boolean subscriptionRelationshipForMe;
+    private Integer contentCount;
+    private Integer benefitCount;
+
+    public Integer getContentCount() {
+        return contentCount;
+    }
+
+    public void setContentCount(Integer contentCount) {
+        this.contentCount = contentCount;
+    }
+
+    public Integer getBenefitCount() {
+        return benefitCount;
+    }
+
+    public void setBenefitCount(Integer benefitCount) {
+        this.benefitCount = benefitCount;
+    }
 
     public Boolean getSubscriptionRelationshipForMe() {
         return subscriptionRelationshipForMe;
