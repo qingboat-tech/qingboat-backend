@@ -431,7 +431,17 @@ public class UserServiceImpl implements UserService {
                size = publishArticleProfileInfoByAuthorId.size();
            }
            countVO.setNewsletterCount(size);
-           countVO.setBenefitCount(benefitDao.countBenefitByCreator(userId));
+           List<TierEntity> tierEntities = tierDao.listTierEntitiesByCreatorId(userId);
+           int maxBenefitCount = 0;
+           if (tierEntities != null && tierEntities.size() > 0){
+               for (TierEntity temp: tierEntities) {
+                   List<BenefitEntity> benefitList = temp.getBenefitList();
+                   if(benefitList != null){
+                       maxBenefitCount = benefitList.size() > maxBenefitCount ? benefitList.size() : maxBenefitCount;
+                   }
+               }
+           }
+           countVO.setBenefitCount(maxBenefitCount);
 
            return countVO;
        } else if (type == 2) {
