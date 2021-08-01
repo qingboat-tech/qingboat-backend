@@ -55,10 +55,10 @@ public class LastAccessRecordServiceImpl implements LastAccessRecordService {
             targetId = "";
             LastAccessRecordsEntity lastAccessRecordsEntity = new LastAccessRecordsEntity(userId,type,targetId);
             lastAccessRecordsEntity.setCreatorId(creatorId);
-            if (lastAccessRecordsDao.findRecord(userId,type,creatorId) == 0){
+            if (lastAccessRecordsDao.findRecord_creatorId(userId,type,creatorId) == 0){
                 lastAccessRecordsDao.insertLastAccessRecords(lastAccessRecordsEntity);
             }else {
-                lastAccessRecordsDao.updateLastAccessTime(userId,type,creatorId);
+                lastAccessRecordsDao.updateLastAccessTime_type3(userId,type,creatorId);
             }
         }
         ApiResponse apiResponse = new ApiResponse();

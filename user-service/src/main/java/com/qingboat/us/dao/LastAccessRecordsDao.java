@@ -22,10 +22,10 @@ public interface LastAccessRecordsDao {
 
 
     @Select("select count(*) from apps_lastaccessrecords where user_id = #{userId} and type = #{type}  and creator_id = #{creatorId}")
-    public Integer findRecord(@Param("userId")Integer userId,@Param("type")Integer type,@Param("creatorId") Integer creatorId);
+    public Integer findRecord_creatorId(@Param("userId")Integer userId,@Param("type")Integer type,@Param("creatorId") Integer creatorId);
 
-    @Select("select last_accessTime from apps_lastaccessrecords where  user_id = #{userId}  and target_id = #{targetId} order by last_accessTime desc limit 0,1")
-    public Date findLastRecordTimeWithTargetId(@Param("userId")Integer userId,@Param("targetId")String targetId);
+//    @Select("select last_accessTime from apps_lastaccessrecords where  user_id = #{userId}  and target_id = #{targetId} order by last_accessTime desc limit 0,1")
+//    public Date findLastRecordTimeWithTargetId(@Param("userId")Integer userId,@Param("targetId")String targetId);
 
     @Select("select last_accessTime from apps_lastaccessrecords where  user_id = #{userId}  and creator_id = #{creatorId} order by last_accessTime desc limit 0,1")
     public Date findLastRecordTimeWithCreatorId(@Param("userId")Integer userId,@Param("creatorId")Integer creatorId);
@@ -38,7 +38,7 @@ public interface LastAccessRecordsDao {
     public Integer updateLastAccessTime(@Param("userId")Integer userId,@Param("type")Integer type,@Param("targetId")String targetId);
 
     @Update("update apps_lastaccessrecords set last_accessTime = NOW() where user_id = #{userId} and type = #{type} and creator_id = #{creatorId}")
-    public Integer updateLastAccessTime(@Param("userId")Integer userId,@Param("type")Integer type,@Param("creatorId")Integer creatorId);
+    public Integer updateLastAccessTime_type3(@Param("userId")Integer userId,@Param("type")Integer type,@Param("creatorId")Integer creatorId);
 //    @Update("update apps_lastaccessrecords set last_accessTime = NOW() where user_id = #{userId} and type = #{type} and target_id = #{targetId}")
 //    public Integer updateLastAccessTime(@Param("userId")Integer userId,@Param("type")Integer type,@Param("targetId")Integer targetId);
 }
