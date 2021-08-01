@@ -1,6 +1,9 @@
 package com.qingboat.us.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.qingboat.base.baseEnum.PathwayActionEnum;
+import com.qingboat.us.DTO.UserSubscriptionDTO;
 import com.qingboat.us.dao.*;
 import com.qingboat.us.entity.*;
 import com.qingboat.us.redis.RedisUtil;
@@ -184,12 +187,12 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
 
         }
         //获取newsletter的信息
-        List<String> list = new ArrayList<>();
+        List<String> tempList = new ArrayList<>();
         for (Integer i: allCreatorIdsByUserId) {
-            list.add(i+ "");
+            tempList.add(i+ "");
         }
         //这里做了一步转换，把原来的int 类型转换成了String  因为int类型 查不到数据      status = 4 表示已发布
-        List<ArticleEntity> articleEntitiesByAuthorIds = articleMongoDao.findPublishArticleProfileInfoByAuthorIds(list);
+        List<ArticleEntity> articleEntitiesByAuthorIds = articleMongoDao.findPublishArticleProfileInfoByAuthorIds(tempList);
         for (int i = 0; i < allCreatorIdsByUserId.size(); i++) {
             System.out.println(allCreatorIdsByUserId.get(i));
         }
@@ -226,11 +229,28 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
             newsUpdateCardVO.setIsLiked(redisUtil.sHasKey(USER_STAR_PRE+userId,articleEntity.getId())); // 判断是否已经点赞
             newsUpdateCardVO.setLikeCount(Long.valueOf(redisUtil.size(USER_STAR_PRE+userId)).intValue());
             newsUpdateCardVO.setCreatorId(creatorId);
-            //这里判断的逻辑有问题。 不能是订阅关系就判定已购买，因为中间还有一层 会员权益层
+            //这里判断的逻辑有问题。 不能是订阅关系就判定已购买，因为中间还有一层 会员权益层    // 这里的isSubscriptionRelationship 并没有判断时间，有记录存在就代表曾经或现在订阅了
             if (userSubscriptionDao.isSubscriptionRelationship(userId,creatorId) == 0 ? false : true){
                 //是订阅关系 ，判断已购买
-                articleEntity.getBenefit();
-//                newsUpdateCardVO.setIsPurchase();
+                Set<String> benefit = articleEntity.getBenefit();
+                if (benefit.contains("FREE")){
+                    //对于免费的  只要曾经订阅过 就给显示解锁。
+                    newsUpdateCardVO.setIsPurchase(true);
+                }else {
+                    List<UserSubscriptionDTO> userSubscriptionDTOS = userSubscriptionDao.listUserSubscription(userId, creatorId);
+                    if (userSubscriptionDTOS != null){
+                        UserSubscriptionDTO userSubscriptionDTO = userSubscriptionDTOS.get(0);
+                        List<JSONObject> list  = JSON.parseObject(userSubscriptionDTO.getBenefitList(),List.class);
+                        for (String benefitString:benefit) {
+                            for (int i = 0; i < list.size(); i++) {
+                                String key = list.get(i).get("key").toString();
+                                if (benefitString.equals(key)){
+                                    newsUpdateCardVO.setIsPurchase(true);
+                                }
+                            }
+                        }
+                    }
+                }
             }
             newsletterInfoByCreatorIds.add(newsUpdateCardVO);
         }

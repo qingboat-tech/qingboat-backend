@@ -1,6 +1,7 @@
 package com.qingboat.us.dao;
 
 import com.qingboat.us.DTO.SubscriptionAndFollowDTO;
+import com.qingboat.us.DTO.UserSubscriptionDTO;
 import com.qingboat.us.vo.UserProfileVO1;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -103,6 +104,8 @@ public interface UserSubscriptionDao {
     @Select("select count(*) from apps_usersubscription where subscriber_id = #{userId} and TIMESTAMPDIFF(second,cast(NOW() as datetime),expire_date) > 0 and TIMESTAMPDIFF(second,cast(NOW() as datetime),start_date) < 0")
     public Integer countAllNewsletterByUserId(@Param("userId") Integer userId);
 
+    @Select("select * from apps_usersubscription where subscriber_id = #{subscriberId} and creator_id = #{creatorId} and TIMESTAMPDIFF(second,cast(NOW() as datetime),expire_date) > 0 and TIMESTAMPDIFF(second,cast(NOW() as datetime),start_date) < 0")
+    public List<UserSubscriptionDTO> listUserSubscription(@Param("subscriberId")Integer subscriberId,@Param("creatorId") Integer creatorId);
 
 
 }
