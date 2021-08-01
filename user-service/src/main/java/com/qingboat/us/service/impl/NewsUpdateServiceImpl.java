@@ -258,6 +258,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
      */
     @Override
     public List<UserProfileVO1> haveUpdate(Integer userId, List<UserProfileVO1> list) {
+        System.out.println("判断红点显示逻辑");
         for (UserProfileVO1 userProfileVO1: list) {
             Integer creatorId = userProfileVO1.getUserId();  //注意  这里是getUserId  不是getId  id 没什么毛用
             Date lastUpdateTimeByCreator = pathwayDao.getLastUpdateTimeByCreator(creatorId);
