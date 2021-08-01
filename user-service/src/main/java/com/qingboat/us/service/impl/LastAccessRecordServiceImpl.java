@@ -31,26 +31,35 @@ public class LastAccessRecordServiceImpl implements LastAccessRecordService {
     @Override
     public ApiResponse lastAccessRecord(Integer userId, Integer type, String targetId) {
         Integer creatorId = 0;
-        if (type == 1){
-            //pathway
-            creatorId = pathwayDao.getCreatorIdByPathwayId(Integer.parseInt(targetId));
-        }else if (type == 2){
-            //newsletter
-            ArticleEntity articleEntity = articleMongoDao.findArticleEntityById(targetId);
-            String authorId = articleEntity.getAuthorId();
-            creatorId = Integer.parseInt(authorId);
+        if (type != 3){
+            if (type == 1){
+                //pathway
+                creatorId = pathwayDao.getCreatorIdByPathwayId(Integer.parseInt(targetId));
+            }else if (type == 2){
+                //newsletter
+                ArticleEntity articleEntity = articleMongoDao.findArticleEntityById(targetId);
+                String authorId = articleEntity.getAuthorId();
+                creatorId = Integer.parseInt(authorId);
+            }
+            LastAccessRecordsEntity lastAccessRecordsEntity = new LastAccessRecordsEntity(userId,type,targetId);
+            lastAccessRecordsEntity.setCreatorId(creatorId);
+            if (lastAccessRecordsDao.findRecord(userId,type,targetId) == 0){
+                //新纪录
+//            lastAccessRecordsEntity.setCreatorId();
+                lastAccessRecordsDao.insertLastAccessRecords(lastAccessRecordsEntity);
+            }else {
+                lastAccessRecordsDao.updateLastAccessTime(userId,type,targetId);
+            }
         }else if (type == 3){
             creatorId = Integer.parseInt(targetId);
             targetId = "";
-        }
-        LastAccessRecordsEntity lastAccessRecordsEntity = new LastAccessRecordsEntity(userId,type,targetId);
-        lastAccessRecordsEntity.setCreatorId(creatorId);
-        if (lastAccessRecordsDao.findRecord(userId,type,targetId) == 0){
-            //新纪录
-//            lastAccessRecordsEntity.setCreatorId();
-            lastAccessRecordsDao.insertLastAccessRecords(lastAccessRecordsEntity);
-        }else {
-            lastAccessRecordsDao.updateLastAccessTime(userId,type,targetId);
+            LastAccessRecordsEntity lastAccessRecordsEntity = new LastAccessRecordsEntity(userId,type,targetId);
+            lastAccessRecordsEntity.setCreatorId(creatorId);
+            if (lastAccessRecordsDao.findRecord(userId,type,creatorId) == 0){
+                lastAccessRecordsDao.insertLastAccessRecords(lastAccessRecordsEntity);
+            }else {
+                lastAccessRecordsDao.updateLastAccessTime(userId,type,creatorId);
+            }
         }
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setData(null);
