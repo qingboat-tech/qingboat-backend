@@ -11,6 +11,6 @@ import java.util.List;
 @Mapper
 public interface TierDao {
 
-    @Select("select * from apps_tire where creator_id = #{creatorId}")
+    @Select("select * from apps_tier where creator_id = #{creatorId}")
     public List<TierEntity> listTierEntitiesByCreatorId(@Param("creatorId")Integer creatorId);
 }
