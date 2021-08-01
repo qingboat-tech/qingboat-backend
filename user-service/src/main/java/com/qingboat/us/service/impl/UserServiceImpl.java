@@ -12,6 +12,7 @@ import com.qingboat.base.utils.DateUtil;
 import com.qingboat.api.MessageService;
 import com.qingboat.api.vo.MessageVo;
 import com.qingboat.us.DTO.SubscriptionAndFollowDTO;
+import com.qingboat.us.DTO.TierDTO;
 import com.qingboat.us.controller.SendEmailController;
 import com.qingboat.us.dao.*;
 import com.qingboat.us.entity.*;
@@ -347,13 +348,14 @@ public class UserServiceImpl implements UserService {
             taSubscriptionNewslettersVO.setUserProfileVO1List(userProfileByIds);
             taSubscriptionNewslettersVO.setSubscriptionCount(userSubscriptionDao.getUserCountByCreatorId_newsletters(targetUserId));
             taSubscriptionNewslettersVO.setContentCount(Integer.parseInt(articleMongoDao.countByAuthorIdAndStatus(targetUserId + "",4) + ""));
-            List<TierEntity> tierEntities = tierDao.listTierEntitiesByCreatorId(targetUserId);
+            List<TierDTO> tierEntities = tierDao.listTierEntitiesByCreatorId(targetUserId);
             int maxBenefitCount = 0;
             if (tierEntities != null && tierEntities.size() > 0){
-                for (TierEntity temp: tierEntities) {
-                    List<BenefitEntity> benefitList = temp.getBenefitList();
-                    if(benefitList != null){
-                        maxBenefitCount = benefitList.size() > maxBenefitCount ? benefitList.size() : maxBenefitCount;
+                for (TierDTO temp: tierEntities) {
+                    List list  = JSON.parseObject(temp.getBenefitList(),List.class);
+//                    List list = JSON./toJavaObject(benefitList, List.class);
+                    if(list != null){
+                        maxBenefitCount = list.size() > maxBenefitCount ? list.size() : maxBenefitCount;
                     }
                 }
             }
@@ -431,13 +433,13 @@ public class UserServiceImpl implements UserService {
                size = publishArticleProfileInfoByAuthorId.size();
            }
            countVO.setNewsletterCount(size);
-           List<TierEntity> tierEntities = tierDao.listTierEntitiesByCreatorId(userId);
+           List<TierDTO> tierEntities = tierDao.listTierEntitiesByCreatorId(userId);
            int maxBenefitCount = 0;
            if (tierEntities != null && tierEntities.size() > 0){
-               for (TierEntity temp: tierEntities) {
-                   List<BenefitEntity> benefitList = temp.getBenefitList();
-                   if(benefitList != null){
-                       maxBenefitCount = benefitList.size() > maxBenefitCount ? benefitList.size() : maxBenefitCount;
+               for (TierDTO temp: tierEntities) {
+                   List list  = JSON.parseObject(temp.getBenefitList(),List.class);
+                   if(list != null){
+                       maxBenefitCount = list.size() > maxBenefitCount ? list.size() : maxBenefitCount;
                    }
                }
            }

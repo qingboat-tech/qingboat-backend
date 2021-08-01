@@ -229,7 +229,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
             //这里判断的逻辑有问题。 不能是订阅关系就判定已购买，因为中间还有一层 会员权益层
             if (userSubscriptionDao.isSubscriptionRelationship(userId,creatorId) == 0 ? false : true){
                 //是订阅关系 ，判断已购买
-
+                articleEntity.getBenefit();
 //                newsUpdateCardVO.setIsPurchase();
             }
             newsletterInfoByCreatorIds.add(newsUpdateCardVO);
