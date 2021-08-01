@@ -25,7 +25,7 @@ public interface UserSubscriptionDao {
 
     public List<UserProfileVO1> getUserIdsByCreatorIdWithStartAndEnd(@Param("creatorId")Integer creatorId,
                                                                      @Param("start") Integer start,
-                                                                     @Param("end") Integer end);
+                                                                     @Param("length") Integer length);
 
     public int countUsersByCreatorId(@Param("creatorId")Integer creatorId);
 
