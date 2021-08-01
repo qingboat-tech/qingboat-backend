@@ -270,6 +270,8 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
                     System.out.println("最后更新时间为：" + lastUpdateTimeByCreator.toString());
                     if (lastAccessTimeByUserIdAndCreatorId != null){
                         System.out.println("最后访问时间为：" + lastAccessTimeByUserIdAndCreatorId.toString());
+                    }else {
+                        System.out.println("没有访问记录：" +userId + "｜" + creatorId);
                     }
                     continue;
                 }
@@ -287,6 +289,8 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
                     System.out.println("最后updatedTime时间为：" + updatedTime.toString());
                     if (lastAccessTimeByUserIdAndCreatorId != null){
                         System.out.println("最后访问时间为：" + lastAccessTimeByUserIdAndCreatorId.toString());
+                    }else {
+                        System.out.println("没有访问记录" + userId + "｜" + creatorId);
                     }
                     userProfileVO1.setHaveUpdate(true);
                 }
