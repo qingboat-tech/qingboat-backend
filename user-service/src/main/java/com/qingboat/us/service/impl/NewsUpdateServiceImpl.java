@@ -233,7 +233,15 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
             if (userSubscriptionDao.isSubscriptionRelationship(userId,creatorId) == 0 ? false : true){
                 //是订阅关系 ，判断已购买
                 Set<String> benefit = articleEntity.getBenefit();
+                if (userId == 937 && creatorId == 67){
+                    System.out.println("937有订阅67");
+                    System.out.println("查看67的newsletter 的benefit");
+                    for (String s:benefit) {
+                        System.out.println(s);
+                    }
+                }
                 if (benefit.contains("FREE")){
+
                     //对于免费的  只要曾经订阅过 就给显示解锁。
                     newsUpdateCardVO.setIsPurchase(true);
                 }else {
