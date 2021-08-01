@@ -237,8 +237,9 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
                     //对于免费的  只要曾经订阅过 就给显示解锁。
                     newsUpdateCardVO.setIsPurchase(true);
                 }else {
+                    System.out.println("userSubscriptionDao.listUserSubscription 查询：" +userId + "｜" + creatorId );
                     List<UserSubscriptionDTO> userSubscriptionDTOS = userSubscriptionDao.listUserSubscription(userId, creatorId);
-                    if (userSubscriptionDTOS != null){
+                    if (userSubscriptionDTOS != null && userSubscriptionDTOS.size() != 0){
                         UserSubscriptionDTO userSubscriptionDTO = userSubscriptionDTOS.get(0);
                         List<JSONObject> list  = JSON.parseObject(userSubscriptionDTO.getBenefitList(),List.class);
                         for (String benefitString:benefit) {
@@ -249,6 +250,8 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
                                 }
                             }
                         }
+                    }else {
+                        System.out.println("查询结果为空");
                     }
                 }
             }
