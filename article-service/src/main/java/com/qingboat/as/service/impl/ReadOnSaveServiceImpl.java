@@ -38,7 +38,7 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
             ApiResponse<Object> result = new ApiResponse<>();
             result.setData(null);
 //            Integer articleId = Integer.parseInt(contentId);
-            ReadonEntity record = readOnDao.findRecord(userId, contentType,contentId,pathwayId);
+            ReadonEntity record = readOnDao.findRecordWithPathwayId(userId, contentType,contentId,pathwayId);
             if (record != null){
                 // 存在记录 说明访问过  走update方式
                 record.setHeight(height);

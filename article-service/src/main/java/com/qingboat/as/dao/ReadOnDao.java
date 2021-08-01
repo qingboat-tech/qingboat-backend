@@ -13,7 +13,7 @@ public interface ReadOnDao {
     public Integer insertRecord(@Param("readEntity")ReadonEntity readonEntity);
 
     @Select("select * from apps_readon where user_id = #{userId} and content_type = #{contentType} and content_id = #{contentId} and pathway_id = #{pathwayId}")
-    public ReadonEntity findRecord(@Param("userId")Integer userId,@Param("contentType")Integer contentType,@Param("contentId")String contentId,@Param("pathwayId")Integer pathwayId);
+    public ReadonEntity findRecordWithPathwayId(@Param("userId")Integer userId,@Param("contentType")Integer contentType,@Param("contentId")String contentId,@Param("pathwayId")Integer pathwayId);
 
 
     @Select("select * from apps_readon where user_id = #{userId} and content_type = #{contentType} and content_id = #{contentId}")
