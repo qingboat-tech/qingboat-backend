@@ -438,10 +438,10 @@ public class UserController extends BaseController  {
                 resultList2.add(temp);
             }
         }
-        MyComparator myComparator = new MyComparator();
+
         resultList1.sort((UserProfileVO1 o1, UserProfileVO1 o2) -> (o1.getFollowTime().compareTo(o2.getFollowTime()) * -1)
         );
-        resultList2.sort(myComparator);
+        resultList2.sort((UserProfileVO1 o1, UserProfileVO1 o2) -> (o1.getFollowTime().compareTo(o2.getFollowTime()) * -1));
         resultList1.addAll(resultList2);
         Iterator<UserProfileVO1> iterator = resultList1.iterator();
         while (iterator.hasNext()){
