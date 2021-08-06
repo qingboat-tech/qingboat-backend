@@ -15,7 +15,7 @@
 
     <!--id和userId问题 待修改-->
     <select id="getUserIdsByCreatorIdWithStartAndEnd" resultType="com.qingboat.us.vo.UserProfileVO1">
-        select user_id as userId,apps_userprofile.id id ,position,headimg_url as headImgUrl ,t1.createTime,nickname,description,apps_industry.name as industry  from apps_userprofile right join (select temp.id as id,createTime from (
+        select user_id as userId,apps_userprofile.id id ,position,headimg_url as headImgUrl ,t1.createTime,nickname,description,apps_industry.name as industry,`role`  from apps_userprofile right join (select temp.id as id,createTime from (
         select distinct t.id as id,max(created_at) createTime from (select subscriber_id as id,created_at from apps_usersubscription
         where creator_id = #{creatorId} and TIMESTAMPDIFF(second,cast(NOW() as datetime),expire_date) > 0 and TIMESTAMPDIFF(second,cast(NOW() as datetime),start_date) &lt; 0
         union all

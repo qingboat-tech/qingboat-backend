@@ -19,6 +19,15 @@ public class UserProfileVO1 {
     private String creatorImgUrl;  //店铺头像
     private String profileName;   //店铺名称
     private Integer userId;     //这个才是
+    private Integer role;
+
+    public Integer getRole() {
+        return role;
+    }
+
+    public void setRole(Integer role) {
+        this.role = role;
+    }
 
     public Integer getUserId() {
         return userId;

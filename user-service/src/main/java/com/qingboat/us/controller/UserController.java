@@ -410,7 +410,7 @@ public class UserController extends BaseController  {
     public String mySubscriptionCreators(@RequestParam("page") Integer page,@RequestParam("pageSize") Integer pageSize,@RequestParam("userId") Integer userId){
         Integer start = (page - 1) * pageSize;
         List<Integer> creatorIds = userService.getCreatorsIdsByUserOnNewslettersAndPathwayWithStartAndEnd(userId, start, pageSize);
-        System.out.println(userId + "所有关注的作者id" + creatorIds.toString());
+//        System.out.println(userId + "所有关注的作者id" + creatorIds.toString());
         if (creatorIds.size() == 0){
             ApiResponse apiResponse = new ApiResponse();
             Object[] objects = new Object[]{};
