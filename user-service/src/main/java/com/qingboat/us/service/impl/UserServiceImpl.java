@@ -471,6 +471,9 @@ public class UserServiceImpl implements UserService {
         if (pathwayIds != null && pathwayIds.size() != 0){
             pathwayNewestDate = followPathwayDao.getNewestDate(userId, pathwayIds);
         }
+        if (pathwayNewestDate == null){
+            pathwayNewestDate = new Date(0l);
+        }
          newsletterNewestDate = userSubscriptionDao.getNewestDate(userId, creatorId);
         if (newsletterNewestDate == null){
             newsletterNewestDate = new Date(0l);
