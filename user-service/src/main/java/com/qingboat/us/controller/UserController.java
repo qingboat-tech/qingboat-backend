@@ -450,7 +450,17 @@ public class UserController extends BaseController  {
                 vo.setTotal(vo.getTotal() - 1);
             }
         }
-        vo.setList(resultList1);
+        Integer startIndex = (page - 1) * pageSize;
+        Integer endIndex = startIndex + pageSize;
+        int size = resultList1.size();
+        if (startIndex >= size){
+            vo.setList(new ArrayList<>());
+        }else {
+            if (endIndex > size){
+                endIndex = size;
+            }
+            vo.setList(resultList1.subList(startIndex,endIndex));
+        }
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setData(vo);
         return JSON.toJSONString(apiResponse,SerializerFeature.WriteNullStringAsEmpty);
