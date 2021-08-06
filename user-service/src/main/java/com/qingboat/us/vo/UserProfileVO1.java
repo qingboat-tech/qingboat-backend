@@ -20,6 +20,16 @@ public class UserProfileVO1 {
     private String profileName;   //店铺名称
     private Integer userId;     //这个才是
     private Integer role;
+    private Date followTime; // 关注或订阅的最早时间
+
+
+    public Date getFollowTime() {
+        return followTime;
+    }
+
+    public void setFollowTime(Date followTime) {
+        this.followTime = followTime;
+    }
 
     public Integer getRole() {
         return role;

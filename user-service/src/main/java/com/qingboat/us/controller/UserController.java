@@ -418,11 +418,41 @@ public class UserController extends BaseController  {
             return JSON.toJSONString(apiResponse,SerializerFeature.WriteNullStringAsEmpty);
         }
         List<UserProfileVO1> userProfileByIds = userService.getUserProfileByIds(creatorIds);  // 这里也需要注意  UserProfileVO1的id 是不是userId
+
         System.out.println("所有关注的作者的基本信息");
         //判断是否有更新
         List<UserProfileVO1> resultList = newsUpdateService.haveUpdate(userId, userProfileByIds);
+        UserProfileVO1List vo =  new UserProfileVO1List();
+        if (userProfileByIds == null || userProfileByIds.size() == 0){
+            vo.setTotal(0);
+        }else {
+            vo.setTotal(resultList.size());
+        }
+        List<UserProfileVO1> resultList1 = new ArrayList<>();
+        List<UserProfileVO1> resultList2 = new ArrayList<>();
+        for (UserProfileVO1 temp: resultList) {
+            temp.setFollowTime(userService.firstFollowTimeByUserIdAndCreatorId(userId,temp.getUserId()));
+            if (temp.getHaveUpdate()){
+                resultList1.add(temp);
+            }else {
+                resultList2.add(temp);
+            }
+        }
+        MyComparator myComparator = new MyComparator();
+        resultList1.sort((UserProfileVO1 o1, UserProfileVO1 o2) -> (o1.getFollowTime().compareTo(o2.getFollowTime()) * -1)
+        );
+        resultList2.sort(myComparator);
+        resultList1.addAll(resultList2);
+        Iterator<UserProfileVO1> iterator = resultList1.iterator();
+        while (iterator.hasNext()){
+            if (iterator.next().getUserId().compareTo(userId) == 0){
+                iterator.remove();
+                vo.setTotal(vo.getTotal() - 1);
+            }
+        }
+        vo.setList(resultList1);
         ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setData(resultList);
+        apiResponse.setData(vo);
         return JSON.toJSONString(apiResponse,SerializerFeature.WriteNullStringAsEmpty);
     }
 
@@ -505,7 +535,12 @@ public class UserController extends BaseController  {
     }
 
 
-
+    class MyComparator implements Comparator<UserProfileVO1>{
+        @Override
+        public int compare(UserProfileVO1 o1, UserProfileVO1 o2) {
+            return (((UserProfileVO1)o1).getFollowTime().compareTo( ((UserProfileVO1)o1).getFollowTime())) * -1;
+        }
+    }
 
 
 }

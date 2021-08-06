@@ -5,6 +5,7 @@ import com.qingboat.us.entity.UserProfileEntity;
 import com.qingboat.us.vo.*;
 import org.springframework.data.domain.Page;
 
+import java.util.Date;
 import java.util.List;
 
 public interface UserService {
@@ -44,6 +45,9 @@ public interface UserService {
     Boolean verificationCodeWhitEmail(Integer userId,String email,String code);
 
     CountVO countCreateContent(Integer userId,Integer type);
+
+    //最早关注或订阅的时间
+    Date firstFollowTimeByUserIdAndCreatorId(Integer userId,Integer creatorId);
 
 
 

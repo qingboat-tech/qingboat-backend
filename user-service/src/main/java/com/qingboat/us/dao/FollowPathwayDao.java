@@ -4,13 +4,19 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.Date;
+import java.util.List;
+
 @Mapper
 public interface FollowPathwayDao {
 
     @Select("select count(*) from apps_followpathway where pathway_id = #{pathwayId} and user_id = #{userId} and expire_date > NOW()")
-    public Integer judgeUserIsFollowSomePathway(@Param("pathwayId")Integer pathwayId,@Param("userId")Integer userId);
+    Integer judgeUserIsFollowSomePathway(@Param("pathwayId")Integer pathwayId,@Param("userId")Integer userId);
 
 
     @Select("select count(*) from apps_followpathway where user_id = #{userId}")
-    public int countSubscriptionPathwayNum(@Param("userId")Integer userId);
+    int countSubscriptionPathwayNum(@Param("userId")Integer userId);
+
+    Date getNewestDate(@Param("userId")Integer userId, @Param("pathwayIds")List<Integer> pathwaysIds);
+
 }

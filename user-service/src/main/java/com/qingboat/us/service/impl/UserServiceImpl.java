@@ -33,6 +33,8 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -310,7 +312,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Integer> getCreatorsIdsByUserOnNewslettersAndPathwayWithStartAndEnd(Integer userId, Integer start, Integer length) {
-        return userSubscriptionDao.getCreatorIdsByUserIdWithStartAndEnd(userId, start, length);
+        return userSubscriptionDao.getCreatorIdsByUserId(userId);
     }
 
     @Override
@@ -451,6 +453,30 @@ public class UserServiceImpl implements UserService {
            countVO.setKeyCount(highlightDao.countHighlight(userId));
        }
        return countVO;
+    }
+
+    @Override
+    public Date firstFollowTimeByUserIdAndCreatorId(Integer userId, Integer creatorId) {
+        Date result = new Date(0l);
+        //
+        List<NewsUpdateCardVO> newsUpdateCardVOList = pathwayDao.pathwayInfoByCreatorIds(Collections.singletonList(creatorId));
+        List<Integer> pathwayIds = new ArrayList<>();
+        if (newsUpdateCardVOList != null && newsUpdateCardVOList.size() != 0){
+            for (NewsUpdateCardVO temp:newsUpdateCardVOList) {
+                pathwayIds.add(Integer.parseInt(temp.getContentId()));
+            }
+        }
+        Date pathwayNewestDate = new Date(0l);
+        Date newsletterNewestDate = new Date(0l);
+        if (pathwayIds != null && pathwayIds.size() != 0){
+            pathwayNewestDate = followPathwayDao.getNewestDate(userId, pathwayIds);
+        }
+         newsletterNewestDate = userSubscriptionDao.getNewestDate(userId, creatorId);
+        if (newsletterNewestDate == null){
+            newsletterNewestDate = new Date(0l);
+        }
+        result = pathwayNewestDate.compareTo(newsletterNewestDate) <= 0 ? newsletterNewestDate : pathwayNewestDate;
+        return result;
     }
 
 
