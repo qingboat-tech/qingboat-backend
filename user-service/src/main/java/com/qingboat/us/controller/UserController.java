@@ -525,6 +525,8 @@ public class UserController extends BaseController  {
         return userService.sendEmailVerificationCode(userId,email);
     }
 
+
+
     /**
      * 绑定邮箱（验证验证码）
      */

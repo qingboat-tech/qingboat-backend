@@ -19,6 +19,8 @@ public interface UserProfileDao extends BaseMapper<UserProfileEntity> {
 
     UserProfileEntity findByUserId(Long userId);
 
+
+
     /**
      * 获取所有的创作者id
      * @return
@@ -37,6 +39,9 @@ public interface UserProfileDao extends BaseMapper<UserProfileEntity> {
 
     @Update("update apps_userprofile set email = #{email} where user_id = #{userId}")
     Integer updateEmailUserprofile(@Param("email")String email,@Param("userId")Integer userId);
+
+    @Select("select count(*) from apps_userprofile where email = #{email}")
+    Integer countByEmail(@Param("email")String email);
 
 
 

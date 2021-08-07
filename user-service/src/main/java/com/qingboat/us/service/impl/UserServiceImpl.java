@@ -382,6 +382,7 @@ public class UserServiceImpl implements UserService {
         UserProfileEntity userProfileEntity = userProfileDao.findByUserId(Long.parseLong(userId + ""));
         if (userProfileEntity != null){
             accountInfoVO.setPhone(userProfileEntity.getPhone());
+//            accountInfoVO.setEmail(userProfileEntity);
 //            accountInfoVO.setEmail(userProfileEntity.getEmail());
             QueryWrapper<UserWechatEntity> queryWrapper = new QueryWrapper<>();
             UserWechatEntity userWechatEntity = new UserWechatEntity();
@@ -407,12 +408,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean verificationCodeWhitEmail(Integer userId, String email, String code) {
+        //绑定邮箱的逻辑是 需要验证码正确 且 此邮箱尚未被绑定
         Object o = redisUtil.get(EMAIL_VERIFICATION + userId);
         String s = o.toString();
         if (s != null && s.equals(code)){
-            userProfileDao.updateEmailUserprofile(email,userId);
             redisUtil.remove(EMAIL_VERIFICATION + userId);
-            return Boolean.TRUE;
+            Integer integer = userProfileDao.countByEmail(email);
+            if (integer == 0){
+                userProfileDao.updateEmailUserprofile(email,userId);
+                return Boolean.TRUE;
+            }
         }
         return Boolean.FALSE;
     }

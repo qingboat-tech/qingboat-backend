@@ -29,6 +29,9 @@ public class RedisDataInitListener implements ApplicationListener<ContextRefresh
             List<Integer> creatorIds = userProfileDao.getCreatorIds();
             for (Integer creatorId:creatorIds) {
                 Integer count_userIdsByCreatorOnNewslettersAndPathway = userService.getCount_UserIdsByCreatorOnNewslettersAndPathway(creatorId);
+                if (creatorId.compareTo(518) == 0 || creatorId.compareTo(733) == 0 || creatorId.compareTo(714) == 0 ||  creatorId.compareTo(7) == 0  || creatorId.compareTo(67) == 0){
+                    count_userIdsByCreatorOnNewslettersAndPathway += 100;
+                }
                 UserProfileEntity userProfile = userService.getUserProfile((long) creatorId);
                 String s = JSON.toJSONString(userProfile);
                 redisUtil.zAdd_string("hotCreator",s,count_userIdsByCreatorOnNewslettersAndPathway);
