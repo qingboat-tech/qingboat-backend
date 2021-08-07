@@ -49,6 +49,8 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
     HighlightDao highlightDao;
     @Autowired
     HighlightnoteDao highlightnoteDao;
+    @Autowired
+    GoodsDao goodsDao;
 
 
     @Autowired
@@ -81,6 +83,9 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
             // contentType 1 表示 pathway
             newsUpdateCardVO.setContentType(1);
             Integer pathwayId = Integer.parseInt(newsUpdateCardVO.getContentId());
+            GoodsEntity goodsEntity = goodsDao.getGoodsEntityByPathwayId(pathwayId);
+//            String tempVar_price = "0";
+            newsUpdateCardVO.setPrice(goodsEntity == null ? "0" : goodsEntity.getPrice() + "");
             newsUpdateCardVO.setLikeCount(likePathwayDao.likeCountByPathwayId(pathwayId));
             newsUpdateCardVO.setIsPurchase(followPathwayDao.judgeUserIsFollowSomePathway(pathwayId,userId) >= 1 ? true : false);
             newsUpdateCardVO.setIsLiked(likePathwayDao.judgeSomeUserIsLiked(userId,Integer.parseInt(newsUpdateCardVO.getContentId())) == 0 ? false : true );
@@ -182,9 +187,6 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
                     newsUpdateCardVO.setActionContent("");
                 }
             }
-
-            //
-
         }
         //获取newsletter的信息
         List<String> tempList = new ArrayList<>();
@@ -193,17 +195,16 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
         }
         //这里做了一步转换，把原来的int 类型转换成了String  因为int类型 查不到数据      status = 4 表示已发布
         List<ArticleEntity> articleEntitiesByAuthorIds = articleMongoDao.findPublishArticleProfileInfoByAuthorIds(tempList);
-        for (int i = 0; i < allCreatorIdsByUserId.size(); i++) {
-            System.out.println(allCreatorIdsByUserId.get(i));
-        }
-        for (int i = 0; i < articleEntitiesByAuthorIds.size(); i++) {
-            System.out.println(articleEntitiesByAuthorIds.get(i).getTitle());
-        }
+//        for (int i = 0; i < allCreatorIdsByUserId.size(); i++) {
+//            System.out.println(allCreatorIdsByUserId.get(i));
+//        }
+//        for (int i = 0; i < articleEntitiesByAuthorIds.size(); i++) {
+//            System.out.println(articleEntitiesByAuthorIds.get(i).getTitle());
+//        }
         List<NewsUpdateCardVO> newsletterInfoByCreatorIds = new ArrayList<>();
         for (ArticleEntity articleEntity: articleEntitiesByAuthorIds) {
             Integer creatorId = Integer.parseInt(articleEntity.getAuthorId());
             NewsUpdateCardVO newsUpdateCardVO = new NewsUpdateCardVO();  //往这里填入信息
-
             String profileName = "";  //店铺名称
             String creatorImgUrl = "" ; //店铺头像
             String nickname = "";
@@ -234,14 +235,11 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
                 //是订阅关系 ，判断已购买
                 Set<String> benefit = articleEntity.getBenefit();
                 if (userId == 937 && creatorId == 67){
-                    System.out.println("937有订阅67");
-                    System.out.println("查看67的newsletter 的benefit");
                     for (String s:benefit) {
                         System.out.println(s);
                     }
                 }
                 if (benefit.contains("FREE")){
-
                     //对于免费的  只要曾经订阅过 就给显示解锁。
                     newsUpdateCardVO.setIsPurchase(true);
                 }else {

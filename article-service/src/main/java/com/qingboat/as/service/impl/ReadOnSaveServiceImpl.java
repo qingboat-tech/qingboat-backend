@@ -125,7 +125,7 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
             }else if (type == 2){
                 //填充newsletter 信息
                 String contentId = readonEntity.getContentId();
-                ArticleEntity articleEntity = articleMongoDao.findArticleEntityById(contentId);
+                ArticleEntity articleEntity = articleMongoDao.findBaseInfoById(contentId);
                 readOnVo.setTitle(articleEntity.getTitle());
                 Integer authorId = Integer.parseInt(articleEntity.getAuthorId());
                 readOnVo.setDesc(articleEntity.getDesc());
