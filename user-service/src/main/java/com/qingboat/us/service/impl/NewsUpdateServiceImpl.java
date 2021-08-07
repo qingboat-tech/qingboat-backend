@@ -85,7 +85,7 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
             Integer pathwayId = Integer.parseInt(newsUpdateCardVO.getContentId());
             GoodsEntity goodsEntity = goodsDao.getGoodsEntityByPathwayId(pathwayId);
 //            String tempVar_price = "0";
-            newsUpdateCardVO.setPrice(goodsEntity == null ? "0" : goodsEntity.getPrice() + "");
+            newsUpdateCardVO.setPrice(goodsEntity == null ? 0 : goodsEntity.getPrice());
             newsUpdateCardVO.setLikeCount(likePathwayDao.likeCountByPathwayId(pathwayId));
             newsUpdateCardVO.setIsPurchase(followPathwayDao.judgeUserIsFollowSomePathway(pathwayId,userId) >= 1 ? true : false);
             newsUpdateCardVO.setIsLiked(likePathwayDao.judgeSomeUserIsLiked(userId,Integer.parseInt(newsUpdateCardVO.getContentId())) == 0 ? false : true );
