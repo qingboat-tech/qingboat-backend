@@ -31,6 +31,7 @@ public class NewsUpdateCardVO implements Comparable<NewsUpdateCardVO>{
     private Double durationUnits;      //阅读时间
     private String durationType;       //阅读时间单位
     private Integer price;
+    private Boolean free;
 
 
 

@@ -323,7 +323,6 @@ public class ArticleController extends BaseController {
 
     /**
      *  领取邀请码
-     *
      * @param inviteKey 邀请码
      * @return
      */

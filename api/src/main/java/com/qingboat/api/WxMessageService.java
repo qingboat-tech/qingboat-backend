@@ -9,9 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "wx-service",url = "${wx.host}")
 public interface WxMessageService {
-
     @RequestMapping(value = "/cgi-bin/message/template/send" , method = RequestMethod.POST)
     Object sendMessage(@RequestParam("access_token") String accessToken, @RequestBody JSONObject body);
-
-
 }

@@ -230,18 +230,24 @@ public class NewsUpdateServiceImpl implements NewsUpdateService {
             newsUpdateCardVO.setIsLiked(redisUtil.sHasKey(USER_STAR_PRE+userId,articleEntity.getId())); // 判断是否已经点赞
             newsUpdateCardVO.setLikeCount(Long.valueOf(redisUtil.size(USER_STAR_PRE+userId)).intValue());
             newsUpdateCardVO.setCreatorId(creatorId);
+            newsUpdateCardVO.setFree(false);
+            Set<String> benefit = articleEntity.getBenefit();
+            if (benefit.contains("FREE")){
+                newsUpdateCardVO.setFree(true);
+            }
             //这里判断的逻辑有问题。 不能是订阅关系就判定已购买，因为中间还有一层 会员权益层    // 这里的isSubscriptionRelationship 并没有判断时间，有记录存在就代表曾经或现在订阅了
             if (userSubscriptionDao.isSubscriptionRelationship(userId,creatorId) == 0 ? false : true){
                 //是订阅关系 ，判断已购买
-                Set<String> benefit = articleEntity.getBenefit();
-                if (userId == 937 && creatorId == 67){
-                    for (String s:benefit) {
-                        System.out.println(s);
-                    }
-                }
+//                Set<String> benefit = articleEntity.getBenefit();
+//                if (userId == 937 && creatorId == 67){
+//                    for (String s:benefit) {
+//                        System.out.println(s);
+//                    }
+//                }
                 if (benefit.contains("FREE")){
                     //对于免费的  只要曾经订阅过 就给显示解锁。
                     newsUpdateCardVO.setIsPurchase(true);
+
                 }else {
                     System.out.println("userSubscriptionDao.listUserSubscription 查询：" +userId + "｜" + creatorId );
                     List<UserSubscriptionDTO> userSubscriptionDTOS = userSubscriptionDao.listUserSubscription(userId, creatorId);

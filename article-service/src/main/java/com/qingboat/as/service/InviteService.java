@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface InviteService  {
 
-    int READ_LIMIT = 5;
+    int READ_LIMIT = 20;
 
     /**
      * 创建邀请码
