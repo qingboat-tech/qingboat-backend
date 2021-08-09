@@ -19,7 +19,7 @@ sudo su - deploy<<EOF
 cd /srv/qingboat-backend
 
 echo "=============git pull begin============="
-git pull git@github.com:qingboat-tech/qingboat-sh.git
+git pull git@github.com:qingboat-tech/qingboat-backend.git
 echo "=============git pull done=============="
 sleep 1
 EOF
