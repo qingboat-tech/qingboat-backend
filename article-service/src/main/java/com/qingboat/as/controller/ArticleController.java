@@ -356,7 +356,7 @@ public class ArticleController extends BaseController {
     @GetMapping(value = "/{articleId}")
     @ResponseBody
     public ArticleEntity viewArticleByArticleId(@PathVariable("articleId") String articleId,
-                                                @RequestParam(value = "inviteKey",required = false) String inviteKey) {
+                                                @RequestParam(value = "inviteKey",required = false) String inviteKey,HttpServletRequest httpServletRequest) {
         // 首先看一下传进来的文章Id是不是发布前的预览邀请读取
         ArticleEntity articleEntity = articleService.findArticleById(articleId);
         if (articleEntity==null) {
@@ -368,6 +368,17 @@ public class ArticleController extends BaseController {
                 articleEntity.setExpireEta(expiredTime);
                 return articleEntity;
             }
+        }
+        Object authorization = httpServletRequest.getHeader("Authorization");
+        Integer loginId = -1;
+        if (authorization != null){
+            loginId =  getUId().intValue();
+        }
+        if (articleEntity != null  || loginId.equals(-1)){
+            //没有订阅，查看付费文章（处理试读）
+            articleEntity.setData(subList(articleEntity.getData()));
+            articleEntity.setStatus(7);
+            return articleEntity;
         }
 
         if (articleEntity!=null){
