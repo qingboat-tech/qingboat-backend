@@ -49,6 +49,8 @@ public interface UserService {
     //最早关注或订阅的时间
     Date firstFollowTimeByUserIdAndCreatorId(Integer userId,Integer creatorId);
 
+    TaSubscriptionNewslettersWithTotalVO getCreatorContent(Integer userId,Integer page,Integer pageSize);
+
 
 
 

@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -239,10 +240,15 @@ public class ArticleController extends BaseController {
     @GetMapping(value = "/findArticleListWithStatus")
     @ResponseBody
     public Page<ArticleEntity> findArticleListWithStatus(@RequestParam(value = "pageIndex",required = false) Integer pageIndex,
-                                                      @RequestParam(value = "pageSize",required = false) Integer pageSize,
-                                                      @RequestParam(value = "creatorId") String creatorId ) {
-        Long userId = getUId();
-        return articleService.findPublishListByAuthorId(creatorId,pageIndex,pageSize,Boolean.FALSE,userId);
+                                                         @RequestParam(value = "pageSize",required = false) Integer pageSize,
+                                                         @RequestParam(value = "creatorId") String creatorId, HttpServletRequest httpServletRequest) {
+//        Long userId = getUId();
+        Object authorization = httpServletRequest.getHeader("Authorization");
+        Long loginId = -1l;
+        if (authorization != null){
+            loginId =  getUId();
+        }
+        return articleService.findPublishListByAuthorId(creatorId,pageIndex,pageSize,Boolean.FALSE,loginId);
     }
 
     /**

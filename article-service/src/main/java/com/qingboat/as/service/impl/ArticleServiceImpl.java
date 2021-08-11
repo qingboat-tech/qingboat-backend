@@ -290,7 +290,7 @@ public class ArticleServiceImpl implements ArticleService {
         Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
         Page<ArticleEntity>  page =  articleMongoDao.findByAuthorIdAndStatus(authorId,4,pageable);
         List<ArticleEntity> articleEntityList = page.getContent();
-        if (articleEntityList == null || articleEntityList.isEmpty() || userId == null || authorId.equals(userId+"")){//列表为空或者作者查看自己的文章列表
+        if (articleEntityList == null || articleEntityList.isEmpty() || userId == null || authorId.equals(userId+"") || userId.equals(-1l)){//列表为空或者作者查看自己的文章列表
             return page;
         }
         // 处理返回文章读权限

@@ -487,6 +487,12 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
+    @Override
+    public TaSubscriptionNewslettersWithTotalVO getCreatorContent(Integer userId, Integer page, Integer pageSize) {
+
+        return null;
+    }
+
 
 //    @Override
 //    public List<Integer> getCreatorIds() {

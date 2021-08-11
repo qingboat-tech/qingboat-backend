@@ -478,9 +478,23 @@ public class UserController extends BaseController  {
         if (authorization != null){
             loginId =  getUId().intValue();
         }
-        TaSubscriptionNewslettersWithTotalVO returnList = userService.getTaSubscriptionNewslettersVO(loginId, userId, page, pageSize);
+        TaSubscriptionNewslettersWithTotalVO returnList = userService.getCreatorContent( userId, page, pageSize);
+
+
         return returnList;
     }
+
+
+//    /**
+//     *  通过userId 查询 TA 创作的newsletter （简介）
+//     */
+//    @GetMapping("/taCreateNewsletter")
+//    @ResponseBody
+//    public TaSubscriptionNewslettersWithTotalVO taCreateNewsletter(@RequestParam("userId") Integer userId, @RequestParam("page") Integer page
+//            ,@RequestParam("pageSize") Integer pageSize , HttpServletRequest httpServletRequest){
+//        TaSubscriptionNewslettersWithTotalVO returnList = userService.getTaSubscriptionNewslettersVO(userId,page,pageSize);
+//        return returnList;
+//    }
 
 
     /**
