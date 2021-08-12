@@ -374,7 +374,7 @@ public class ArticleController extends BaseController {
         if (authorization != null){
             loginId =  getUId().intValue();
         }
-        if (articleEntity != null  || loginId.equals(-1)){
+        if (articleEntity != null  && loginId.equals(-1)){
             //没有订阅，查看付费文章（处理试读）
             articleEntity.setData(subList(articleEntity.getData()));
             articleEntity.setStatus(7);
