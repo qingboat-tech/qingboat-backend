@@ -478,9 +478,7 @@ public class UserController extends BaseController  {
         if (authorization != null){
             loginId =  getUId().intValue();
         }
-        TaSubscriptionNewslettersWithTotalVO returnList = userService.getCreatorContent( userId, page, pageSize);
-
-
+        TaSubscriptionNewslettersWithTotalVO returnList = userService.getTaSubscriptionNewslettersVO( loginId,userId, page, pageSize);
         return returnList;
     }
 
