@@ -128,15 +128,19 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
                 System.out.println("查询newsletter： " + contentId);
                 ArticleEntity articleEntity = articleMongoDao.findBaseInfoById(contentId);
                 System.out.println("查询newsletter结果： " + articleEntity);
-                readOnVo.setTitle(articleEntity.getTitle());
-                Integer authorId = Integer.parseInt(articleEntity.getAuthorId());
-                readOnVo.setDesc(articleEntity.getDesc());
-                readOnVo.setHeight(readonEntity.getHeight());
-                UserProfileInfoVo userProfileInfoById = userProfileDao.getUserProfileInfoById(authorId);
-                readOnVo.setNickname(userProfileInfoById.getNickname());
-                readOnVo.setProfileName(userProfileInfoById.getProfileName());
-                readOnVo.setCreatorimgUrl(userProfileInfoById.getCreatorImgUrl());
-                readOnVo.setHeadimgUrl(userProfileInfoById.getHeadimgUrl());
+                if(readOnVo == null){
+
+                }else {
+                    readOnVo.setTitle(articleEntity.getTitle());
+                    Integer authorId = Integer.parseInt(articleEntity.getAuthorId());
+                    readOnVo.setDesc(articleEntity.getDesc());
+                    readOnVo.setHeight(readonEntity.getHeight());
+                    UserProfileInfoVo userProfileInfoById = userProfileDao.getUserProfileInfoById(authorId);
+                    readOnVo.setNickname(userProfileInfoById.getNickname());
+                    readOnVo.setProfileName(userProfileInfoById.getProfileName());
+                    readOnVo.setCreatorimgUrl(userProfileInfoById.getCreatorImgUrl());
+                    readOnVo.setHeadimgUrl(userProfileInfoById.getHeadimgUrl());
+                }
             }
             list.add(readOnVo);
         }
