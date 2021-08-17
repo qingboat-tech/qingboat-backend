@@ -279,7 +279,7 @@ public class UserController extends BaseController  {
 
         RedisMessage<Long> redisMessage = new RedisMessage();
         redisMessage.setBody(uid);
-        redisMessage.setDelayTime(60*1000*5L);
+//        redisMessage.setDelayTime(60*1000*5L);
         redisMessage.setTopic("TOPIC:applyCreator");
 
         redisQueue.push(redisMessage);

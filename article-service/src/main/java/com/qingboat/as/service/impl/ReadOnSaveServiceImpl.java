@@ -129,7 +129,7 @@ public class ReadOnSaveServiceImpl implements ReadOnSaveService {
                 ArticleEntity articleEntity = articleMongoDao.findBaseInfoById(contentId);
                 System.out.println("查询newsletter结果： " + articleEntity);
                 if(readOnVo == null){
-
+                    continue;
                 }else {
                     readOnVo.setTitle(articleEntity.getTitle());
                     Integer authorId = Integer.parseInt(articleEntity.getAuthorId());

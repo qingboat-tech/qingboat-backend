@@ -526,7 +526,7 @@ public class UserServiceImpl implements UserService {
             "        },\n" +
             "        {\n" +
             "          \"key\": \"E\",\n" +
-            "          \"value\": \"10年以上\"\n" +
+            "          \"value\": \"8年以上\"\n" +
             "        }\n" +
             "      ]\n" +
             "    },\n" +
