@@ -115,32 +115,32 @@ public class UserServiceImpl implements UserService {
             if(1== userProfileEntity.getRole()){
 
             }else {
-                userProfileEntity.setRole(1);
+//                userProfileEntity.setRole(1);
                 userProfileEntity.setStatus(0);
                 userProfileDao.updateById(userProfileEntity);
 
                 // 发飞书通知
-                FeishuService.TextBody textBody = new FeishuService.TextBody(
-                        new StringBuilder().append("===创者者申请===").append("\n")
-                                .append("操作link：").append(this.businessDomainPathwayBackend + "/api/admin/apps/userprofile/"+userId+"/change/").append("\n")
-                                .append("创作者Id：").append(userId).append("\n")
-                                .append("操作步骤：请将role状态改为1").append("\n")
-                                .append("创者者昵称：").append(userProfileEntity.getNickname()).append("\n").toString());
-                feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
+//                FeishuService.TextBody textBody = new FeishuService.TextBody(
+//                        new StringBuilder().append("===创者者申请===").append("\n")
+//                                .append("操作link：").append(this.businessDomainPathwayBackend + "/api/admin/apps/userprofile/"+userId+"/change/").append("\n")
+//                                .append("创作者Id：").append(userId).append("\n")
+//                                .append("操作步骤：请将role状态改为1").append("\n")
+//                                .append("创者者昵称：").append(userProfileEntity.getNickname()).append("\n").toString());
+//                feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
 
                 // 发站内信
-                MessageVo msg = new MessageVo();
-                msg.setMsgType(MessageVo.SYSTEM_MSG);
-                msg.setMsgTitle("您的创作者身份已经审核通过");
-                msg.setTo(userId);
-                msg.setSenderId(0l);
-                msg.setSenderName("管理员");
-                msg.setExtData("to",userId);
-                messageService.sendMessage(msg);
+//                MessageVo msg = new MessageVo();
+//                msg.setMsgType(MessageVo.SYSTEM_MSG);
+//                msg.setMsgTitle("您的创作者身份已经审核通过");
+//                msg.setTo(userId);
+//                msg.setSenderId(0l);
+//                msg.setSenderName("管理员");
+//                msg.setExtData("to",userId);
+//                messageService.sendMessage(msg);
 
 
                 //发送微信消息，告知审核结果
-                String creatorIdStr = String.valueOf(userProfileEntity.getUserId());
+            /*    String creatorIdStr = String.valueOf(userProfileEntity.getUserId());
 
                 JSONObject body2 = new JSONObject();
                 JSONObject data2 = new JSONObject();
@@ -171,7 +171,7 @@ public class UserServiceImpl implements UserService {
 
                 log.info(" request: " + body2);
                 Object obj2 = wxMessageService.sendMessage(token, body2);
-                log.info(" response: " + obj2);
+                log.info(" response: " + obj2);*/
 
             }
         }
