@@ -278,7 +278,7 @@ public class UserController extends BaseController  {
         log.info(" applyCreator, RequestParam: uid=" +uid);
         RedisMessage<Long> redisMessage = new RedisMessage();
         redisMessage.setBody(uid);
-        redisMessage.setDelayTime(60*1000*50000000L);
+        redisMessage.setDelayTime(60*1000*5L);
         redisMessage.setTopic("TOPIC:applyCreator");
         redisQueue.push(redisMessage);
         return null;

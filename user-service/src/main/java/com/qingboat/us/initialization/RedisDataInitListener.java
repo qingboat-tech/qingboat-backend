@@ -25,17 +25,17 @@ public class RedisDataInitListener implements ApplicationListener<ContextRefresh
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         if (contextRefreshedEvent.getSource() instanceof org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext){
-            //初始化 热点创作者集合   此操作会导致 redis中数据会少于mysql中的数据（在操作期间有的新的人发生订阅或购买），但是大体上不会影响 热点榜的人
-            List<Integer> creatorIds = userProfileDao.getCreatorIds();
-            for (Integer creatorId:creatorIds) {
-                Integer count_userIdsByCreatorOnNewslettersAndPathway = userService.getCount_UserIdsByCreatorOnNewslettersAndPathway(creatorId);
-                if (creatorId.compareTo(518) == 0 || creatorId.compareTo(733) == 0 || creatorId.compareTo(714) == 0 ||  creatorId.compareTo(7) == 0  || creatorId.compareTo(67) == 0){
-                    count_userIdsByCreatorOnNewslettersAndPathway += 100;
-                }
-                UserProfileEntity userProfile = userService.getUserProfile((long) creatorId);
-                String s = JSON.toJSONString(userProfile);
-                redisUtil.zAdd_string("hotCreator",s,count_userIdsByCreatorOnNewslettersAndPathway);
-            }
+//            //初始化 热点创作者集合   此操作会导致 redis中数据会少于mysql中的数据（在操作期间有的新的人发生订阅或购买），但是大体上不会影响 热点榜的人
+//            List<Integer> creatorIds = userProfileDao.getCreatorIds();
+//            for (Integer creatorId:creatorIds) {
+//                Integer count_userIdsByCreatorOnNewslettersAndPathway = userService.getCount_UserIdsByCreatorOnNewslettersAndPathway(creatorId);
+//                if (creatorId.compareTo(518) == 0 || creatorId.compareTo(733) == 0 || creatorId.compareTo(714) == 0 ||  creatorId.compareTo(7) == 0  || creatorId.compareTo(67) == 0){
+//                    count_userIdsByCreatorOnNewslettersAndPathway += 100;
+//                }
+//                UserProfileEntity userProfile = userService.getUserProfile((long) creatorId);
+//                String s = JSON.toJSONString(userProfile);
+//                redisUtil.zAdd_string("hotCreator",s,count_userIdsByCreatorOnNewslettersAndPathway);
+//            }
         }
 //        RedisUtil redisUtil = applicationContext.getBean("redisUtil", RedisUtil.class);
 //            System.out.println(redisUtil.zAdd_string("hot-test","id-1",100));
