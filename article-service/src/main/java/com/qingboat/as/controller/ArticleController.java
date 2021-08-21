@@ -9,6 +9,7 @@ import com.qingboat.as.utils.AliyunOssUtil;
 import com.qingboat.as.utils.RedisUtil;
 import com.qingboat.as.utils.RssUtil;
 import com.qingboat.as.utils.sensi.SensitiveFilter;
+import com.qingboat.as.vo.ArticlePriceVo;
 import com.qingboat.as.vo.ArticlePublishVo;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
@@ -550,7 +551,14 @@ public class ArticleController extends BaseController {
             return rst;
         }
         return  null;
+    }
 
+
+    @RequestMapping(value = "/price/{articleId}",method = RequestMethod.GET)
+    @ResponseBody
+    public ArticlePriceVo getPriceByArticleId(@PathVariable("articleId") String articleId){
+        ArticlePriceVo priceByArticleId = articleService.getPriceByArticleId(articleId);
+        return  priceByArticleId;
     }
 
 

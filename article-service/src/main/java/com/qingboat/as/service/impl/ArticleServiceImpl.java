@@ -8,12 +8,14 @@ import com.mongodb.client.result.UpdateResult;
 import com.qingboat.api.WxMessageService;
 import com.qingboat.api.WxTokenService;
 import com.qingboat.as.dao.ArticleMongoDao;
+import com.qingboat.as.dao.TierDao;
 import com.qingboat.as.entity.*;
 import com.qingboat.as.filter.AuthFilter;
 import com.qingboat.as.service.*;
 import com.qingboat.as.utils.RedisUtil;
 import com.qingboat.as.utils.sensi.FilterResult;
 import com.qingboat.as.utils.sensi.SensitiveFilter;
+import com.qingboat.as.vo.ArticlePriceVo;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
 import com.qingboat.base.utils.DateUtil;
@@ -74,6 +76,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     UserWechatService userWechatService;
+
+    @Autowired
+    TierDao tierDao;
 
     @Value("${business-domain}")
     private String businessDomain;
@@ -1008,6 +1013,29 @@ public class ArticleServiceImpl implements ArticleService {
         }else {
             return "paid-subscriber";
         }
+    }
+
+    @Override
+    public ArticlePriceVo getPriceByArticleId(String article) {
+        ArticleEntity articleEntity = articleMongoDao.findArticleEntityById(article);
+        ArticlePriceVo articlePriceVo = new ArticlePriceVo();
+        if (articleEntity == null){
+            return null;
+        }
+        TierEntity tierEntity = articleEntity.getTierEntity();
+        if (tierEntity != null){
+            articlePriceVo.setMouthPrice(tierEntity.getMonthPrice()+"");
+            articlePriceVo.setYearPrice(tierEntity.getYearPrice()+"");
+            articlePriceVo.setTierName(tierEntity.getTitle());
+        }else {
+            String authorId = articleEntity.getAuthorId();
+            TierEntity maxPriceByCreatorId = tierDao.getMAXPriceByCreatorId(authorId);
+            articlePriceVo.setMouthPrice(maxPriceByCreatorId.getMonthPrice()+"");
+            articlePriceVo.setYearPrice(maxPriceByCreatorId.getYearPrice()+"");
+            articlePriceVo.setTierName(maxPriceByCreatorId.getTitle());
+        }
+        return articlePriceVo;
+
     }
 
 

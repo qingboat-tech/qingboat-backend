@@ -2,10 +2,9 @@ package com.qingboat.as.service;
 
 import com.qingboat.as.entity.ArticleEntity;
 import com.qingboat.as.entity.UserSubscriptionEntity;
+import com.qingboat.as.vo.ArticlePriceVo;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
-import javax.xml.stream.events.Comment;
 import java.util.List;
 import java.util.Set;
 
@@ -135,6 +134,12 @@ public interface ArticleService {
      * 获取阅读者角色：author、free-subscriber、paid-subscriber、visitor
      */
     String getReaderRole(ArticleEntity article,Long userId);
+
+    /**
+     *  得到文章价格
+     * @return
+     */
+    ArticlePriceVo getPriceByArticleId(String article);
 
 
 }
