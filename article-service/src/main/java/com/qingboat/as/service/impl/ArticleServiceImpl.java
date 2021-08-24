@@ -1019,7 +1019,9 @@ public class ArticleServiceImpl implements ArticleService {
     public ArticlePriceVo getPriceByArticleId(String article) {
         ArticleEntity articleEntity = articleMongoDao.findArticleEntityById(article);
         ArticlePriceVo articlePriceVo = new ArticlePriceVo();
+        System.out.println("查找articleEntity：" + article);
         if (articleEntity == null){
+            System.out.println("查找结果为空");
             return null;
         }
         TierEntity tierEntity = articleEntity.getTierEntity();
