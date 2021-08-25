@@ -12,6 +12,7 @@ import com.qingboat.as.service.TierService;
 import com.qingboat.as.service.UserService;
 import com.qingboat.as.service.UserSubscriptionService;
 
+import com.qingboat.as.service.impl.UserSubscriptionServiceImpl;
 import com.qingboat.base.api.FeishuService;
 import com.qingboat.base.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,8 @@ public class ReaderSubscriptionController extends BaseController {
 
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private UserSubscriptionServiceImpl userSubscriptionServiceImpl;
 
 
     //=======================针对 reader 接口=============================
@@ -72,8 +75,19 @@ public class ReaderSubscriptionController extends BaseController {
                     }
                 }
             }
+            //如果有订阅的 就把免费的给取消了
+            Boolean aBoolean = userSubscriptionServiceImpl.haveSubscription(Integer.parseInt(userId + ""), Integer.parseInt(creatorId + ""));
+            if (aBoolean){
+                Iterator<TierEntity> iterator = tierEntityList.iterator();
+                while (iterator.hasNext()){
+                    TierEntity temp = iterator.next();
+                    String subscribeDuration = temp.getSubscribeDuration();
+                    if ("free".equals(subscribeDuration)){
+                        iterator.remove();
+                    }
+                }
+            }
         }
-
         return tierEntityList;
     }
 

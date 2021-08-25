@@ -19,7 +19,7 @@ ssh qingboat@39.105.29.208<< soff
 cd /srv/qingboat-backend
 
 echo "=============git pull begin============="
-git pull git@github.com:qingboat-tech/qingboat-backend.git
+# git pull git@github.com:qingboat-tech/qingboat-backend.git
 echo "=============git pull done=============="
 sleep 1
 

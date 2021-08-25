@@ -11,4 +11,6 @@ public interface UserSubscriptionService extends IService<UserSubscriptionEntity
 
     UserSubscriptionEntity subscribe(UserSubscriptionEntity userSubscriptionEntity);
 
+    Boolean haveSubscription(Integer subscriberId,Integer creatorId);
+
 }

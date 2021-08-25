@@ -36,6 +36,8 @@ public class UserSubscriptionServiceImpl extends ServiceImpl<UserSubscriptionDao
 
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private UserSubscriptionDao userSubscriptionDao;
 
     @Override
     public Object createBillAndUpdateWallet(UserSubscriptionEntity userSubscriptionEntity) {
@@ -208,4 +210,14 @@ public class UserSubscriptionServiceImpl extends ServiceImpl<UserSubscriptionDao
             throw  new BaseException(500,"TierId="+memberTierId +" 不存在。");
         }
     }
+
+    @Override
+    public Boolean haveSubscription(Integer subscriberId, Integer creatorId) {
+        UserSubscriptionEntity userSubscriptionEntity = userSubscriptionDao.getUserSubscriptionEntity(subscriberId, creatorId);
+        if (userSubscriptionEntity != null){
+            return true;
+        }
+        return false;
+    }
+
 }
