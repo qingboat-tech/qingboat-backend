@@ -479,7 +479,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (tierList == null){
             throw new BaseException(500,"操作失败：创作者还没有设置套餐");
         }
-        String benefitKey = "FREE".equalsIgnoreCase(publishType)?"FREE":"READ";
+        String benefitKey = "FREE".equalsIgnoreCase(publishType)?"FREE":"READ";   //这是什么
         benefitKeySet.add(benefitKey);
 
         Query query = new Query();
@@ -742,102 +742,108 @@ public class ArticleServiceImpl implements ArticleService {
 
             UpdateResult result= mongoTemplate.updateFirst(query, update, ArticleEntity.class);
 
-            FeishuService.TextBody textBody = new FeishuService.TextBody(
-                    new StringBuilder().append("文章审核通过").append("\n")
-                            .append("创作者：").append(articleEntity.getAuthorNickName()).append("\n")
-                            .append("链接：").append(this.businessDomain + "/articleDetail/" + articleEntity.getId() +"/"+articleEntity.getAuthorId()).append("\n")
-                            .append("文章《").append(title).append("》\n").toString());
-            feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
+            if (result == null || result.getModifiedCount()<=0){
+                log.error("=============mongoTemplate.updateFirst修改异常===============");
+            }else {
+                FeishuService.TextBody textBody = new FeishuService.TextBody(
+                        new StringBuilder().append("文章审核通过").append("\n")
+                                .append("创作者：").append(articleEntity.getAuthorNickName()).append("\n")
+                                .append("链接：").append(this.businessDomain + "/articleDetail/" + articleEntity.getId() +"/"+articleEntity.getAuthorId()).append("\n")
+                                .append("文章《").append(title).append("》\n").toString());
+                feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
 
-            // 发送站内消息
-            //发送消息
-            MessageEntity msg = new MessageEntity();
-            msg.setMsgType(MessageEntity.SYSTEM_MSG);
-            msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核通过" );
-            msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
-            msg.setSenderId(0l);
-            msg.setSenderName("管理员");
-            msg.setExtData("dataType","text");
-            msg.setExtData("content","《"+articleEntity.getTitle()+"》审核通过" );
-            messageService.asyncSendMessage(msg);
-
-
-
-            //发送微信消息，告知审核结果
-            String creatorIdStr = String.valueOf(articleEntity.getAuthorId());
-            String sec = AuthFilter.getSecret(creatorIdStr);
-            String token =  wxTokenService.getWxUserToken(sec, creatorIdStr);
+                // 发送站内消息
+                //发送消息
+                MessageEntity msg = new MessageEntity();
+                msg.setMsgType(MessageEntity.SYSTEM_MSG);
+                msg.setMsgTitle("《"+articleEntity.getTitle()+"》审核通过" );
+                msg.setTo(Long.parseLong(articleEntity.getAuthorId()));
+                msg.setSenderId(0l);
+                msg.setSenderName("管理员");
+                msg.setExtData("dataType","text");
+                msg.setExtData("content","《"+articleEntity.getTitle()+"》审核通过" );
+                messageService.asyncSendMessage(msg);
 
 
-            JSONObject body2 = new JSONObject();
-            JSONObject data2 = new JSONObject();
-            //
-            data2.put("first", JSON.parse("{'value':  '您的文章已经审核通过'}"));
-            // 审核人
-            data2.put("keyword1", JSON.parse("{'value':  '氢舟管理员'}"));
-            // 审核内容
-            data2.put("keyword2", JSON.parse("{'value': '"+title +"'}"));
-            // 审核日期
-            data2.put("keyword3", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
-            // 备注
-            data2.put("remark", JSON.parse("{'value': '加油来创作下一篇爆款文章吧！'}"));
-            // 找到发送者的微信openId
-            QueryWrapper<UserWechatEntity> queryWrapper2 = new QueryWrapper<>();
-            queryWrapper2.lambda().eq(UserWechatEntity::getUserId,articleEntity.getAuthorId());
-            UserWechatEntity userWechatEntity2 = userWechatService.getOne(queryWrapper2);
-            if (userWechatEntity2 == null){
-                throw new BaseException(500,"creator没有微信openId,没法发消息");
-            }
-            body2.put("touser",userWechatEntity2.getOpenId());                   // 发给谁
-            body2.put("template_id",this.reviewTemplate2);                      // 那个模板
-            body2.put("url",this.businessDomain+"/articleDetail/"+articleEntity.getId()+"/"+creatorIdStr);
-            body2.put("data",data2);
 
-            log.info( " request: " +body2);
-            Object obj2 = wxMessageService.sendMessage(token,body2);
-            log.info( " response: " +obj2);
+                //发送微信消息，告知审核结果
+                String creatorIdStr = String.valueOf(articleEntity.getAuthorId());
+                String sec = AuthFilter.getSecret(creatorIdStr);
+                String token =  wxTokenService.getWxUserToken(sec, creatorIdStr);
 
-            //给订阅者发微信模板消息
-            LocalDate today = LocalDate.now();
-            QueryWrapper<UserSubscriptionEntity> userSubscriptionEntityQueryWrapper = new QueryWrapper<>();
-            userSubscriptionEntityQueryWrapper.gt("expire_date",today);
-            userSubscriptionEntityQueryWrapper.eq("creator_id",Long.parseLong(creatorIdStr));
-            List<UserSubscriptionEntity> subscriptionEntityList = userSubscriptionService.list(userSubscriptionEntityQueryWrapper);
-            if (subscriptionEntityList == null ){
-                return;
-            }
-            //TODO  这里有点小问题，发送付费文章，免费订阅用户也能收到消息
-            for (UserSubscriptionEntity userSubscriptionEntity: subscriptionEntityList){
-                String subscribeIdStr = String.valueOf(userSubscriptionEntity.getSubscriberId());
-                String  secret = AuthFilter.getSecret(subscribeIdStr);
-                String sendToken =  wxTokenService.getWxUserToken(sec, subscribeIdStr);
-                JSONObject body = new JSONObject();
-                JSONObject bodyData = new JSONObject();
 
+                JSONObject body2 = new JSONObject();
+                JSONObject data2 = new JSONObject();
+                //
+                data2.put("first", JSON.parse("{'value':  '您的文章已经审核通过'}"));
+                // 审核人
+                data2.put("keyword1", JSON.parse("{'value':  '氢舟管理员'}"));
+                // 审核内容
+                data2.put("keyword2", JSON.parse("{'value': '"+title +"'}"));
+                // 审核日期
+                data2.put("keyword3", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
+                // 备注
+                data2.put("remark", JSON.parse("{'value': '加油来创作下一篇爆款文章吧！'}"));
                 // 找到发送者的微信openId
-                QueryWrapper<UserWechatEntity> queryWrapper = new QueryWrapper<>();
-                queryWrapper.lambda().eq(UserWechatEntity::getUserId,userSubscriptionEntity.getSubscriberId());
-                UserWechatEntity userWechatEntity = userWechatService.getOne(queryWrapper);
-                if (userWechatEntity == null){
-                    log.warn("订阅者没有微信openId,没法发消息");
-                    continue;
+                QueryWrapper<UserWechatEntity> queryWrapper2 = new QueryWrapper<>();
+                queryWrapper2.lambda().eq(UserWechatEntity::getUserId,articleEntity.getAuthorId());
+                UserWechatEntity userWechatEntity2 = userWechatService.getOne(queryWrapper2);
+                if (userWechatEntity2 == null){
+                    throw new BaseException(500,"creator没有微信openId,没法发消息");
                 }
+                body2.put("touser",userWechatEntity2.getOpenId());                   // 发给谁
+                body2.put("template_id",this.reviewTemplate2);                      // 那个模板
+                body2.put("url",this.businessDomain+"/articleDetail/"+articleEntity.getId()+"/"+creatorIdStr);
+                body2.put("data",data2);
 
-                body.put("touser",userWechatEntity.getOpenId());                    // 发给谁
-                body.put("template_id",this.dataUpdateTemplate);                // 那个模板
-                body.put("url",this.businessDomain+"/mysubscription");             // 打开地址 TODO
-                body.put("data",bodyData);
+                log.info( " request: " +body2);
+                Object obj2 = wxMessageService.sendMessage(token,body2);
+                log.info( " response: " +obj2);
 
-                bodyData.put("first", JSON.parse("{'value': '您订阅的套餐有新的文章啦！'}"));
-                bodyData.put("keyword1", JSON.parse("{'value': '"+articleEntity.getAuthorNickName()+"'}"));
-                bodyData.put("keyword2", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
-                bodyData.put("remark", JSON.parse("{'value': '"+articleEntity.getTitle()+"'}"));
+                //给订阅者发微信模板消息
+                LocalDate today = LocalDate.now();
+                QueryWrapper<UserSubscriptionEntity> userSubscriptionEntityQueryWrapper = new QueryWrapper<>();
+                userSubscriptionEntityQueryWrapper.gt("expire_date",today);
+                userSubscriptionEntityQueryWrapper.eq("creator_id",Long.parseLong(creatorIdStr));
+                List<UserSubscriptionEntity> subscriptionEntityList = userSubscriptionService.list(userSubscriptionEntityQueryWrapper);
+                if (subscriptionEntityList == null ){
+                    return;
+                }
+                //TODO  这里有点小问题，发送付费文章，免费订阅用户也能收到消息
+                for (UserSubscriptionEntity userSubscriptionEntity: subscriptionEntityList){
+                    String subscribeIdStr = String.valueOf(userSubscriptionEntity.getSubscriberId());
+                    String  secret = AuthFilter.getSecret(subscribeIdStr);
+                    String sendToken =  wxTokenService.getWxUserToken(sec, subscribeIdStr);
+                    JSONObject body = new JSONObject();
+                    JSONObject bodyData = new JSONObject();
 
-                log.info( " request: " +body);
-                Object obj = wxMessageService.sendMessage(sendToken,body);
-                log.info( " response: " +obj);
+                    // 找到发送者的微信openId
+                    QueryWrapper<UserWechatEntity> queryWrapper = new QueryWrapper<>();
+                    queryWrapper.lambda().eq(UserWechatEntity::getUserId,userSubscriptionEntity.getSubscriberId());
+                    UserWechatEntity userWechatEntity = userWechatService.getOne(queryWrapper);
+                    if (userWechatEntity == null){
+                        log.warn("订阅者没有微信openId,没法发消息");
+                        continue;
+                    }
 
-            }  //微信推送暂时关闭
+                    body.put("touser",userWechatEntity.getOpenId());                    // 发给谁
+                    body.put("template_id",this.dataUpdateTemplate);                // 那个模板
+                    body.put("url",this.businessDomain+"/mysubscription");             // 打开地址 TODO
+                    body.put("data",bodyData);
+
+                    bodyData.put("first", JSON.parse("{'value': '您订阅的套餐有新的文章啦！'}"));
+                    bodyData.put("keyword1", JSON.parse("{'value': '"+articleEntity.getAuthorNickName()+"'}"));
+                    bodyData.put("keyword2", JSON.parse("{'value': '"+ DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD) +"'}"));
+                    bodyData.put("remark", JSON.parse("{'value': '"+articleEntity.getTitle()+"'}"));
+
+                    log.info( " request: " +body);
+                    Object obj = wxMessageService.sendMessage(sendToken,body);
+                    log.info( " response: " +obj);
+
+                }  //微信推送暂时关闭
+            }
+
+
 
         }
 
