@@ -744,6 +744,12 @@ public class ArticleServiceImpl implements ArticleService {
 
             if (result == null || result.getModifiedCount()<=0){
                 log.error("=============mongoTemplate.updateFirst修改异常===============");
+                FeishuService.TextBody textBody = new FeishuService.TextBody(
+                        new StringBuilder().append("文章审核失败").append("\n")
+                                .append("创作者：").append(articleEntity.getAuthorNickName()).append("\n")
+                                .append("文章ID：" + articleId)
+                                .append("文章《").append(title).append("》\n").toString());
+                feishuService.sendTextMsg("003ca497-bef4-407f-bb41-4e480f16dd44", textBody);
             }else {
                 FeishuService.TextBody textBody = new FeishuService.TextBody(
                         new StringBuilder().append("文章审核通过").append("\n")

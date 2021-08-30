@@ -1,5 +1,7 @@
 package com.qingboat.us.controller;
 
+import com.qingboat.base.MessageType;
+import com.qingboat.base.mq.MessageTemplate;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
@@ -34,8 +36,22 @@ public class MessageController {
 //        Message message = new Message(temp.getBytes(StandardCharsets.UTF_8),messageProperties);
 
 //        rabbitTemplate.send("MSGTopic","push.*.msg",message);
-//        System.out.println(System.currentTimeMillis());
-//        rabbitTemplate.convertAndSend("push.message","",temp);
+        MessageProperties messageProperties = new MessageProperties();
+       if (temp.equals("abc")){
+//        messageProperties.setMessageId("1");
+           messageProperties.setContentType(MessageType.FS_ARTICLE_APPROVED.getTypeName());
+           messageProperties.setHeader("发起人","发起人 nickname");
+           messageProperties.setHeader("操作人","操作人ID");
+           messageProperties.setHeader("内容",temp);
+       }else {
+//        messageProperties.setMessageId("1");
+           messageProperties.setContentType(MessageType.FS_CREATOR_APPLY.getTypeName());
+           messageProperties.setHeader("发起人","FS_CREATOR_APPLY nickname");
+           messageProperties.setHeader("操作人","FS_CREATOR_APPLY");
+           messageProperties.setHeader("内容",temp);
+       }
+        Message message = new Message("".getBytes(StandardCharsets.UTF_8),messageProperties);
+        rabbitTemplate.convertAndSend("push.message","",message);
         return temp;
     }
 }
