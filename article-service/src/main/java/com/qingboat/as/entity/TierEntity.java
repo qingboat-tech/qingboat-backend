@@ -60,4 +60,9 @@ public class TierEntity implements Serializable {
     @TableField(exist = false)
     private Boolean subscribed; //是否订阅
 
+
+    private String welcomeWords;
+
+    private String imageUrl;
+
 }

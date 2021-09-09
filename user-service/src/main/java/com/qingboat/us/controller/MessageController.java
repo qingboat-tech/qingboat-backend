@@ -52,6 +52,7 @@ public class MessageController {
        }
         Message message = new Message("".getBytes(StandardCharsets.UTF_8),messageProperties);
         rabbitTemplate.convertAndSend("push.message","",message);
+//        rabbitTemplate.setConfirmCallback();
         return temp;
     }
 }

@@ -355,10 +355,10 @@ public class CreatorSubscriptionController extends BaseController {
     @PostMapping(value = "/tier")
     @ResponseBody
     public TierEntity addCreatorTierEntity(@RequestBody TierEntity tierEntity) {
-        System.out.println("System.out.println(tierEntity.getSubscribeDuration());");
-        System.out.println(tierEntity.getSubscribeDuration());
-        System.out.println(tierEntity.getYearDiscount());
-        System.out.println("========");
+//        System.out.println("System.out.println(tierEntity.getSubscribeDuration());");
+//        System.out.println(tierEntity.getSubscribeDuration());
+//        System.out.println(tierEntity.getYearDiscount());
+//        System.out.println("========");
         if (StringUtils.isEmpty(tierEntity.getTitle())){
             throw new BaseException(500,"操作失败：创建会员等级标题为空");
         }

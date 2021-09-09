@@ -85,7 +85,14 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
         MessageEntity msg = new MessageEntity();
         msg.setMsgType(MessageEntity.SYSTEM_MSG);
-        msg.setMsgTitle("感谢您成功订阅："+ createUser.getNickname()+"(" +tierEntity.getTitle() + "),<a href=\"" +  this.businessDomain+"/qwqr\">"  + "\uD83D\uDD17点击链接</a>添加客服后加入创作者会员群");
+        //这里  setMsgTitle 设置为 欢迎语  欢迎语要查 在tier表里
+        Long memberTierId = userSubscriptionEntity.getMemberTierId();
+//        TierEntity tierEntity1 = tierService.getBaseMapper().selectById(memberTierId);
+
+        String welcomeWords = "";
+        welcomeWords = tierEntity.getWelcomeWords();
+        msg.setMsgTitle("),<a href=\"" + this.businessDomain+"/qwqr\">"  + "\uD83D\uDD17" + welcomeWords  + "</a>");
+//        msg.setMsgTitle("感谢您成功订阅："+ createUser.getNickname()+"(" +tierEntity.getTitle() + "),<a href=\"" +  this.businessDomain+"/qwqr\">"  + "\uD83D\uDD17点击链接</a>添加客服后加入创作者会员群");
         msg.setTo(subscribeUser.getUserId());
         msg.setSenderId(createUser.getUserId());
         msg.setSenderName(createUser.getNickname());

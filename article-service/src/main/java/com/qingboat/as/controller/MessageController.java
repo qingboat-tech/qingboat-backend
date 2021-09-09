@@ -58,7 +58,7 @@ public class MessageController extends BaseController {
      */
     @GetMapping(value = "/unReadCount")
     @ResponseBody
-    public Integer unReadCount( @RequestParam(value = "msgType",required = false) Integer msgType) {
+    public Integer unReadCount(@RequestParam(value = "msgType",required = false) Integer msgType) {
         return messageService.getUnreadMessageCount(getUId(),msgType);
     }
 
