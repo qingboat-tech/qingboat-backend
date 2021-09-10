@@ -26,6 +26,9 @@ public class TierVo {
     private Integer status;  // 0:表示删除，1：表示有效
     private Integer subscribeCount; //订阅人数
 
+    private String welcomeWords;
+    private String imageUrl;
+
     private  List<Object> benefitList;
 
 
@@ -44,5 +47,7 @@ public class TierVo {
 
         return map;
     }
+
+
 
 }
