@@ -17,8 +17,11 @@ import com.qingboat.as.service.*;
 import com.qingboat.base.exception.BaseException;
 import com.qingboat.base.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +32,7 @@ import java.util.function.IntBinaryOperator;
 
 @Service
 @Slf4j
-public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> implements MessageService {
+public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> implements MessageService, ApplicationContextAware {
 
     @Autowired
     private UserService userService;
@@ -66,6 +69,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
     @Value("${wx-msg-template.answer-result}")
     private String answerResultTemplate;
+    private ApplicationContext applicationContext;
 
     @Override
     @Async
@@ -112,7 +116,13 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         msg.setExtData("subscriberId",subscribeUser.getUserId());
         msg.setExtData("subscriberNickName",subscribeUser.getNickname());
         msg.setExtData("subscriberHeadImgUrl",subscribeUser.getHeadimgUrl());
-        this.save(msg);
+        applicationContext.getBean("messageServiceImpl",MessageServiceImpl.class).asyncSendMessage(msg);
+        System.out.println("保存消息"
+        );
+        this.asyncSendMessage(msg);//
+        System.out.println("保存完毕"
+        );
+//        messageService.asyncSendMessage(msg);
 
         // 发订阅者微信消息
         String subscribeIdStr = String.valueOf(subscribeUser.getUserId());
@@ -465,4 +475,8 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         return baseMapper.getGroupUnreadCountByUserId(messageEntity);
     }
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 }
