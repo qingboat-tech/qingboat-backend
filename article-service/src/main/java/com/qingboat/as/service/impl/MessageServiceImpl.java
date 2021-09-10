@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.function.IntBinaryOperator;
 
 
 @Service
@@ -91,7 +92,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
         String welcomeWords = "";
         welcomeWords = tierEntity.getWelcomeWords();
-        msg.setMsgTitle("),<a href=\"" + this.businessDomain+"/qwqr\">"  + "\uD83D\uDD17" + welcomeWords  + "</a>");
+        msg.setMsgTitle("<a href=\"" + this.businessDomain+"/subscribesuccess\">"  + "\uD83D\uDD17" + welcomeWords  + "</a>");
 //        msg.setMsgTitle("感谢您成功订阅："+ createUser.getNickname()+"(" +tierEntity.getTitle() + "),<a href=\"" +  this.businessDomain+"/qwqr\">"  + "\uD83D\uDD17点击链接</a>添加客服后加入创作者会员群");
         msg.setTo(subscribeUser.getUserId());
         msg.setSenderId(createUser.getUserId());
@@ -198,21 +199,13 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         if (userWechatEntity2 == null){
             throw new BaseException(500,"creator没有微信openId,没法发消息");
         }
-
         body2.put("touser",userWechatEntity2.getOpenId());                   // 发给谁
         body2.put("template_id",this.newOrderTemplate);                      // 那个模板
         body2.put("url", this.businessDomain+"/creatorcenter/subscribe");             // 打开地址
         body2.put("data",data2);
-
-
-
         log.info( " request: " +body2);
         Object obj2 = wxMessageService.sendMessage(token,body2);
         log.info( " response: " +obj2);
-
-
-
-
     }
 
     @Override
@@ -399,6 +392,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
 
     }
 
+    //todo
     @Override
     public IPage<MessageEntity> list(Long toUserId, Integer msgType,Integer pageIndex,Integer pageSize) {
         MessageEntity entity = new MessageEntity();
@@ -407,6 +401,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         QueryWrapper<MessageEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntity(entity);
         queryWrapper.orderByDesc("created_at");
+
 
         if (pageIndex == null || pageIndex<0){
             pageIndex = 1;
